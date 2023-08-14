@@ -21,7 +21,7 @@ public class Address extends PrimaryKeyEntity {
     private String city;
 
     @NotNull
-    private String load;
+    private String road;
 
     @NotNull
     private String building;

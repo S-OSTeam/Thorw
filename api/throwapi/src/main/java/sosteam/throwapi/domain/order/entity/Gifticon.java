@@ -17,6 +17,6 @@ public class Gifticon extends PrimaryKeyEntity {
     private Item item;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "receipt_id")
+    private Receipt receipt;
 }
