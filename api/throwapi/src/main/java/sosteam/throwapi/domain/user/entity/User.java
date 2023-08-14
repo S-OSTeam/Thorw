@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sosteam.throwapi.domain.order.entity.Order;
+import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import sosteam.throwapi.global.entity.Role;
@@ -44,7 +44,7 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     private List<Store> stores;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Order> orders;
+    private List<Receipt> receipts;
 
     public Role setRole(Role role) {
         this.role = role;
