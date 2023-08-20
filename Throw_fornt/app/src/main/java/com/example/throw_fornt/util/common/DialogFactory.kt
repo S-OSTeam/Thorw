@@ -6,7 +6,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.example.throw_fornt.R
 
-
 class DialogFactory {
     fun Activity.showDialog(
         @StringRes
