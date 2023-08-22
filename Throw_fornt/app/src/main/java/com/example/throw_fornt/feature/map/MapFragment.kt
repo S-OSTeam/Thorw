@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.FragmentMapBinding
 import com.example.throw_fornt.util.common.BindingFragment
+import net.daum.mf.map.api.MapView
 
 class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
@@ -14,5 +15,8 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+
+        val mapView = MapView(requireContext())
+        binding.flMapContainer.addView(mapView)
     }
 }
