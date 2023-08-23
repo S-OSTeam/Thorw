@@ -5,13 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address extends PrimaryKeyEntity {
 
     @NotNull
@@ -29,8 +32,6 @@ public class Address extends PrimaryKeyEntity {
 
     @NotNull
     private String zipCode;
-
-    public Address(){};
 
     public Address(Point location, double latitude, double longitude, String fullAddress, String zipCode) {
         this.location = location;

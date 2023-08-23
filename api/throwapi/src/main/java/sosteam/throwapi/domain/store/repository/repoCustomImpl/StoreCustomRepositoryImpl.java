@@ -52,8 +52,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .from(qStore)
                 .innerJoin(qStore.address, qAddress)
                 .where(mbrContains.eq("1"))
-                .fetch()
-                .stream().distinct().toList();
+                .fetch();
 
         return Optional.of(result);
     }

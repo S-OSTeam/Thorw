@@ -6,8 +6,8 @@ import org.locationtech.jts.geom.*;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.dto.StoreResponseDto;
 import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
-import sosteam.throwapi.domain.store.exception.NoContentException;
-import sosteam.throwapi.domain.store.exception.NotFoundException;
+import sosteam.throwapi.global.exception.exception.NoContentException;
+import sosteam.throwapi.global.exception.exception.NotFoundException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
@@ -38,7 +38,7 @@ public class StoreGetService {
      * if there are stores, return 200 (StoreList)
      */
     public List<StoreResponseDto> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
-        log.info("Start Searching Stores around = {}", searchStoreInRadiusDto);
+        log.debug("Start Searching Stores around = {}", searchStoreInRadiusDto);
 
         // 1:
         Point northEast = GeometryUtil.calculate(
@@ -53,8 +53,8 @@ public class StoreGetService {
                 searchStoreInRadiusDto.getDistance(),
                 Direction.SOUTHWEST.getBearing()
         );
-        log.info(String.format("NorthEast(%s %s) SRID:%s", northEast.getX(), northEast.getY(), northEast.getSRID()));
-        log.info(String.format("SouthWest(%s %s) SRID:%s", southWest.getX(), southWest.getY(), southWest.getSRID()));
+        log.debug(String.format("NorthEast(%s %s) SRID:%s", northEast.getX(), northEast.getY(), northEast.getSRID()));
+        log.debug(String.format("SouthWest(%s %s) SRID:%s", southWest.getX(), southWest.getY(), southWest.getSRID()));
         GeometryFactory geometryFactory = GeometryUtil.getGeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{
                 new Coordinate(northEast.getY(), northEast.getX()),
@@ -65,7 +65,7 @@ public class StoreGetService {
 
         searchStoreInRadiusDto.setLineString(lineString);
 
-        log.info("Created LineString = {}", lineString);
+        log.debug("Created LineString = {}", lineString);
 
         Optional<List<StoreResponseDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
 
