@@ -6,7 +6,7 @@ import lombok.Getter;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 @Getter
-@Entity
+//@Entity
 public class Gifticon extends PrimaryKeyEntity {
 
     @NotNull

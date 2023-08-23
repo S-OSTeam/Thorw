@@ -1,11 +1,12 @@
 package sosteam.throwapi.global.exception.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 @Data
 public class CommonException extends RuntimeException{
     private final String code;
-    private String message;
+    private final String message;
     private final HttpStatus status;
 }

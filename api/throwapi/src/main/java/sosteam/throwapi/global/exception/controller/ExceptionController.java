@@ -1,5 +1,6 @@
 package sosteam.throwapi.global.exception.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,6 +16,7 @@ import sosteam.throwapi.global.exception.exception.CommonExceptionResponse;
  * CommonException을 이용하여 외부로 에러 정보가 나가는 것을 방지한다.
  * 각 Entity마다 exception을 제작, 사용한다.
  */
+@Slf4j
 @RestControllerAdvice
 public class ExceptionController {
 
@@ -24,7 +26,7 @@ public class ExceptionController {
      */
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<CommonExceptionResponse> commonExceptionHandler(CommonException e) {
-        return new ResponseEntity(
+        return new ResponseEntity<>(
                 new CommonExceptionResponse(
                         e.getCode(),
                         e.getMessage()

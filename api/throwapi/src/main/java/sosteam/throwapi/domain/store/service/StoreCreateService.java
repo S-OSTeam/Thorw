@@ -1,0 +1,53 @@
+package sosteam.throwapi.domain.store.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Point;
+import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.store.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.dto.StoreSearchDto;
+import sosteam.throwapi.domain.store.entity.Address;
+import sosteam.throwapi.domain.store.entity.Store;
+import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
+import sosteam.throwapi.domain.store.util.GeometryUtil;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class StoreCreateService {
+    private final StoreRepository storeRepository;
+
+    public Store save(StoreSaveDto storeSaveDto) {
+        log.debug("Start Creating Store = {}", storeSaveDto);
+        // if Store is already Exist
+        // ...
+
+        // 1: Create Store Entity
+        Store store = new Store(
+                storeSaveDto.getName(),
+                storeSaveDto.getCompanyRegisterNumber(),
+                storeSaveDto.getSecondPassword()
+        );
+
+        // 2: Create Address Entity
+        // 2-1 : Create Point based on Lat,Lon
+        Point location = GeometryUtil.parseLocation(
+                storeSaveDto.getLatitude(),
+                storeSaveDto.getLongitude()
+        );
+        Address address = new Address(
+                location,
+                storeSaveDto.getLatitude(),
+                storeSaveDto.getLongitude(),
+                storeSaveDto.getFullAddress(),
+                storeSaveDto.getZipCode()
+        );
+
+        // 3: Mapping Store and Address
+        store.setAddress(address);
+        address.setStore(store);
+
+        // 4: save Store Entity
+        return storeRepository.save(store);
+    }
+}

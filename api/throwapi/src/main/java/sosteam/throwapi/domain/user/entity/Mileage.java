@@ -7,7 +7,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
-@Entity
+//@Entity
 public class Mileage extends PrimaryKeyEntity {
 
     @NotNull

@@ -13,7 +13,7 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
  * 유저의 개인 정보를 저장하는 엔티티
  * 이름, 핸드폰 번호, 이메일을 입력 받는다.
  */
-@Entity
+//@Entity
 @Getter
 public class UserInfo extends PrimaryKeyEntity {
     @NotNull

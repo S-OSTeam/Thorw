@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @Getter
-@Entity
+//@Entity
 public class User extends PrimaryKeyEntity implements UserDetails {
 
     @NotNull

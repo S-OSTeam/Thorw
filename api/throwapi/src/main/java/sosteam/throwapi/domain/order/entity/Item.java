@@ -10,7 +10,7 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import java.util.List;
 
 @Getter
-@Entity
+//@Entity
 public class Item extends PrimaryKeyEntity {
 
     @NotNull
