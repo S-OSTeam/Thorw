@@ -60,4 +60,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation files('libs/libDaumMapAndroid.jar')
+    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 }

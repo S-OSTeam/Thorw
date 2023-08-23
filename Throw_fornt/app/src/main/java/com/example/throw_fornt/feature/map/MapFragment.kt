@@ -15,8 +15,23 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+    }
 
-        val mapView = MapView(requireContext())
-        binding.flMapContainer.addView(mapView)
+    override fun onStart() {
+        super.onStart()
+        startTracking()
+        stopTracking()
+    }
+
+    // 위치추적 시작
+    private fun startTracking() {
+        binding.mapView.currentLocationTrackingMode =
+            MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+    }
+
+    // 위치추적 중지
+    private fun stopTracking() {
+        binding.mapView.currentLocationTrackingMode =
+            MapView.CurrentLocationTrackingMode.TrackingModeOff
     }
 }
