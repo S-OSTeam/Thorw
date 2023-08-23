@@ -7,15 +7,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sosteam.throwapi.domain.store.dto.StoreResponseDto;
+import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.dto.StoreSaveDto;
-import sosteam.throwapi.domain.store.dto.StoreSearchDto;
 import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
@@ -31,10 +30,10 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<List<StoreResponseDto>> search(StoreSearchDto storeSearchDto) {
+    public Optional<List<StoreResponseDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         StringTemplate mbrContains = Expressions.stringTemplate(
                 "MBRContains({0},{1})",
-                storeSearchDto.getLineString(),
+                searchStoreInRadiusDto.getLineString(),
                 qAddress.location
         );
 
@@ -43,6 +42,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         Projections.constructor(
                                 StoreResponseDto.class,
                                 qStore.name,
+                                qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
                                 qAddress.zipCode,
@@ -56,5 +56,25 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .stream().distinct().toList();
 
         return Optional.of(result);
+    }
+
+    @Override
+    public StoreResponseDto findByRegistrationNumber(String registrationNumber) {
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(
+                                StoreResponseDto.class,
+                                qStore.name,
+                                qStore.companyRegistrationNumber,
+                                qAddress.latitude,
+                                qAddress.longitude,
+                                qAddress.zipCode,
+                                qAddress.fullAddress
+                        )
+                )
+                .from(qStore)
+                .innerJoin(qStore.address, qAddress)
+                .where(qStore.companyRegistrationNumber.eq(registrationNumber))
+                .fetchOne();
     }
 }

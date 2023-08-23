@@ -1,13 +1,13 @@
 package sosteam.throwapi.domain.store.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import sosteam.throwapi.domain.store.dto.StoreResponseDto;
-import sosteam.throwapi.domain.store.dto.StoreSearchDto;
+import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.exception.NoContentException;
 import sosteam.throwapi.domain.store.exception.NotFoundException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
@@ -32,27 +32,27 @@ public class StoreGetService {
      * -----------------------------------------------------------
      * MBRContains(A,B):
      * if MBR of A contains B, return 1 else 0
-     * @param storeSearchDto Current User's Location and demanded distance
+     * @param searchStoreInRadiusDto Current User's Location and demanded distance
      *
      * @return
      * if null, return 404 (NOT FOUND)
      * if there are no stores, return 204 (No Content)
      * if there are stores, return 200 (StoreList)
      */
-    public List<StoreResponseDto> search(StoreSearchDto storeSearchDto) {
-        log.info("Start Searching Stores around = {}", storeSearchDto);
+    public List<StoreResponseDto> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+        log.info("Start Searching Stores around = {}", searchStoreInRadiusDto);
 
         // 1:
         Point northEast = GeometryUtil.calculate(
-                storeSearchDto.getLatitude(),
-                storeSearchDto.getLongitude(),
-                storeSearchDto.getDistance(),
+                searchStoreInRadiusDto.getLatitude(),
+                searchStoreInRadiusDto.getLongitude(),
+                searchStoreInRadiusDto.getDistance(),
                 Direction.NORTHEAST.getBearing()
         );
         Point southWest = GeometryUtil.calculate(
-                storeSearchDto.getLatitude(),
-                storeSearchDto.getLongitude(),
-                storeSearchDto.getDistance(),
+                searchStoreInRadiusDto.getLatitude(),
+                searchStoreInRadiusDto.getLongitude(),
+                searchStoreInRadiusDto.getDistance(),
                 Direction.SOUTHWEST.getBearing()
         );
         log.info(String.format("NorthEast(%s %s) SRID:%s", northEast.getX(), northEast.getY(), northEast.getSRID()));
@@ -65,14 +65,19 @@ public class StoreGetService {
 
         LineString lineString = geometryFactory.createLineString(coordinates);
 
-        storeSearchDto.setLineString(lineString);
+        searchStoreInRadiusDto.setLineString(lineString);
 
         log.info("Created LineString = {}", lineString);
 
-        Optional<List<StoreResponseDto>> storeListOptional = storeRepository.search(storeSearchDto);
+        Optional<List<StoreResponseDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
 
         if(storeListOptional.isEmpty()) throw new NotFoundException();
         if(storeListOptional.get().isEmpty()) throw new NoContentException();
         return storeListOptional.get();
+    }
+
+
+    public StoreResponseDto findByRegistrationNumber(String registrationNumber) {
+        return storeRepository.findByRegistrationNumber(registrationNumber);
     }
 }

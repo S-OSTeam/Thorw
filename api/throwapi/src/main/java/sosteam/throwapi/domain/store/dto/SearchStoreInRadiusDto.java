@@ -1,23 +1,21 @@
 package sosteam.throwapi.domain.store.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
 import org.locationtech.jts.geom.LineString;
+import sosteam.throwapi.domain.store.validation.ValidLatitude;
+import sosteam.throwapi.domain.store.validation.ValidLongitude;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreSearchDto {
-    @NotNull
-    @Range(min = -90,max = 90, message = "위도 범위 : -90 ~ 90")
+public class SearchStoreInRadiusDto {
+    @ValidLatitude
     private Double latitude;
 
-    @NotNull
-    @Range(min = -180,max = 180, message = "경도 범위 : -180 ~ 180")
+    @ValidLongitude
     private Double longitude;
 
     @NotNull
@@ -26,7 +24,7 @@ public class StoreSearchDto {
 
     private LineString lineString;
 
-    public StoreSearchDto(double latitude, double longitude, double distance) {
+    public SearchStoreInRadiusDto(double latitude, double longitude, double distance) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;

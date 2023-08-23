@@ -25,7 +25,6 @@ class StoreCreateServiceTest {
         StoreSaveDto storeSaveDto = new StoreSaveDto(
                 "시실리",
                 "1234",
-                "1234",
                 126.969896,
                 37.530975,
                 "1234",

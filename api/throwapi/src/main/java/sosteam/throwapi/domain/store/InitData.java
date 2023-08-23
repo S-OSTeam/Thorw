@@ -15,7 +15,7 @@ import java.util.Random;
 public class InitData {
     private final StoreCreateService storeCreateService;
 
-    @PostConstruct
+    //@PostConstruct
     void init() {
         double baseLon = 126.951135;
         double baseLat = 37.543588;
@@ -38,9 +38,46 @@ public class InitData {
             }
             StoreSaveDto storeSaveDto = new StoreSaveDto(
                     "TestStore" + String.valueOf(i),
-                    String.valueOf(r.nextInt()),
-                    "test",
+                    String.valueOf(r.nextInt()%1000)+"-"+String.valueOf(r.nextInt()%100) + "-" + String.valueOf(r.nextInt()%100000),
                     lon,
+                    lat,
+                    "test",
+                    "test"
+            );
+            storeCreateService.save(storeSaveDto);
+        }
+    }
+
+    @PostConstruct
+    void init2() {
+        double baseLon = 126.951135;
+        double baseLat = 37.543588;
+
+        Random r = new Random();
+        for (int i = 0; i < 1000; i++) {
+            double lat,lon;
+            if(i <= 250) {
+                lat = baseLat + r.nextDouble() * 0.1;
+                lon = baseLon + r.nextDouble() * 0.1;
+            } else if(i <= 500) {
+                lat = baseLat + r.nextDouble() * 0.1;
+                lon = baseLon - r.nextDouble() * 0.1;
+            } else if(i <= 750) {
+                lat = baseLat - r.nextDouble() * 0.1;
+                lon = baseLon + r.nextDouble() * 0.1;
+            } else {
+                lat = baseLat - r.nextDouble() * 0.1;
+                lon = baseLon - r.nextDouble() * 0.1;
+            }
+
+            String s1 =String.valueOf(r.nextInt()%1000);
+            String s2 = String.valueOf(r.nextInt()%100);
+            String s3 = String.valueOf(r.nextInt()%100000);
+            String rn = s1 + "-" + s2 + "-" + s3;
+            StoreSaveDto storeSaveDto = new StoreSaveDto(
+                    "TestStore" + String.valueOf(i),
+                   rn,
+                   lon,
                     lat,
                     "test",
                     "test"

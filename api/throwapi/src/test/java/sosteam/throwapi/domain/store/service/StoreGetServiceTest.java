@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sosteam.throwapi.domain.store.dto.StoreResponseDto;
 import sosteam.throwapi.domain.store.dto.StoreSaveDto;
-import sosteam.throwapi.domain.store.dto.StoreSearchDto;
+import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 
 import java.util.List;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class StoreGetServiceTest {
@@ -24,19 +22,19 @@ class StoreGetServiceTest {
     private StoreCreateService storeCreateService;
     @Test
     void search() {
-        StoreSearchDto storeSearchDto = new StoreSearchDto(
+        SearchStoreInRadiusDto searchStoreInRadiusDto = new SearchStoreInRadiusDto(
                 37.543588,
                 126.951135,
                 1.0,
                 null
         );
-        List<StoreResponseDto> stores = storeGetService.search(storeSearchDto);
+        List<StoreResponseDto> stores = storeGetService.search(searchStoreInRadiusDto);
         for (StoreResponseDto store : stores) {
             System.out.println("store = " + store.toString());
         }
     }
 
-    @PostConstruct
+    //@PostConstruct
     void init() {
         double baseLon = 126.951135;
         double baseLat = 37.543588;
@@ -60,7 +58,6 @@ class StoreGetServiceTest {
             StoreSaveDto storeSaveDto = new StoreSaveDto(
                     "TestStore" + String.valueOf(i),
                     String.valueOf(r.nextInt()),
-                    "test",
                     lon,
                     lat,
                     "test",

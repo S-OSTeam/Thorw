@@ -8,14 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 public class StoreResponseDto {
     private String name;
-    private double latitude;
-    private double longitude;
+    private String companyRegistrationNumber;
+    private Double latitude;
+    private Double longitude;
     private String zipCode;
     private String fullAddress;
 
     @QueryProjection
-    public StoreResponseDto(String name, double latitude, double longitude, String zipCode, String fullAddress) {
+    public StoreResponseDto(String name, String companyRegistrationNumber,double latitude, double longitude, String zipCode, String fullAddress) {
         this.name = name;
+        this.companyRegistrationNumber = companyRegistrationNumber;
         this.latitude = latitude;
         this.longitude = longitude;
         this.zipCode = zipCode;
