@@ -32,7 +32,7 @@ public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
     @PostMapping
-    public void save(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
+    public void saveStore(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
         log.debug("StoreSaveRequest = {}", storeSaveRequest);
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
@@ -52,7 +52,7 @@ public class StoreController {
      * @return check down below
      */
     @GetMapping("/search")
-    public Set<SearchStoreInRadiusResponse> search(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
+    public Set<SearchStoreInRadiusResponse> storeSearchInRadius(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
         log.debug("storeSearchDto={}", searchStoreInRadiusRequest);
         // Call search Service
         SearchStoreInRadiusDto dto = new SearchStoreInRadiusDto(
