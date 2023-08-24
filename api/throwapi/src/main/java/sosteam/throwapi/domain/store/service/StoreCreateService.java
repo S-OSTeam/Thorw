@@ -47,8 +47,8 @@ public class StoreCreateService {
         );
 
         // 3: Mapping Store and Address
-        store.setAddress(address);
-        address.setStore(store);
+        store.modifyAddress(address);
+        address.modifyStore(store);
 
         // 4: save Store Entity
         return storeRepository.save(store);
