@@ -1,25 +1,18 @@
-package sosteam.throwapi.domain.store.dto;
+package sosteam.throwapi.domain.store.entity.dto;
 
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.LineString;
-import sosteam.throwapi.domain.store.validation.ValidDemandedDistance;
-import sosteam.throwapi.domain.store.validation.ValidLatitude;
-import sosteam.throwapi.domain.store.validation.ValidLongitude;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchStoreInRadiusDto {
-    @ValidLatitude
     private Double latitude;
 
-    @ValidLongitude
     private Double longitude;
 
-    @ValidDemandedDistance
     private Double distance;
 
     private LineString lineString;

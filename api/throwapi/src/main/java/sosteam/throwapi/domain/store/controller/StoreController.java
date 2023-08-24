@@ -3,16 +3,18 @@ package sosteam.throwapi.domain.store.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
-import sosteam.throwapi.domain.store.dto.StoreResponseDto;
-import sosteam.throwapi.domain.store.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.controller.request.SearchStoreInRadiusRequest;
+import sosteam.throwapi.domain.store.controller.response.SearchStoreInRadiusResponse;
+import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
+import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 유저의 store와 관련된 컨트롤러
@@ -30,21 +32,46 @@ public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
     @PostMapping
-    public void save(@RequestBody @Valid StoreSaveDto storeSaveDto) {
+    public void save(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
+        log.debug("StoreSaveRequest = {}", storeSaveRequest);
         // Call save Service
-        storeCreateService.saveStore(storeSaveDto);
+        StoreSaveDto dto = new StoreSaveDto(
+                storeSaveRequest.getName(),
+                storeSaveRequest.getCompanyRegistrationNumber(),
+                storeSaveRequest.getLatitude(),
+                storeSaveRequest.getLongitude(),
+                storeSaveRequest.getZipCode(),
+                storeSaveRequest.getFullAddress()
+        );
+        storeCreateService.saveStore(dto);
     }
 
     /**
      * 현재 위치로부터 반경 내에 있는 가게들의 정보를 반환
-     * @param searchStoreInRadiusDto (위도, 경도, 반경 거리)
+     * @param searchStoreInRadiusRequest (위도, 경도, 반경 거리)
      * @return check down below
      */
     @GetMapping("/search")
-    public Set<StoreResponseDto> search(@RequestBody @Valid SearchStoreInRadiusDto searchStoreInRadiusDto) {
-        log.debug("storeSearchDto={}", searchStoreInRadiusDto);
+    public Set<SearchStoreInRadiusResponse> search(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
+        log.debug("storeSearchDto={}", searchStoreInRadiusRequest);
         // Call search Service
-        return storeGetService.searchStoreInRadius(searchStoreInRadiusDto);
+        SearchStoreInRadiusDto dto = new SearchStoreInRadiusDto(
+                searchStoreInRadiusRequest.getLatitude(),
+                searchStoreInRadiusRequest.getLongitude(),
+                searchStoreInRadiusRequest.getDistance()
+        );
+        Set<StoreDto> storeDto = storeGetService.searchStoreInRadius(dto);
+        return storeDto.stream()
+                .map(store ->
+                        new SearchStoreInRadiusResponse(
+                                store.getName(),
+                                store.getCompanyRegistrationNumber(),
+                                store.getLatitude(),
+                                store.getLongitude(),
+                                store.getZipCode(),
+                                store.getFullAddress()
+                        )
+                ).collect(Collectors.toSet());
     }
 }
 

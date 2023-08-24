@@ -2,12 +2,10 @@ package sosteam.throwapi.domain.store.controller;
 
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
-import sosteam.throwapi.domain.store.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 테스트 아님 돌리지마삼

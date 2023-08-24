@@ -1,8 +1,6 @@
-package sosteam.throwapi.domain.store.dto;
+package sosteam.throwapi.domain.store.controller.request;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +9,7 @@ import sosteam.throwapi.domain.store.validation.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreSaveDto {
+public class StoreSaveRequest {
     @ValidStoreName
     private String name;
 

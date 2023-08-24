@@ -6,18 +6,15 @@ import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import sosteam.throwapi.domain.store.dto.StoreResponseDto;
-import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
-import sosteam.throwapi.domain.store.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
+import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
@@ -33,17 +30,17 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<Set<StoreResponseDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Optional<Set<StoreDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         StringTemplate mbrContains = Expressions.stringTemplate(
                 "MBRContains({0},{1})",
                 searchStoreInRadiusDto.getLineString(),
                 qAddress.location
         );
 
-        Set<StoreResponseDto> result = new HashSet<>(jpaQueryFactory
+        Set<StoreDto> result = new HashSet<>(jpaQueryFactory
                 .select(
                         Projections.constructor(
-                                StoreResponseDto.class,
+                                StoreDto.class,
                                 qStore.name,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
@@ -61,11 +58,11 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public StoreResponseDto findByRegistrationNumber(String registrationNumber) {
+    public StoreDto findByRegistrationNumber(String registrationNumber) {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(
-                                StoreResponseDto.class,
+                                StoreDto.class,
                                 qStore.name,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,

@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.store.dto.StoreResponseDto;
-import sosteam.throwapi.domain.store.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.Store;
+import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.exception.StoreAlreadyExistException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
@@ -22,7 +22,7 @@ public class StoreCreateService {
         log.debug("Start Creating Store = {}", storeSaveDto);
         // if Store is already Exist
         // return 409 : Conflict http status
-        StoreResponseDto dto = storeGetService.findByRegistrationNumber(storeSaveDto.getCompanyRegistrationNumber());
+        StoreDto dto = storeGetService.findByRegistrationNumber(storeSaveDto.getCompanyRegistrationNumber());
         if (dto != null) throw new StoreAlreadyExistException();
 
         // 1: Create Store Entity
@@ -37,6 +37,7 @@ public class StoreCreateService {
                 storeSaveDto.getLatitude(),
                 storeSaveDto.getLongitude()
         );
+        log.debug("location={}", location);
         Address address = new Address(
                 location,
                 storeSaveDto.getLatitude(),

@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.store.dto.StoreResponseDto;
-import sosteam.throwapi.domain.store.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.global.exception.exception.NoContentException;
 import sosteam.throwapi.global.exception.exception.NotFoundException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,7 +37,7 @@ public class StoreGetService {
      * if there are no stores, return 204 (No Content)
      * if there are stores, return 200 (StoreList)
      */
-    public Set<StoreResponseDto> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Set<StoreDto> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         log.debug("Start Searching Stores around = {}", searchStoreInRadiusDto);
 
         // 1:
@@ -58,8 +57,8 @@ public class StoreGetService {
         log.debug(String.format("SouthWest(%s %s) SRID:%s", southWest.getX(), southWest.getY(), southWest.getSRID()));
         GeometryFactory geometryFactory = GeometryUtil.getGeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(northEast.getY(), northEast.getX()),
-                new Coordinate(southWest.getY(), southWest.getX())
+                new Coordinate(northEast.getX(), northEast.getY()),
+                new Coordinate(southWest.getX(), southWest.getY())
         };
 
         LineString lineString = geometryFactory.createLineString(coordinates);
@@ -68,7 +67,7 @@ public class StoreGetService {
 
         log.debug("Created LineString = {}", lineString);
 
-        Optional<Set<StoreResponseDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
+        Optional<Set<StoreDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
 
         if(storeListOptional.isEmpty()) throw new NotFoundException();
         if(storeListOptional.get().isEmpty()) throw new NoContentException();
@@ -76,7 +75,7 @@ public class StoreGetService {
     }
 
 
-    public StoreResponseDto findByRegistrationNumber(String registrationNumber) {
+    public StoreDto findByRegistrationNumber(String registrationNumber) {
         return storeRepository.findByRegistrationNumber(registrationNumber);
     }
 }

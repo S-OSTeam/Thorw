@@ -39,13 +39,16 @@ public class GeometryUtil {
     }
 
     /**
-     * (경도,위도)를 입력 받아 POINT 타입 객체 반환
-     * @param x longitude 경도
-     * @param y latitude 위도
-     * @return POINT(x,y)
+     * (위도,경도)를 입력 받아 POINT 타입 객체 반환
+     * @param x latitude 위도
+     * @param y longitude 경도
+     * @return POINT(y,x)
+     * 중요****
+     * 우리가 평상 시 지도에서 찾을 때는 위도 경도 순으로 작성한다
+     * 하지만 Geometry의 POINT는 경도 위도 순이다.
      */
     public static Point parseLocation(double x, double y) {
-        Geometry geometry = GeometryUtil.wktToGeometry(String.format("POINT(%s %s)", x, y));
+        Geometry geometry = GeometryUtil.wktToGeometry(String.format("POINT(%s %s)", y, x));
         Point point = (Point) geometry;
         point.setSRID(SRID);
         return point;
