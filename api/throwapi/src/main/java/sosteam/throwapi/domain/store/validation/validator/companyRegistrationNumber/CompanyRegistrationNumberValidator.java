@@ -51,11 +51,16 @@ public class CompanyRegistrationNumberValidator implements ConstraintValidator<V
                         .block();
 
         log.debug("BIZNO-API-RESPONSE={}",response);
-
         // if response is null or response.totalCount is zero, return false
-        if(response == null || response.getTotalCount() == 0) {
+        if(response == null || response.getResultCode() == -1 || response.getTotalCount() == 0) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("등록되지 않은 사업자 번호입니다.").addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("국세청에 등록되지 않은 사업자등록번호입니다.").addConstraintViolation();
+            return false;
+        }
+        int resultCode = response.getResultCode();
+        if (resultCode == -2 || resultCode == -3 || resultCode == -9) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("BIZNO-API:사업자 등록 번호 조회 API 관련 오류!!").addConstraintViolation();
             return false;
         }
 
