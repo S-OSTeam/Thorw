@@ -31,8 +31,12 @@ public class Store extends PrimaryKeyEntity {
     private User user;
 
 
-    @Setter
     @OneToOne(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
+
+    public Address modifyAddress(Address address){
+        this.address = address;
+        return this.address;
+    }
 }
