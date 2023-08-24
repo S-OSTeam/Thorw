@@ -44,4 +44,9 @@ public class Address extends PrimaryKeyEntity {
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     private Store store;
+
+    public Store modifyStore(Store store){
+        this.store = store;
+        return this.store;
+    }
 }
