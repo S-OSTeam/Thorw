@@ -1,17 +1,20 @@
 package sosteam.throwapi.domain.order.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Entity
 public class Item extends PrimaryKeyEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+    private UUID id;
 
     @NotNull
     private String name;
