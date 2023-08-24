@@ -41,7 +41,6 @@ public class Address extends PrimaryKeyEntity {
         this.zipCode = zipCode;
     }
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     private Store store;
 
