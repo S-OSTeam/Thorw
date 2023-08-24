@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -23,5 +23,5 @@ public class Item extends PrimaryKeyEntity {
     private Long price;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<Gifticon> gifticons;
+    private Set<Gifticon> gifticons;
 }
