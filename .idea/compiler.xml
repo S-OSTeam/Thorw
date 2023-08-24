@@ -12,5 +12,10 @@
         <module name="throwapi.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="throwapi" target="17" />
+      <module name="throwapi.main" target="17" />
+      <module name="throwapi.test" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

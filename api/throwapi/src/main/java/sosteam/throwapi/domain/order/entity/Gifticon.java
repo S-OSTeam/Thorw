@@ -25,4 +25,11 @@ public class Gifticon extends PrimaryKeyEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receipt_id")
     private Receipt receipt;
+
+    @Enumerated(EnumType.STRING)
+    private GifticonStatus gifticonStatus; // 주문 상태 [WAIT,SOLD]
+
+    public void setReceipt(Receipt receipt) {
+        this.receipt=receipt;
+    }
 }

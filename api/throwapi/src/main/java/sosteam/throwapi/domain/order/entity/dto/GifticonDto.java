@@ -11,12 +11,14 @@ public class GifticonDto {
     private String couponNumber;
     private UUID itemId;
     private UUID receiptId;
+    private String gifticonStatus;
 
     @QueryProjection
-    public GifticonDto(UUID id, String couponNumber, UUID itemId, UUID receiptId) {
+    public GifticonDto(UUID id, String couponNumber, UUID itemId, UUID receiptId, String gifticonStatus) {
         this.id = id;
         this.couponNumber = couponNumber;
         this.itemId = itemId;
         this.receiptId = receiptId;
+        this.gifticonStatus=gifticonStatus;
     }
 }
