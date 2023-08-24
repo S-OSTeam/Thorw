@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.LineString;
+import sosteam.throwapi.domain.store.validation.ValidDemandedDistance;
 import sosteam.throwapi.domain.store.validation.ValidLatitude;
 import sosteam.throwapi.domain.store.validation.ValidLongitude;
 
@@ -18,8 +19,7 @@ public class SearchStoreInRadiusDto {
     @ValidLongitude
     private Double longitude;
 
-    @NotNull
-    @Max(value = 5, message = "검색 최대 거리 5km")
+    @ValidDemandedDistance
     private Double distance;
 
     private LineString lineString;
