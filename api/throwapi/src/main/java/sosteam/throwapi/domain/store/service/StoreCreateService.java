@@ -18,7 +18,7 @@ import sosteam.throwapi.domain.store.util.GeometryUtil;
 public class StoreCreateService {
     private final StoreRepository storeRepository;
     private final StoreGetService storeGetService;
-    public Store save(StoreSaveDto storeSaveDto) {
+    public Store saveStore(StoreSaveDto storeSaveDto) {
         log.debug("Start Creating Store = {}", storeSaveDto);
         // if Store is already Exist
         // return 409 : Conflict http status

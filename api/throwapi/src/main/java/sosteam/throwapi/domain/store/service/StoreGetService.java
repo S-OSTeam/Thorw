@@ -14,6 +14,7 @@ import sosteam.throwapi.domain.store.util.GeometryUtil;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class StoreGetService {
      * if there are no stores, return 204 (No Content)
      * if there are stores, return 200 (StoreList)
      */
-    public List<StoreResponseDto> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Set<StoreResponseDto> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         log.debug("Start Searching Stores around = {}", searchStoreInRadiusDto);
 
         // 1:
@@ -67,7 +68,7 @@ public class StoreGetService {
 
         log.debug("Created LineString = {}", lineString);
 
-        Optional<List<StoreResponseDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
+        Optional<Set<StoreResponseDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
 
         if(storeListOptional.isEmpty()) throw new NotFoundException();
         if(storeListOptional.get().isEmpty()) throw new NoContentException();

@@ -13,8 +13,11 @@ import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
@@ -30,14 +33,14 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<List<StoreResponseDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Optional<Set<StoreResponseDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         StringTemplate mbrContains = Expressions.stringTemplate(
                 "MBRContains({0},{1})",
                 searchStoreInRadiusDto.getLineString(),
                 qAddress.location
         );
 
-        List<StoreResponseDto> result = jpaQueryFactory
+        Set<StoreResponseDto> result = new HashSet<>(jpaQueryFactory
                 .select(
                         Projections.constructor(
                                 StoreResponseDto.class,
@@ -52,7 +55,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .from(qStore)
                 .innerJoin(qStore.address, qAddress)
                 .where(mbrContains.eq("1"))
-                .fetch();
+                .fetch());
 
         return Optional.of(result);
     }

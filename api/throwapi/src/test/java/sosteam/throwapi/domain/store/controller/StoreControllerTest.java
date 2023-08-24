@@ -53,7 +53,7 @@ class StoreControllerTest {
                     "test",
                     "test"
             );
-            storeCreateService.save(storeSaveDto);
+            storeCreateService.saveStore(storeSaveDto);
         }
     }
 }

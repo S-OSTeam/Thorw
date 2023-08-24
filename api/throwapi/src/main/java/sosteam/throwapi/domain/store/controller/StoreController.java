@@ -12,6 +12,7 @@ import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 유저의 store와 관련된 컨트롤러
@@ -31,7 +32,7 @@ public class StoreController {
     @PostMapping
     public void save(@RequestBody @Valid StoreSaveDto storeSaveDto) {
         // Call save Service
-        storeCreateService.save(storeSaveDto);
+        storeCreateService.saveStore(storeSaveDto);
     }
 
     /**
@@ -40,10 +41,10 @@ public class StoreController {
      * @return check down below
      */
     @GetMapping("/search")
-    public List<StoreResponseDto> search(@RequestBody @Valid SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Set<StoreResponseDto> search(@RequestBody @Valid SearchStoreInRadiusDto searchStoreInRadiusDto) {
         log.debug("storeSearchDto={}", searchStoreInRadiusDto);
         // Call search Service
-        return storeGetService.search(searchStoreInRadiusDto);
+        return storeGetService.searchStoreInRadius(searchStoreInRadiusDto);
     }
 }
 
