@@ -99,13 +99,17 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         viewModel.lastUserPoint.observe(viewLifecycleOwner) {
             val mapPoint = MapPoint.mapPointWithGeoCoord(it.latitude, it.longitude)
             if (curPositionMarker == null) {
-                curPositionMarker = MapPOIItem()
-                curPositionMarker?.itemName = "현재 위치"
-                curPositionMarker?.markerType =
-                    MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
-                curPositionMarker?.selectedMarkerType =
-                    MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-                curPositionMarker?.mapPoint = mapPoint
+                curPositionMarker = MapPOIItem().apply {
+                    itemName = "현재 위치"
+                    markerType = MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
+                    selectedMarkerType =
+                        MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                    this.mapPoint = mapPoint
+                    markerType = MapPOIItem.MarkerType.CustomImage // 마커타입을 커스텀 마커로 지정.
+                    customImageResourceId = R.drawable.ic_map_pin_user_24
+                    isCustomImageAutoscale = false // 항상 같은 크기로 보이도록
+                    setCustomImageAnchor(0.5f, 1.0f)
+                }
                 binding.mapView.addPOIItem(curPositionMarker)
                 binding.mapView.setZoomLevel(1, true)
             } else {
@@ -140,6 +144,10 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
                 markerType = MapPOIItem.MarkerType.YellowPin
                 selectedMarkerType = MapPOIItem.MarkerType.RedPin
                 this.mapPoint = mapPoint
+                markerType = MapPOIItem.MarkerType.CustomImage
+                customImageResourceId = R.drawable.ic_map_open_store_24
+                isCustomImageAutoscale = false // 항상 같은 크기로 보이도록
+                setCustomImageAnchor(0.5f, 1.0f)
             }
         }.toTypedArray()
     }

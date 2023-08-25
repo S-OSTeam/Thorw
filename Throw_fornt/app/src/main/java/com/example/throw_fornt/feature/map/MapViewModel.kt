@@ -77,11 +77,11 @@ class MapViewModel : ViewModel() {
             _nearByStores.value = listOf(
                 MapStoreInfo(
                     "가게1",
-                    GeoPoint(it.latitude + 0.05, it.longitude + 0.05),
+                    GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
                 ),
                 MapStoreInfo(
                     "가게2",
-                    GeoPoint(it.latitude - 0.05, it.longitude - 0.05),
+                    GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
                 ),
             )
             //
