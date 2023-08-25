@@ -1,18 +1,29 @@
 package com.example.throw_fornt.feature.map
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.FragmentMapBinding
+import com.example.throw_fornt.models.GeoPoint
+import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.util.common.BindingFragment
 import com.example.throw_fornt.util.common.Toaster
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 
@@ -23,10 +34,12 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             ActivityResultContracts.RequestMultiplePermissions(),
         ) { permissions ->
             if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
-                updateCurrentPosition(37.5, 128.5)
+                Toaster.showShort(requireContext(), "1권한을 획득했습니다.")
             } else if (permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-                Toaster.showShort(requireContext(), "정확한 앱 동작을 위해 설정에서 정확한 위치정보로 수정해주세요.") // todo: 스낵바
-                updateCurrentPosition(37.5, 128.5)
+                Toaster.showShort(
+                    requireContext(),
+                    "정확한 앱 동작을 위해 설정에서 정확한 위치정보로 수정해주세요.",
+                ) // todo: 스낵바
             } else {
                 Toaster.showShort(requireContext(), "1위치 권한을 얻지 못했습니다") // todo: 스낵바
             }
@@ -34,35 +47,130 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
     private val viewModel: MapViewModel by viewModels()
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     private var curPositionMarker: MapPOIItem? = null
+
+    private var nearByStoreMarkers: Array<MapPOIItem> = arrayOf()
+
+    private val locationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            for (location in locationResult.locations) {
+                Log.d(
+                    "mendel",
+                    "제공자: ${location.provider}, ${location.latitude}, ${location.longitude}",
+                )
+                Toaster.showShort(
+                    requireContext(),
+                    "제공자: ${location.provider}, ${location.latitude}, ${location.longitude}",
+                )
+                viewModel.updateCurPosition(GeoPoint(location.latitude, location.longitude))
+                break
+            }
+        }
+    }
+
+    private val locationRequest = LocationRequest.create().apply {
+        interval = 2000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+        checkLocationPermission()
+        setupViewModel()
     }
 
-    private fun updateCurrentPosition(latitude: Double, longitude: Double) {
-        val mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-        binding.mapView.setMapCenterPoint(mapPoint, true)
-        binding.mapView.setZoomLevel(1, true)
-
-        if (curPositionMarker == null) {
-            curPositionMarker = MapPOIItem()
-            curPositionMarker?.itemName = "현재 위치"
-            curPositionMarker?.markerType =
-                MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
-            curPositionMarker?.selectedMarkerType =
-                MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-            curPositionMarker?.mapPoint = mapPoint
-            binding.mapView.addPOIItem(curPositionMarker)
-        } else {
-            curPositionMarker?.mapPoint = mapPoint
+    private fun setupViewModel() {
+        viewModel.curCameraCenterPoint.observe(viewLifecycleOwner) {
+            val mapPoint = MapPoint.mapPointWithGeoCoord(it.latitude, it.longitude)
+            binding.mapView.setMapCenterPoint(mapPoint, true)
+            setMinDistance()
+        }
+        viewModel.lastUserPoint.observe(viewLifecycleOwner) {
+            val mapPoint = MapPoint.mapPointWithGeoCoord(it.latitude, it.longitude)
+            if (curPositionMarker == null) {
+                curPositionMarker = MapPOIItem()
+                curPositionMarker?.itemName = "현재 위치"
+                curPositionMarker?.markerType =
+                    MapPOIItem.MarkerType.BluePin // 기본으로 제공하는 BluePin 마커 모양.
+                curPositionMarker?.selectedMarkerType =
+                    MapPOIItem.MarkerType.RedPin // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                curPositionMarker?.mapPoint = mapPoint
+                binding.mapView.addPOIItem(curPositionMarker)
+                binding.mapView.setZoomLevel(1, true)
+            } else {
+                curPositionMarker?.mapPoint = mapPoint
+            }
+        }
+        viewModel.nearByStores.observe(viewLifecycleOwner) {
+            binding.mapView.removePOIItems(nearByStoreMarkers)
+            nearByStoreMarkers = it.makeStoreInfoToMarkers()
+            binding.mapView.addPOIItems(nearByStoreMarkers)
         }
     }
 
+    private fun setMinDistance() {
+        val bounds = binding.mapView.mapPointBounds
+        val bl = bounds.bottomLeft.mapPointGeoCoord
+        val tr = bounds.topRight.mapPointGeoCoord
+        viewModel.setVisibleMapDistance(
+            GeoPoint(bl.latitude, bl.longitude),
+            GeoPoint(tr.latitude, tr.longitude),
+        )
+    }
+
+    private fun List<MapStoreInfo>.makeStoreInfoToMarkers(): Array<MapPOIItem> {
+        return groupBy { it.geoPoint }.map { samePointStores ->
+            val mapPoint = MapPoint.mapPointWithGeoCoord(
+                samePointStores.key.latitude,
+                samePointStores.key.longitude,
+            )
+            MapPOIItem().apply {
+                itemName = samePointStores.value.joinToString()
+                markerType = MapPOIItem.MarkerType.YellowPin
+                selectedMarkerType = MapPOIItem.MarkerType.RedPin
+                this.mapPoint = mapPoint
+            }
+        }.toTypedArray()
+    }
+
+    @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
-        checkLocationPermission()
+
+        if (isAllowedLocationPermission().not()) return
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper(),
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun isAllowedLocationPermission(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+        return true
     }
 
     private fun checkLocationPermission() {
@@ -88,11 +196,10 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
                 Toaster.showShort(
                     requireContext(),
-                    "대략적인 위치로 정보를 얻겠습니다.\n정확한 위치 정보로 수정하길 추천드립니다.",
+                    "대략적인 위치로 정보를 얻겠습니다.\n정확한 위치 정보로 수정 추천",
                 )
                 // 이부분도 스낵바로? 교체해야 할듯.
             }
-            updateCurrentPosition(37.5, 128.5)
         }
     }
 
