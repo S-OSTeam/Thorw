@@ -10,11 +10,6 @@ import java.util.UUID;
 @Getter
 @Entity
 public class Gifticon extends PrimaryKeyEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-    private UUID id;
-
     @NotNull
     private String couponNumber;
 
@@ -29,7 +24,20 @@ public class Gifticon extends PrimaryKeyEntity {
     @Enumerated(EnumType.STRING)
     private GifticonStatus gifticonStatus; // 주문 상태 [WAIT,SOLD]
 
-    public void setReceipt(Receipt receipt) {
+    public void modifyReceipt(Receipt receipt) {
         this.receipt=receipt;
+    }
+
+    public void modifyItem(Item item){
+        this.item=item;
+    }
+
+    //==생성 메서드==//
+    public static Gifticon createGifticon(Item item,int count) {
+        Gifticon gifticon=new Gifticon();
+        gifticon.modifyItem(item);
+        // 여기 수정해야됨.
+        item.addStock(count);
+        return gifticon;
     }
 }

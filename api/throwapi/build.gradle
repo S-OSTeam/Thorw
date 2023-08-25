@@ -33,7 +33,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
-    implementation 'com.github.f4b6a3:ulid-creator:5.2.0'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     //querydsl

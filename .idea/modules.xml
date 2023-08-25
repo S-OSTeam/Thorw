@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Throw.iml" filepath="$PROJECT_DIR$/.idea/Throw.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/throwapi.iml" filepath="$PROJECT_DIR$/.idea/modules/throwapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/throwapi.main.iml" filepath="$PROJECT_DIR$/.idea/modules/throwapi.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/throwapi.test.iml" filepath="$PROJECT_DIR$/.idea/modules/throwapi.test.iml" />
     </modules>
   </component>
 </project>

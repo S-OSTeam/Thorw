@@ -12,11 +12,6 @@ import java.util.UUID;
 @Getter
 @Entity
 public class Item extends PrimaryKeyEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-    private UUID id;
-
     @NotNull
     private String name;
 

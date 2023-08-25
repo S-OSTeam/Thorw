@@ -13,11 +13,6 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Receipt extends PrimaryKeyEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-    private UUID id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -40,7 +35,7 @@ public class Receipt extends PrimaryKeyEntity {
 
     public void modifyGifticon(Gifticon gifticon) {
         this.gifticon = gifticon;
-        gifticon.setReceipt(this);
+        gifticon.modifyReceipt(this);
     }
 
     //==비즈니스 로직==//
@@ -52,6 +47,7 @@ public class Receipt extends PrimaryKeyEntity {
         receipt.modifyUser(user);
         receipt.modifyGifticon(gifticon);
         receipt.modifyGifticonStatus(GifticonStatus.SOLD);
+
         return receipt;
     }
 
