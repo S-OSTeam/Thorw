@@ -1,9 +1,7 @@
 package com.example.throw_fornt.feature.home
 
-import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -15,33 +13,18 @@ import com.example.throw_fornt.databinding.ActivityHomeBinding
 import com.example.throw_fornt.feature.map.MapFragment
 import com.example.throw_fornt.feature.myPage.MyPageFragment
 import com.example.throw_fornt.util.common.BindingActivity
-import com.example.throw_fornt.util.common.Toaster
-import com.example.throw_fornt.util.common.requestTedPermission
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class HomeActivity : BindingActivity<ActivityHomeBinding>(R.layout.activity_home) {
+
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
         getHashKey() // 여기서 로그로 나온 디버그용 해시키 값을 카카오 콘솔에 등록할 것
-        checkLocationPermission()
-    }
-
-    private fun checkLocationPermission() {
-        if (checkLocationService().not()) {
-            Toaster.showShort(this, "GPS를 먼저 켜주세요.")
-            finish()
-        }
-
-        requestTedPermission(
-            permissions = listOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-            onPermissionGranted = { setupViewModel() },
-            onPermissionDenied = { finish() },
-            deniedMessage = "위치 권한이 없으면 앱을 사용할 수 없습니다.\n\n[설정]->[권한]->[위치]->[항상 허용]",
-        )
+        setupViewModel()
     }
 
     private fun setupViewModel() {
@@ -85,11 +68,5 @@ class HomeActivity : BindingActivity<ActivityHomeBinding>(R.layout.activity_home
                 Log.e("KeyHash", "Unable to get MessageDigest. signature=$signature", e)
             }
         }
-    }
-
-    // GPS가 켜져있는지 확인
-    private fun checkLocationService(): Boolean {
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 }
