@@ -3,14 +3,18 @@ package com.example.throw_fornt.feature.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
@@ -19,6 +23,7 @@ import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.util.common.BindingFragment
 import com.example.throw_fornt.util.common.Toaster
+import com.example.throw_fornt.util.common.showSnackbar
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -33,15 +38,12 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions(),
         ) { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
-                Toaster.showShort(requireContext(), "1권한을 획득했습니다.")
-            } else if (permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-                Toaster.showShort(
-                    requireContext(),
-                    "정확한 앱 동작을 위해 설정에서 정확한 위치정보로 수정해주세요.",
-                ) // todo: 스낵바
+            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) return@registerForActivityResult
+
+            if (permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                showSnackBar(R.string.map_location_permission_upgrade_require_message) { navigateToPermissionSetting() }
             } else {
-                Toaster.showShort(requireContext(), "1위치 권한을 얻지 못했습니다") // todo: 스낵바
+                showSnackBar(R.string.map_location_permission_require_message) { navigateToPermissionSetting() }
             }
         }
 
@@ -175,7 +177,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
     private fun checkLocationPermission() {
         if (checkLocationService().not()) {
-            Toaster.showShort(requireContext(), "GPS를 먼저 켜주세요.") // 스낵바 띄워줘야 할듯
+            showToast(R.string.map_location_service_turn_on_require_message)
         }
 
         // 둘 중에 한 개도 부여된 것이 없다면,,
@@ -183,23 +185,26 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             requireActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Toaster.showShort(requireContext(), "원활한 동작을 위해 위치 권한을 켜주세요.")
+                showSnackBar(R.string.map_location_permission_require_message) { navigateToPermissionSetting() }
             } else {
-                locationResultLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    ),
-                )
+                locationResultLauncher.launch(REQUIRE_LOCATION_PERMISSIONS)
             }
         } else {
             if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                Toaster.showShort(
-                    requireContext(),
-                    "대략적인 위치로 정보를 얻겠습니다.\n정확한 위치 정보로 수정 추천",
-                )
-                // 이부분도 스낵바로? 교체해야 할듯.
+                showSnackBar(R.string.map_location_permission_upgrade_require_message) { navigateToPermissionSetting() }
             }
+        }
+    }
+
+    private fun showSnackBar(@StringRes messageId: Int, action: () -> Unit) {
+        binding.root.showSnackbar(messageId) { action() }
+    }
+
+    private fun navigateToPermissionSetting() {
+        Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.fromParts("package", requireActivity().packageName, null)
+            startActivity(this)
         }
     }
 
@@ -210,8 +215,19 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
+    private fun showToast(@StringRes messageId: Int) {
+        Toaster.showShort(requireContext(), requireContext().getString(messageId))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         curPositionMarker = null
+    }
+
+    companion object {
+        private val REQUIRE_LOCATION_PERMISSIONS = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
     }
 }

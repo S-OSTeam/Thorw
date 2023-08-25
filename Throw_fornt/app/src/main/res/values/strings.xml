@@ -2,7 +2,15 @@
     <string name="app_name">Throw_fornt</string>
     <string name="all_dialog_default_positive_button">데이터</string>
 
+    <!---->
+    <string name="all_snackbar_default_action">확인</string>
+
     <!-- home -->
     <string name="home_menu_map">지도</string>
     <string name="home_menu_mypage">마이페이지</string>
+
+    <!--map-->
+    <string name="map_location_permission_upgrade_require_message">정확한 위치를 활용하려면 위치 권한을 업데이트해주세요!</string>
+    <string name="map_location_permission_require_message">원활한 동작을 위해 위치 권한을 켜주세요.</string>
+    <string name="map_location_service_turn_on_require_message">GPS를 먼저 켜주세요.</string>
 </resources>
