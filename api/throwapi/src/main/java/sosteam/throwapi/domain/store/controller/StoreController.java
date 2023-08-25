@@ -10,6 +10,8 @@ import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
+import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
+    private final BiznoAPI biznoAPI;
     @PostMapping
     public void saveStore(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
         log.debug("StoreSaveRequest = {}", storeSaveRequest);
@@ -72,6 +75,20 @@ public class StoreController {
                                 store.getFullAddress()
                         )
                 ).collect(Collectors.toSet());
+    }
+
+    /**
+     * 요청온 사업자 등록 번호가 실제 국세청에 등록된 번호인지 확인하는 API
+     * @param number 사업자 등록 번호
+     * @return true: 등록 된 번호 , false : 등록 되지 않은 번호
+     */
+    @GetMapping("/companyregistrationnumber/{number}")
+    public boolean confirmCompanyRegisterNumber(@PathVariable String number){
+        BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number);
+        boolean result = true;
+        if(response == null || response.getTotalCount() == 0 || response.getResultCode() != 0)
+            result = false;
+        return result;
     }
 }
 
