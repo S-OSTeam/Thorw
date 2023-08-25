@@ -32,8 +32,8 @@ public class BiznoAPI {
                         .bodyToMono(BiznoApiResponse.class)
                         .block();
 
-        log.info("BIZNO-API-RESPONSE={}",response);
-        log.info("API-KEY={}", apiKey);
+        log.debug("BIZNO-API-RESPONSE={}",response);
+        log.debug("API-KEY={}", apiKey);
 
         return response;
     }
