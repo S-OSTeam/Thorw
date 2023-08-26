@@ -37,7 +37,7 @@ public class Gifticon extends PrimaryKeyEntity {
         Gifticon gifticon=new Gifticon();
         gifticon.modifyItem(item);
         // 여기 수정해야됨.
-        item.addStock(count);
+        item.addStock();
         return gifticon;
     }
 }
