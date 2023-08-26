@@ -1,23 +1,25 @@
 package sosteam.throwapi.domain.store.controller.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sosteam.throwapi.domain.store.validation.ValidDemandedDistance;
-import sosteam.throwapi.domain.store.validation.ValidLatitude;
-import sosteam.throwapi.domain.store.validation.ValidLongitude;
+import org.hibernate.validator.constraints.Range;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchStoreInRadiusRequest {
-    @ValidLatitude
+    @NotNull
+    @Range(min = -90,max = 90, message = "위도 범위 : -90 ~ 90")
     private Double latitude;
 
-    @ValidLongitude
+    @NotNull
+    @Range(min = -180,max = 180, message = "경도 범위 : -180 ~ 180")
     private Double longitude;
 
-    @ValidDemandedDistance
+    @NotNull
+    @Range(min = 0,max = 5, message = "0km <= 탐색 거리 <= 5km")
     private Double distance;
 
     public SearchStoreInRadiusRequest(double latitude, double longitude, double distance) {

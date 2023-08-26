@@ -10,6 +10,10 @@ import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.exception.BiznoAPIException;
+import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
+import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
+import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
@@ -26,13 +30,23 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/store")
+@RequestMapping("/api/store")
 @RequiredArgsConstructor
 public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
+    private final BiznoAPI biznoAPI;
     @PostMapping
     public void saveStore(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
+        // Bizno RegistrationNumber Confirm API Error checking
+        int resultCode = confirmCompanyRegistrationNumber(storeSaveRequest.getCompanyRegistrationNumber());
+        log.debug("BIZNO API RESULT CODE ={}",resultCode);
+        if(resultCode == -1) {
+            throw new NoSuchRegistrationNumberException();
+        } else if(resultCode < 0){
+            throw new BiznoAPIException(resultCode);
+        }
+
         log.debug("StoreSaveRequest = {}", storeSaveRequest);
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
@@ -72,6 +86,19 @@ public class StoreController {
                                 store.getFullAddress()
                         )
                 ).collect(Collectors.toSet());
+    }
+
+    public int confirmCompanyRegistrationNumber(String number){
+        BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number);
+        int resultCode;
+        // 해당 번호 존재 X
+        if(response == null || response.getTotalCount() == 0) resultCode = -1;
+        // BIZNO API 호출 관련 오류
+        // -2 : 파라메터 오류
+        // -3 : 1일 100건 조회수 초과
+        // 9 : 기타 오류
+        else resultCode = response.getResultCode();
+        return resultCode;
     }
 }
 
