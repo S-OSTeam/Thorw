@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
-import java.util.UUID;
-
 @Getter
 @Entity
 public class Gifticon extends PrimaryKeyEntity {

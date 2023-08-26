@@ -3,8 +3,6 @@ package sosteam.throwapi.domain.order.entity.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Value;
 
-import java.util.UUID;
-
 @Value
 public class ItemDto {
     private String name;
