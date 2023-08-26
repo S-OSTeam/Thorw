@@ -81,6 +81,7 @@ class MapViewModel : ViewModel() {
     fun refreshNearbyStores() {
         if (refreshStoreLoading) return
         _lastUserPoint.value?.let {
+            Log.d("mendel", "가게 갱신 시작")
             refreshStoreLoading = true
             // 가게 목록 갱신
             _nearByStores.value = listOf(
@@ -95,6 +96,12 @@ class MapViewModel : ViewModel() {
             )
             //
             refreshStoreLoading = false
+        }
+    }
+
+    val searchStores = { content: String? ->
+        if (content.isNullOrEmpty().not()) {
+            Log.d("mendel", "검색: $content")
         }
     }
 }

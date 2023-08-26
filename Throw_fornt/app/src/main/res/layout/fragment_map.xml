@@ -35,6 +35,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/sb_store_search_bar"
+            setOnQueryTextListener="@{viewModel.searchStores}"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_white_radius"
+            app:iconifiedByDefault="false"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toStartOf="@id/gl_begin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:queryBackground="@null"
+            app:queryHint="가게이름을 입력하세요" />
+
         <ImageView
             android:id="@+id/btn_move_camera_to_cur_position"
             android:layout_width="32dp"
