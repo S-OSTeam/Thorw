@@ -1,19 +1,10 @@
 package sosteam.throwapi.domain.order.exception;
 
-public class NotEnoughStockException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+import sosteam.throwapi.global.exception.exception.CommonException;
+
+public class NotEnoughStockException extends CommonException {
     public NotEnoughStockException() {
-        super();
-    }
-
-    public NotEnoughStockException(String message) {
-        super(message);
-    }
-
-    public NotEnoughStockException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NotEnoughStockException(Throwable cause) {
-        super(cause);
+        super("NOT_ENOUGH_STOCK", HttpStatus.CONFLICT);
     }
 }

@@ -7,15 +7,13 @@ import java.util.UUID;
 
 @Value
 public class GifticonDto {
-    private UUID id;
     private String couponNumber;
     private UUID itemId;
     private UUID receiptId;
     private String gifticonStatus;
 
     @QueryProjection
-    public GifticonDto(UUID id, String couponNumber, UUID itemId, UUID receiptId, String gifticonStatus) {
-        this.id = id;
+    public GifticonDto(String couponNumber, UUID itemId, UUID receiptId, String gifticonStatus) {
         this.couponNumber = couponNumber;
         this.itemId = itemId;
         this.receiptId = receiptId;

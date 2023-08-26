@@ -37,7 +37,7 @@ public class Item extends PrimaryKeyEntity {
     public void removeStock(int quantity) {
         int restStock=this.stockQuantity-quantity;
         if(restStock<0){
-            throw new NotEnoughStockException("need more stock");
+            throw new NotEnoughStockException();
         }
         this.stockQuantity=restStock;
     }
