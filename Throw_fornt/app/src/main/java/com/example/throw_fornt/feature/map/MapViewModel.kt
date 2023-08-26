@@ -69,6 +69,15 @@ class MapViewModel : ViewModel() {
         updateCurPositionLoading = false
     }
 
+    fun moveCameraToCurPosition() {
+        if (updateCurPositionLoading) return
+        _lastUserPoint.value?.let {
+            updateCurPositionLoading = true
+            _curCameraCenterPoint.value = it
+            updateCurPositionLoading = false
+        }
+    }
+
     fun refreshNearbyStores() {
         if (refreshStoreLoading) return
         _lastUserPoint.value?.let {
