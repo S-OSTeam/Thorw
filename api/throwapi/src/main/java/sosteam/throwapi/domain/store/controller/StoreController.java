@@ -41,22 +41,25 @@ public class StoreController {
         // Bizno RegistrationNumber Confirm API Error checking
         int resultCode = confirmCompanyRegistrationNumber(storeSaveRequest.getCompanyRegistrationNumber());
         log.debug("BIZNO API RESULT CODE ={}",resultCode);
-        if(resultCode == -1) {
+        if(resultCode == -10) {
             throw new NoSuchRegistrationNumberException();
         } else if(resultCode < 0){
             throw new BiznoAPIException(resultCode);
         }
 
-        log.debug("StoreSaveRequest = {}", storeSaveRequest);
+        // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
+        // remove '-'
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
                 storeSaveRequest.getName(),
-                storeSaveRequest.getCompanyRegistrationNumber(),
+                storeSaveRequest.getCompanyRegistrationNumber().replaceAll("-",""),
                 storeSaveRequest.getLatitude(),
                 storeSaveRequest.getLongitude(),
                 storeSaveRequest.getZipCode(),
                 storeSaveRequest.getFullAddress()
         );
+        log.debug("StoreSaveRequest = {}", storeSaveRequest);
+
         storeCreateService.saveStore(dto);
     }
 
@@ -92,8 +95,9 @@ public class StoreController {
         BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number);
         int resultCode;
         // 해당 번호 존재 X
-        if(response == null || response.getTotalCount() == 0) resultCode = -1;
+        if(response == null || response.getTotalCount() == 0) resultCode = -10;
         // BIZNO API 호출 관련 오류
+        // -1 : 미등록 사용자 -> Wrong API-KEY
         // -2 : 파라메터 오류
         // -3 : 1일 100건 조회수 초과
         // 9 : 기타 오류
