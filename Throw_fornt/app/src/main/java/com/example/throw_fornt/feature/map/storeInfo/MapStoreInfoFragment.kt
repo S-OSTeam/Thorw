@@ -65,7 +65,9 @@ class MapStoreInfoFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
 
-            is MapStoreInfoViewModel.Event.NavigateToCall -> {}
+            is MapStoreInfoViewModel.Event.NavigateToCall -> {
+                navigateToCall(event.phoneNumber)
+            }
 
             is MapStoreInfoViewModel.Event.NavigateToDestination -> {
                 parentViewModel.lastUserPoint.value?.let {
@@ -73,6 +75,11 @@ class MapStoreInfoFragment : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    private fun navigateToCall(phoneNumber: String) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+        startActivity(intent)
     }
 
     private fun navigateToDestination(start: GeoPoint, destination: GeoPoint) {

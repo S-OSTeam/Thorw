@@ -12,7 +12,7 @@ class MapStoreInfoViewModel : ViewModel() {
         get() = _event
 
     fun onStoreCall(mapStoreInfo: MapStoreInfo) {
-        _event.value = Event.NavigateToCall("010-7658-7639")
+        _event.value = Event.NavigateToCall("01012345678")
     }
 
     fun onNavigatorStart(mapStoreInfo: MapStoreInfo) {
