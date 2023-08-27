@@ -16,7 +16,7 @@ import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
 import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
-import sosteam.throwapi.global.service.IPUtil;
+import sosteam.throwapi.global.service.IPService;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,7 +39,7 @@ public class StoreController {
     private final BiznoAPI biznoAPI;
     @PostMapping
     public void saveStore(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
-        log.debug("Request Client IP={}", IPUtil.getClientIP());
+        log.debug("Request Client IP={}", IPService.getClientIP());
         // Bizno RegistrationNumber Confirm API Error checking
         int resultCode = confirmCompanyRegistrationNumber(storeSaveRequest.getCompanyRegistrationNumber());
         log.debug("BIZNO API RESULT CODE ={}",resultCode);

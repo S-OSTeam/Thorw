@@ -50,7 +50,7 @@ import java.util.Objects;
  *     - 웹 서버가 클라이언트의 원격 IP 주소를 결정하기 위해 사용하는 환경 변수.
  *     - 다른 프록시 헤더가 없는 경우 원격 클라이언트의 IP 주소를 포함함.
  */
-public class IPUtil {
+public class IPService {
 
     private static final String[] IP_HEADER_CANDIDATES = {
             "X-Forwarded-For",
