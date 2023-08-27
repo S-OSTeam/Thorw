@@ -16,11 +16,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.FragmentMapBinding
 import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
+import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.BindingFragment
 import com.example.throw_fornt.util.common.Toaster
 import com.example.throw_fornt.util.common.showSnackbar
@@ -29,6 +31,8 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 
@@ -86,8 +90,29 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+        setupFilterSearchChips()
         checkLocationPermission()
         setupViewModel()
+    }
+
+    private fun setupFilterSearchChips() {
+        Trash.values().forEach { type ->
+            binding.cgTrashFilterChipGroup.addView(
+                Chip(requireContext()).apply {
+                    setChipDrawable(
+                        ChipDrawable.createFromAttributes(
+                            requireContext(),
+                            null,
+                            0,
+                            R.style.CustomChipChoice,
+                        ),
+                    )
+                    text = type.type
+                    isChecked = viewModel.selectedTrashTypes.value?.contains(type) ?: false
+                    setOnClickListener { viewModel.changeCheckedState(type, this.isChecked) }
+                },
+            )
+        }
     }
 
     private fun setupViewModel() {
@@ -120,6 +145,14 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             binding.mapView.removePOIItems(nearByStoreMarkers)
             nearByStoreMarkers = it.makeStoreInfoToMarkers()
             binding.mapView.addPOIItems(nearByStoreMarkers)
+        }
+
+        viewModel.selectedTrashTypes.observe(viewLifecycleOwner) { selectedTypes ->
+            val typeNames = selectedTypes.map { it.type }
+            binding.cgTrashFilterChipGroup.forEach { view ->
+                val chip = view as Chip
+                chip.isChecked = (chip.text.toString() in typeNames)
+            }
         }
     }
 

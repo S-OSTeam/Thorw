@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
+import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.SingleLiveEvent
 
 class MapViewModel : ViewModel() {
@@ -21,6 +22,11 @@ class MapViewModel : ViewModel() {
     private val _nearByStores: MutableLiveData<List<MapStoreInfo>> = MutableLiveData()
     val nearByStores: LiveData<List<MapStoreInfo>>
         get() = _nearByStores
+
+    private val _selectedTrashTypes: MutableLiveData<List<Trash>> =
+        MutableLiveData(listOf(Trash.ALL))
+    val selectedTrashTypes: LiveData<List<Trash>>
+        get() = _selectedTrashTypes
 
     private var updateCurPositionLoading: Boolean = false
     private var refreshStoreLoading: Boolean = false
@@ -40,7 +46,6 @@ class MapViewModel : ViewModel() {
             bottomLeft.longitude,
         )
         visibleMapMinQuarterDistance = (listOf(widthDistance, heightDistance).min() / 8)
-        Log.d("mendel", "최소 반지름: $visibleMapMinQuarterDistance")
     }
 
     fun updateCurPosition(geoPoint: GeoPoint) {
@@ -81,7 +86,6 @@ class MapViewModel : ViewModel() {
     fun refreshNearbyStores() {
         if (refreshStoreLoading) return
         _lastUserPoint.value?.let {
-            Log.d("mendel", "가게 갱신 시작")
             refreshStoreLoading = true
             // 가게 목록 갱신
             _nearByStores.value = listOf(
@@ -102,6 +106,30 @@ class MapViewModel : ViewModel() {
     val searchStores = { content: String? ->
         if (content.isNullOrEmpty().not()) {
             Log.d("mendel", "검색: $content")
+        }
+    }
+
+    fun changeCheckedState(type: Trash, isChecked: Boolean) {
+        if (type == Trash.ALL && isChecked) {
+            _selectedTrashTypes.value = listOf(type)
+            return
+        }
+
+        val checkedStates = (_selectedTrashTypes.value?.toMutableList() ?: mutableListOf()).apply {
+            if (isChecked) {
+                add(type)
+            } else {
+                remove(type)
+            }
+        }
+
+        if (checkedStates.size == 0) {
+            _selectedTrashTypes.value = listOf(Trash.ALL)
+        } else if (checkedStates.size >= 2 && checkedStates.contains(Trash.ALL)) {
+            checkedStates.remove(Trash.ALL)
+            _selectedTrashTypes.value = checkedStates
+        } else {
+            _selectedTrashTypes.value = checkedStates
         }
     }
 }
