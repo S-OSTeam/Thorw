@@ -39,7 +39,12 @@ class MapStoreInfoFragment : BottomSheetDialogFragment() {
 
     private fun handleEvent(event: MapStoreInfoViewModel.Event) {
         when (event) {
-            is MapStoreInfoViewModel.Event.Dismiss -> {}
+            is MapStoreInfoViewModel.Event.Dismiss -> {
+                dismiss()
+            }
+
+            is MapStoreInfoViewModel.Event.NavigateToCall -> {}
+
             is MapStoreInfoViewModel.Event.NavigateToDestination -> {}
         }
     }

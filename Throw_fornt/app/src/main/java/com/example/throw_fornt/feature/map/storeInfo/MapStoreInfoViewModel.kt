@@ -12,6 +12,7 @@ class MapStoreInfoViewModel : ViewModel() {
 
     sealed class Event {
         object Dismiss : Event()
+        data class NavigateToCall(val phoneNumber: String) : Event()
         data class NavigateToDestination(val destination: GeoPoint) : Event()
     }
 }
