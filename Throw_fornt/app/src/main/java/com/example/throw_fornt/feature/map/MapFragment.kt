@@ -20,6 +20,7 @@ import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.FragmentMapBinding
+import com.example.throw_fornt.feature.map.storeInfo.MapStoreInfoFragment
 import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
@@ -116,6 +117,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     }
 
     private fun setupViewModel() {
+        viewModel.event.observe(viewLifecycleOwner) { handleEvent(it) }
         viewModel.curCameraCenterPoint.observe(viewLifecycleOwner) {
             val mapPoint = MapPoint.mapPointWithGeoCoord(it.latitude, it.longitude)
             binding.mapView.setMapCenterPoint(mapPoint, true)
@@ -152,6 +154,14 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             binding.cgTrashFilterChipGroup.forEach { view ->
                 val chip = view as Chip
                 chip.isChecked = (chip.text.toString() in typeNames)
+            }
+        }
+    }
+
+    private fun handleEvent(event: MapViewModel.Event) {
+        when (event) {
+            is MapViewModel.Event.ShowMapStoreInfo -> {
+                MapStoreInfoFragment().show(childFragmentManager, MAP_STORE_INFO_TAG)
             }
         }
     }
@@ -266,6 +276,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     }
 
     companion object {
+        private const val MAP_STORE_INFO_TAG = "fragment_map_store_info_tag"
         private val REQUIRE_LOCATION_PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
