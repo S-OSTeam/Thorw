@@ -67,8 +67,10 @@
             android:layout_height="32dp"
             android:layout_marginBottom="20dp"
             android:adjustViewBounds="true"
+            android:background="@drawable/bg_white_and_black_radius"
             android:onClick="@{() -> viewModel.moveCameraToCurPosition()}"
             android:scaleType="centerCrop"
+            android:padding="4dp"
             android:src="@drawable/ic_my_location_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/gl_begin" />
@@ -79,8 +81,10 @@
             android:layout_height="32dp"
             android:layout_marginBottom="20dp"
             android:adjustViewBounds="true"
+            android:background="@drawable/bg_white_and_black_radius"
             android:onClick="@{() -> viewModel.refreshNearbyStores()}"
             android:scaleType="centerCrop"
+            android:padding="4dp"
             android:src="@drawable/ic_refresh_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/gl_end" />
