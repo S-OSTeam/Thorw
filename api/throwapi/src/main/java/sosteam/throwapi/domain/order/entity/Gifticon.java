@@ -10,7 +10,7 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 public class Gifticon extends PrimaryKeyEntity {
 
     @NotNull
-    private String gift_trace_id; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
+    private String giftTraceId; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")

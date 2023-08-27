@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface GifticonRepository extends JpaRepository<Gifticon, UUID> {
-    Optional<Gifticon> findByGiftTraceId(String gift_trace_id);
+    Optional<Gifticon> findByGiftTraceId(String giftTraceId);
 }

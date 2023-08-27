@@ -14,19 +14,19 @@ import java.util.List;
 public class Item extends PrimaryKeyEntity {
 
     @NotNull
-    private String product_name; // 테스트상품명
+    private String productName; // 테스트상품명
 
     @NotNull
-    private String brand_name; // 테스트브랜드명
+    private String brandName; // 테스트브랜드명
 
     @NotNull
-    private String brand_image_url; // 테스트브랜드이미지url
+    private String brandImageUrl; // 테스트브랜드이미지url
 
     @NotNull
-    private String product_image_url; // 테스트상품이미지url
+    private String productImageUrl; // 테스트상품이미지url
 
     @NotNull
-    private  String product_thumb_image_url; // 테스트상품썸네일url
+    private  String productThumbImageUrl; // 테스트상품썸네일url
 
     @NotNull
     private Long price; // 상품 가격
