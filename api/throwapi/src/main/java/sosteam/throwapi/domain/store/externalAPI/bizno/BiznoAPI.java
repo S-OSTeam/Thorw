@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import sosteam.throwapi.global.service.IPService;
 
 @Slf4j
 @Component
@@ -13,6 +14,7 @@ public class BiznoAPI {
     private String apiKey;
 
     public BiznoApiResponse confirmCompanyRegistrationNumber(String number) {
+        log.debug("{},{}", IPService.getClientIP(),number);
         // Call Bizno-api to Confirm CompanyRegistrationNumber
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://bizno.net/api/fapi?")
@@ -31,10 +33,8 @@ public class BiznoAPI {
                         .retrieve()
                         .bodyToMono(BiznoApiResponse.class)
                         .block();
-
         log.debug("BIZNO-API-RESPONSE={}",response);
         log.debug("API-KEY={}", apiKey);
-
         return response;
     }
 }
