@@ -7,6 +7,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 /**
@@ -15,6 +16,7 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
  */
 @Entity
 @Getter
+@NoArgsConstructor
 public class UserInfo extends PrimaryKeyEntity {
     @NotNull
     private String name;
@@ -30,12 +32,18 @@ public class UserInfo extends PrimaryKeyEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public String setPhoneNumber(String phoneNumber) {
+    public UserInfo(String name, String phoneNumber, String email){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
+    public String modifyPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this.phoneNumber;
     }
 
-    public String setEmail(String email) {
+    public String modifyEmail(String email) {
         this.email = email;
         return this.email;
     }
