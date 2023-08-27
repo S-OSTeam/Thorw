@@ -1,5 +1,6 @@
 package sosteam.throwapi.domain.order.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -31,6 +32,6 @@ public class Item extends PrimaryKeyEntity {
     @NotNull
     private Long price; // 상품 가격
 
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Gifticon> gifticons;
 }
