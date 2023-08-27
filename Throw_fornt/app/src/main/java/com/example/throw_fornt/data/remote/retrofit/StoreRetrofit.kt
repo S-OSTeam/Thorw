@@ -1,7 +1,7 @@
 package com.example.throw_fornt.data.remote.retrofit
 
 import com.example.throw_fornt.data.model.request.StoreRequest
-import com.example.throw_fornt.data.model.response.ResponseBody
+import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -23,7 +23,7 @@ class StoreRetrofit {
     /*
     가게 등록을 위한 api호출
      */
-    fun registerResponse(store: StoreResponse){
+    fun registerResponse(store: StoreModel){
         try {
             val urls = URL(url)
             val retrofit = Retrofit.Builder()
@@ -34,10 +34,10 @@ class StoreRetrofit {
             request.registerRequest(
                 store.address_id, store.location_id, store.name,
                 store.company_registration_number, store.type, store.second_password
-            ).enqueue(object: Callback<ResponseBody>{
+            ).enqueue(object: Callback<StoreResponse>{
                 override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
+                    call: Call<StoreResponse>,
+                    response: Response<StoreResponse>
                 ) {
                     if(response.isSuccessful && response.body()?.code=="200"){
                         //성공 토스트 넣기
@@ -47,7 +47,7 @@ class StoreRetrofit {
                     }
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                override fun onFailure(call: Call<StoreResponse>, t: Throwable) {
                     //실패 토스트 넣기
                 }
 
@@ -78,7 +78,7 @@ class StoreRetrofit {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
-            val response: Response<ResponseBody> = withContext(Dispatchers.IO) {
+            val response: Response<StoreResponse> = withContext(Dispatchers.IO) {
                 try {
                     request.bnoRequest(companyNum).execute()
                 } catch (e: Exception) {

@@ -1,6 +1,6 @@
 package com.example.throw_fornt.data.model.request
 
-import com.example.throw_fornt.data.model.response.ResponseBody
+import com.example.throw_fornt.data.model.response.StoreResponse
 import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.http.GET
@@ -18,17 +18,17 @@ interface StoreRequest {
         @Query("company_registration_number") company_registration_number : String,
         @Query("type") type : String,
         @Query("second_password") second_password : String,
-    ) : Call<ResponseBody>
+    ) : Call<StoreResponse>
 
     /*
     상점 데이터 request
      */
     @GET("/api/...")
     fun storeRequest(
-    ) : Call<ResponseBody>
+    ) : Call<StoreResponse>
 
     @GET("/api/...")
     fun bnoRequest(
         @Query("bno") address_id : String
-    ) : Call<ResponseBody>
+    ) : Call<StoreResponse>
 }
