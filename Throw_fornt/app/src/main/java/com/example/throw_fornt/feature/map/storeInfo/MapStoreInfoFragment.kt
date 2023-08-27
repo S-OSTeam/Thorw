@@ -1,6 +1,10 @@
 package com.example.throw_fornt.feature.map.storeInfo
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +12,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.databinding.FragmentMapStoreInfoBinding
 import com.example.throw_fornt.feature.map.MapViewModel
+import com.example.throw_fornt.models.GeoPoint
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MapStoreInfoFragment : BottomSheetDialogFragment() {
@@ -62,12 +67,50 @@ class MapStoreInfoFragment : BottomSheetDialogFragment() {
 
             is MapStoreInfoViewModel.Event.NavigateToCall -> {}
 
-            is MapStoreInfoViewModel.Event.NavigateToDestination -> {}
+            is MapStoreInfoViewModel.Event.NavigateToDestination -> {
+                parentViewModel.lastUserPoint.value?.let {
+                    navigateToDestination(it, event.destination)
+                }
+            }
+        }
+    }
+
+    private fun navigateToDestination(start: GeoPoint, destination: GeoPoint) {
+        val url: String = MAP_URI.format(
+            start.latitude,
+            start.longitude,
+            destination.latitude,
+            destination.longitude,
+        )
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.addCategory(Intent.CATEGORY_BROWSABLE)
+        val list = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().packageManager.queryIntentActivities(
+                Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER),
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()),
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            requireActivity().packageManager.queryIntentActivities(
+                Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER),
+                PackageManager.GET_META_DATA,
+            )
+        }
+
+        if (list.isEmpty()) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MAP_URI_IN_PLAY_STORE)))
+        } else {
+            startActivity(intent)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val MAP_URI = "kakaomap://route?sp=%f,%f&ep=%f,%f&by=FOOT"
+        private const val MAP_URI_IN_PLAY_STORE = "market://details?id=net.daum.android.map"
     }
 }
