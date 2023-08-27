@@ -100,10 +100,12 @@ class MapViewModel : ViewModel() {
             // 가게 목록 갱신
             _nearByStores.value = listOf(
                 MapStoreInfo(
+                    1L,
                     "가게1",
                     GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
                 ),
                 MapStoreInfo(
+                    2L,
                     "가게2",
                     GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
                 ),
@@ -122,11 +124,43 @@ class MapViewModel : ViewModel() {
                 // 검색 결과가 0이 아닐때만.
                 searchedStores = listOf(
                     MapStoreInfo(
+                        1L,
                         "가게1",
                         GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
                     ),
                     MapStoreInfo(
+                        2L,
                         "가게2",
+                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
+                    ),
+                    MapStoreInfo(
+                        3L,
+                        "가게3",
+                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
+                    ),
+                    MapStoreInfo(
+                        4L,
+                        "가게4",
+                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
+                    ),
+                    MapStoreInfo(
+                        5L,
+                        "가게5",
+                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
+                    ),
+                    MapStoreInfo(
+                        6L,
+                        "가게6",
+                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
+                    ),
+                    MapStoreInfo(
+                        7L,
+                        "가게7",
+                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
+                    ),
+                    MapStoreInfo(
+                        8L,
+                        "가게8",
                         GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
                     ),
                 )
