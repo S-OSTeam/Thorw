@@ -21,6 +21,7 @@ public class GifticonCreateService {
      */
     @Transactional
     public Gifticon createGifticon(Gifticon gifticon) {
+        log.debug("GIFTICON CREATE");
         validateGifticon(gifticon); // 유효성 검사
         checkGifticonDuplication(gifticon); // 중복 검사
         return gifticonRepository.save(gifticon);
