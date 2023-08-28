@@ -3,15 +3,20 @@ package sosteam.throwapi.domain.store.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import sosteam.throwapi.domain.store.controller.request.SearchStoreByName;
 import sosteam.throwapi.domain.store.controller.request.SearchStoreByRegistrationNumberRequest;
 import sosteam.throwapi.domain.store.controller.request.SearchStoreInRadiusRequest;
 import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
 import sosteam.throwapi.domain.store.controller.response.SearchStoreResponse;
+import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
-import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -21,7 +26,6 @@ import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 유저의 store와 관련된 컨트롤러
@@ -73,7 +77,7 @@ public class StoreController {
      * @return check down below
      */
     @PostMapping("/search")
-    public Set<SearchStoreResponse> storeSearchInRadius(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
+    public ResponseEntity<Set<SearchStoreResponse>> searchStoreInRadius(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
         log.debug("storeSearchDto={}", searchStoreInRadiusRequest);
         // Call search Service
         SearchStoreInRadiusDto dto = new SearchStoreInRadiusDto(
@@ -81,18 +85,7 @@ public class StoreController {
                 searchStoreInRadiusRequest.getLongitude(),
                 searchStoreInRadiusRequest.getDistance()
         );
-        Set<StoreDto> storeDto = storeGetService.searchStoreInRadius(dto);
-        return storeDto.stream()
-                .map(store ->
-                        new SearchStoreResponse(
-                                store.getName(),
-                                store.getCompanyRegistrationNumber(),
-                                store.getLatitude(),
-                                store.getLongitude(),
-                                store.getZipCode(),
-                                store.getFullAddress()
-                        )
-                ).collect(Collectors.toSet());
+        return storeGetService.searchStoreInRadius(dto);
     }
 
     /**
@@ -104,8 +97,8 @@ public class StoreController {
      * 실패 (요청으로 들어온 번호가 형식에 안맞을 경우) : 500 INTERNAL_ERROR : 서버 로그에서 확인 가능
      */
     @PostMapping("/crn")
-    public SearchStoreResponse findByCompanyRegistrationNumber(@RequestBody SearchStoreByRegistrationNumberRequest number) {
-        StoreDto store =  storeGetService.findByRegistrationNumber(number.getCompanyRegistrationNumber().replaceAll("-",""));
+    public SearchStoreResponse searchByCompanyRegistrationNumber(@RequestBody @Valid SearchStoreByRegistrationNumberRequest number) {
+        StoreDto store =  storeGetService.searchByRegistrationNumber(number.getCompanyRegistrationNumber().replaceAll("-",""));
         if(store == null) throw new NoSuchStoreException();
         return new SearchStoreResponse(
                 store.getName(),
@@ -117,6 +110,16 @@ public class StoreController {
         );
     }
 
+
+    /**
+     * 검색 이름이 포함된 가게들의 정보를 반환
+     * @param searchStoreByName 가게이름
+     * @return 가게 정보들
+     */
+    @PostMapping("/name")
+    public ResponseEntity<Set<SearchStoreResponse>> searchByName(@RequestBody @Valid SearchStoreByName searchStoreByName) {
+        return storeGetService.searchStoreByName(searchStoreByName.getName());
+    }
 
     /**
      * BIZNO API를 이용하여 해당 사업자 번호가 국세청에 등록된 번호인지 확인
@@ -135,5 +138,7 @@ public class StoreController {
         else resultCode = response.getResultCode();
         return resultCode;
     }
+
+
 }
 

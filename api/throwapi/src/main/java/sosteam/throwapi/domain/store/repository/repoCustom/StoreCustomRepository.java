@@ -7,7 +7,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface StoreCustomRepository {
-    Optional<Set<StoreDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto);
+    Optional<Set<StoreDto>> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto);
 
-    StoreDto findByRegistrationNumber(String registrationNumber);
+    Optional<Set<StoreDto>> searchByName(String name);
+
+    StoreDto searchByRegistrationNumber(String registrationNumber);
+
 }

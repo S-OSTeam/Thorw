@@ -30,7 +30,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<Set<StoreDto>> search(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Optional<Set<StoreDto>> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         StringTemplate mbrContains = Expressions.stringTemplate(
                 "MBRContains({0},{1})",
                 searchStoreInRadiusDto.getLineString(),
@@ -58,7 +58,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public StoreDto findByRegistrationNumber(String registrationNumber) {
+    public StoreDto searchByRegistrationNumber(String registrationNumber) {
         return jpaQueryFactory
                 .select(
                         Projections.constructor(
@@ -75,5 +75,29 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .innerJoin(qStore.address, qAddress)
                 .where(qStore.companyRegistrationNumber.eq(registrationNumber))
                 .fetchOne();
+    }
+
+    @Override
+    public Optional<Set<StoreDto>> searchByName(String name) {
+
+        Set<StoreDto> result = new HashSet<>(
+                jpaQueryFactory
+                        .select(
+                                Projections.constructor(
+                                        StoreDto.class,
+                                        qStore.name,
+                                        qStore.companyRegistrationNumber,
+                                        qAddress.latitude,
+                                        qAddress.longitude,
+                                        qAddress.zipCode,
+                                        qAddress.fullAddress
+                                )
+                        )
+                        .from(qStore)
+                        .innerJoin(qStore.address,qAddress)
+                        .where(qStore.name.contains(name))
+                        .fetch()
+        );
+        return Optional.of(result);
     }
 }
