@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
-import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 
@@ -30,10 +30,10 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<Set<StoreDto>> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public Optional<Set<StoreDto>> searchStoreInRadius(StoreInRadiusDto storeInRadiusDto) {
         StringTemplate mbrContains = Expressions.stringTemplate(
                 "MBRContains({0},{1})",
-                searchStoreInRadiusDto.getLineString(),
+                storeInRadiusDto.getLineString(),
                 qAddress.location
         );
 
@@ -58,8 +58,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public StoreDto searchByRegistrationNumber(String registrationNumber) {
-        return jpaQueryFactory
+    public Optional<StoreDto> searchByCRN(String crn) {
+        StoreDto result = jpaQueryFactory
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
@@ -73,8 +73,10 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 )
                 .from(qStore)
                 .innerJoin(qStore.address, qAddress)
-                .where(qStore.companyRegistrationNumber.eq(registrationNumber))
+                .where(qStore.companyRegistrationNumber.eq(crn))
                 .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 
     @Override

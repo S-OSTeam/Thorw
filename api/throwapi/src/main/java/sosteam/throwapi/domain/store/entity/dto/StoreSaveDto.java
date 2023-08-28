@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class StoreSaveDto {
     private String name;
 
-    private String companyRegistrationNumber;
+    private String crn;
 
     private Double latitude;
 

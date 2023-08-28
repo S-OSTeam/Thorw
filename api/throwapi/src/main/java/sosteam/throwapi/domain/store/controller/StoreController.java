@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sosteam.throwapi.domain.store.controller.request.SearchStoreByName;
-import sosteam.throwapi.domain.store.controller.request.SearchStoreByRegistrationNumberRequest;
-import sosteam.throwapi.domain.store.controller.request.SearchStoreInRadiusRequest;
+import sosteam.throwapi.domain.store.controller.request.StoreNameRequest;
+import sosteam.throwapi.domain.store.controller.request.StoreCrnRequest;
+import sosteam.throwapi.domain.store.controller.request.StoreInRadiusRequest;
 import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
-import sosteam.throwapi.domain.store.controller.response.SearchStoreResponse;
-import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.controller.response.StoreResponse;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
@@ -26,6 +26,7 @@ import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 유저의 store와 관련된 컨트롤러
@@ -45,9 +46,9 @@ public class StoreController {
     private final StoreCreateService storeCreateService;
     private final BiznoAPI biznoAPI;
     @PostMapping
-    public void saveStore(@RequestBody @Valid StoreSaveRequest storeSaveRequest) {
+    public void saveStore(@RequestBody @Valid StoreSaveRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
-        int resultCode = confirmCompanyRegistrationNumber(storeSaveRequest.getCompanyRegistrationNumber());
+        int resultCode = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("BIZNO API RESULT CODE ={}",resultCode);
         if(resultCode == -10) {
             throw new NoSuchRegistrationNumberException();
@@ -59,66 +60,65 @@ public class StoreController {
         // remove '-'
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
-                storeSaveRequest.getName(),
-                storeSaveRequest.getCompanyRegistrationNumber().replaceAll("-",""),
-                storeSaveRequest.getLatitude(),
-                storeSaveRequest.getLongitude(),
-                storeSaveRequest.getZipCode(),
-                storeSaveRequest.getFullAddress()
+                request.getName(),
+                request.getCrn().replaceAll("-",""),
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getZipCode(),
+                request.getFullAddress()
         );
-        log.debug("StoreSaveRequest = {}", storeSaveRequest);
+        log.debug("StoreSaveRequest = {}", request);
 
         storeCreateService.saveStore(dto);
     }
 
     /**
      * 현재 위치로부터 반경 내에 있는 가게들의 정보를 반환
-     * @param searchStoreInRadiusRequest (위도, 경도, 반경 거리)
+     * @param request (위도, 경도, 반경 거리)
      * @return check down below
      */
     @PostMapping("/search")
-    public ResponseEntity<Set<SearchStoreResponse>> searchStoreInRadius(@RequestBody @Valid SearchStoreInRadiusRequest searchStoreInRadiusRequest) {
-        log.debug("storeSearchDto={}", searchStoreInRadiusRequest);
+    public ResponseEntity<Set<StoreResponse>> searchStoreInRadius(@RequestBody @Valid StoreInRadiusRequest request) {
+        log.debug("storeSearchDto={}", request);
         // Call search Service
-        SearchStoreInRadiusDto dto = new SearchStoreInRadiusDto(
-                searchStoreInRadiusRequest.getLatitude(),
-                searchStoreInRadiusRequest.getLongitude(),
-                searchStoreInRadiusRequest.getDistance()
+        StoreInRadiusDto dto = new StoreInRadiusDto(
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getDistance()
         );
-        return storeGetService.searchStoreInRadius(dto);
+        // Convert Dto to Response
+        Set<StoreDto> storeDtos = storeGetService.searchStoreInRadius(dto);
+        Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
+        return ResponseEntity.ok(resp);
     }
 
     /**
      * 사업자 등록번호로 가게 조회 하기
-     * @param number 사업자 등록 번호
+     * @param request 사업자 등록 번호
      * @return 해당 사업자 등록 번호를 가진 가게
      * 성공 시 : 200 OK
      * 실패 (가게가 없을 시) : 404 NOT_FOUND
      * 실패 (요청으로 들어온 번호가 형식에 안맞을 경우) : 500 INTERNAL_ERROR : 서버 로그에서 확인 가능
      */
     @PostMapping("/crn")
-    public SearchStoreResponse searchByCompanyRegistrationNumber(@RequestBody @Valid SearchStoreByRegistrationNumberRequest number) {
-        StoreDto store =  storeGetService.searchByRegistrationNumber(number.getCompanyRegistrationNumber().replaceAll("-",""));
-        if(store == null) throw new NoSuchStoreException();
-        return new SearchStoreResponse(
-                store.getName(),
-                store.getCompanyRegistrationNumber(),
-                store.getLatitude(),
-                store.getLongitude(),
-                store.getZipCode(),
-                store.getFullAddress()
-        );
+    public ResponseEntity<StoreResponse> searchByCompanyRegistrationNumber(@RequestBody @Valid StoreCrnRequest request) {
+        StoreDto dto =  storeGetService.searchByCRN(request.getCrn().replaceAll("-",""));
+        if(dto == null) throw new NoSuchStoreException();
+        StoreResponse resp = dto.toResponse();
+        return ResponseEntity.ok(resp);
     }
 
 
     /**
      * 검색 이름이 포함된 가게들의 정보를 반환
-     * @param searchStoreByName 가게이름
+     * @param storeNameRequest 가게이름
      * @return 가게 정보들
      */
     @PostMapping("/name")
-    public ResponseEntity<Set<SearchStoreResponse>> searchByName(@RequestBody @Valid SearchStoreByName searchStoreByName) {
-        return storeGetService.searchStoreByName(searchStoreByName.getName());
+    public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest storeNameRequest) {
+        Set<StoreDto> dtos = storeGetService.searchStoreByName(storeNameRequest.getName());
+        Set<StoreResponse> resp = dtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
+        return ResponseEntity.ok(resp);
     }
 
     /**
@@ -138,7 +138,5 @@ public class StoreController {
         else resultCode = response.getResultCode();
         return resultCode;
     }
-
-
 }
 

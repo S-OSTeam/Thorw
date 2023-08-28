@@ -3,17 +3,17 @@ package sosteam.throwapi.domain.store.controller.response;
 import lombok.Data;
 
 @Data
-public class SearchStoreResponse {
+public class StoreResponse {
     private String name;
-    private String companyRegistrationNumber;
+    private String crn;
     private Double latitude;
     private Double longitude;
     private String zipCode;
     private String fullAddress;
 
-    public SearchStoreResponse(String name, String companyRegistrationNumber, double latitude, double longitude, String zipCode, String fullAddress) {
+    public StoreResponse(String name, String crn, double latitude, double longitude, String zipCode, String fullAddress) {
         this.name = name;
-        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.crn = crn;
         this.latitude = latitude;
         this.longitude = longitude;
         this.zipCode = zipCode;

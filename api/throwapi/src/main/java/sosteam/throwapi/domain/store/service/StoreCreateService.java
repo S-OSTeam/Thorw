@@ -12,6 +12,8 @@ import sosteam.throwapi.domain.store.exception.StoreAlreadyExistException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,13 +24,13 @@ public class StoreCreateService {
         log.debug("Start Creating Store = {}", storeSaveDto);
         // if Store is already Exist
         // return 409 : Conflict http status
-        StoreDto dto = storeGetService.searchByRegistrationNumber(storeSaveDto.getCompanyRegistrationNumber());
-        if (dto != null) throw new StoreAlreadyExistException();
+        Optional<StoreDto> storeDto = storeGetService.isExistByCRN(storeSaveDto.getCrn());
+        if (storeDto.isPresent()) throw new StoreAlreadyExistException();
 
         // 1: Create Store Entity
         Store store = new Store(
                 storeSaveDto.getName(),
-                storeSaveDto.getCompanyRegistrationNumber()
+                storeSaveDto.getCrn()
         );
 
         // 2: Create Address Entity

@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Range;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchStoreInRadiusRequest {
+public class StoreInRadiusRequest {
     @NotNull
     @Range(min = -90,max = 90, message = "위도 범위 : -90 ~ 90")
     private Double latitude;
@@ -22,7 +22,7 @@ public class SearchStoreInRadiusRequest {
     @Range(min = 0,max = 5, message = "0km <= 탐색 거리 <= 5km")
     private Double distance;
 
-    public SearchStoreInRadiusRequest(double latitude, double longitude, double distance) {
+    public StoreInRadiusRequest(double latitude, double longitude, double distance) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
