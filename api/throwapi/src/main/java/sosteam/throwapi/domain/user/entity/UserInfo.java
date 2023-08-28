@@ -38,6 +38,11 @@ public class UserInfo extends PrimaryKeyEntity {
         this.email = email;
     }
 
+    public User modifyUser(User user){
+        this.user = user;
+        return this.user;
+    }
+
     public String modifyPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this.phoneNumber;

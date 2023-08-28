@@ -1,10 +1,13 @@
 package sosteam.throwapi.domain.user.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
+import sosteam.throwapi.domain.user.service.SignUpService;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.SNSCategory;
 import sosteam.throwapi.global.entity.UserStatus;
@@ -19,10 +22,12 @@ import sosteam.throwapi.global.entity.UserStatus;
 @Controller
 @Slf4j
 @RequestMapping("/login")
+@RequiredArgsConstructor
 public class LoginController {
+    private final SignUpService signUpService;
 
     @PostMapping("/signUp")
-    public void SignUp(@RequestBody UserSaveRequest params){
+    public ResponseEntity<String> SignUp(@RequestBody UserSaveRequest params){
         UserSaveDto dto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassWord(),
@@ -35,8 +40,7 @@ public class LoginController {
                 params.getEmail()
         );
 
-
+        signUpService.SignUp(dto);
+        return ResponseEntity.ok("정상 회원가입 완료");
     }
-
-
 }

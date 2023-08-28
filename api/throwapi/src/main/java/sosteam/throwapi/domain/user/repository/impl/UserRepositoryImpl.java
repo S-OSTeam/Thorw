@@ -33,4 +33,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         }
         return true;
     }
+
+    @Override
+    public User findByInputId(String inputId){
+        User result = queryFactory
+                .selectFrom(user)
+                .where(user.inputId.eq(inputId))
+                .fetchOne();
+        return result;
+    }
 }
