@@ -1,18 +1,19 @@
 package sosteam.throwapi.global.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SignatureException;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtTokenService {
     private final Key key;
 
@@ -44,5 +45,23 @@ public class JwtTokenService {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    // 토근 검증
+    public Boolean validateToken(String token){
+        try {
+            this.parseClaims(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+        }
+
+        return false;
     }
 }

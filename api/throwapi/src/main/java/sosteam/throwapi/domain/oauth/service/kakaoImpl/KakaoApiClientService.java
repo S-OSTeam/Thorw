@@ -41,7 +41,7 @@ public class KakaoApiClientService implements OAuthApiClientService {
 
     @Override
     public String requestAccessToken(OAuthLoginParamsService params){
-        log.info("requestAccessSuccess {}", params);
+        log.debug("requestAccessSuccess {}", params);
 
         MultiValueMap<String, String> body = params.makeBody();
         body.add("grant_type", GRANT_TYPE);
@@ -49,8 +49,8 @@ public class KakaoApiClientService implements OAuthApiClientService {
         body.add("redirect_uri", redirectURI);
 
         for (String s : body.keySet()) {
-            log.info("AccessToken body key {}", s);
-            log.info("AccessToken body value {}", body.get(s));
+            log.debug("AccessToken body key {}", s);
+            log.debug("AccessToken body value {}", body.get(s));
         }
 
 

@@ -1,4 +1,4 @@
-package sosteam.throwapi.domain.oauth.service.exception;
+package sosteam.throwapi.domain.oauth.exception;
 
 import org.springframework.http.HttpStatus;
 import sosteam.throwapi.global.exception.exception.CommonException;
