@@ -17,8 +17,4 @@ public class TimeStamped {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
 }

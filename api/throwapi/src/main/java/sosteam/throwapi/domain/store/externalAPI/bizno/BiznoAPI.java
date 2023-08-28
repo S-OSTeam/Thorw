@@ -9,6 +9,8 @@ import sosteam.throwapi.domain.store.log.CrnLog;
 import sosteam.throwapi.domain.store.repository.CrnLogRepository;
 import sosteam.throwapi.global.service.IPService;
 
+import java.util.UUID;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class BiznoAPI {
 
     public BiznoApiResponse confirmCompanyRegistrationNumber(String number) {
         // LOG to DB
-        CrnLog crnLog = new CrnLog(IPService.getClientIP(), "test");
+        CrnLog crnLog = new CrnLog(IPService.getClientIP(), UUID.randomUUID());
         crnLogRepository.save(crnLog);
 
         log.debug("{},{}", IPService.getClientIP(),number);

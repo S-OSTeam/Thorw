@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import sosteam.throwapi.global.service.TimeStamped;
 
+import java.util.UUID;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CrnLog extends TimeStamped {
@@ -16,10 +18,10 @@ public class CrnLog extends TimeStamped {
     private String ip;
 
     @Column
-    private String email;
+    private UUID userId;
 
-    public CrnLog(String ip, String email) {
+public CrnLog(String ip, UUID userId) {
         this.ip = ip;
-        this.email = email;
+        this.userId = userId;
     }
 }
