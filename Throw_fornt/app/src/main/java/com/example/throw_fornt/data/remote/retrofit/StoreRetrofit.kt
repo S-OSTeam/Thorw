@@ -3,6 +3,7 @@ package com.example.throw_fornt.data.remote.retrofit
 import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
+import com.example.throw_fornt.data.model.response.testBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -15,9 +16,23 @@ import java.lang.Exception
 import java.net.URL
 
 class StoreRetrofit {
-
     companion object {
-        const val url = ""          //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
+        const val url = "https://bizno.net/api/"
+        const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
+        //const val url = ""          //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
+        lateinit var requestService: StoreRequest
+
+        //SingleTon Pattern 싱글톤 패턴
+        @Volatile
+        private var instance: StoreRetrofit? = null
+
+        fun getInstance() =
+            instance?: synchronized(StoreRetrofit::class.java){
+                instance ?: StoreRetrofit().also {
+                    instance = it
+                }
+            }
+
     }
 
     /*
@@ -50,7 +65,6 @@ class StoreRetrofit {
                 override fun onFailure(call: Call<StoreResponse>, t: Throwable) {
                     //실패 토스트 넣기
                 }
-
             })
         } catch (e: Exception) {
             e.printStackTrace()
@@ -67,32 +81,16 @@ class StoreRetrofit {
     /*
     사업자등록번호 조회 api 호출
      */
-    fun bnoResponse(companyNum: String): Boolean = runBlocking {
-        var check = false               //사업자등록번호가 조회가 되는지 확인하는 변수
-        if (companyNum == "") return@runBlocking check
-
+    fun bnoResponse(){
         try {
             val urls = URL(url)
             val retrofit = Retrofit.Builder()
                 .baseUrl(urls)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            val request: StoreRequest = retrofit.create(StoreRequest::class.java)
-            val response: Response<StoreResponse> = withContext(Dispatchers.IO) {
-                try {
-                    request.bnoRequest(companyNum).execute()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }!!
-            }
-
-            if (response != null && response.isSuccessful && response.body()?.code == "200") {
-                check = true
-            }
+            requestService = retrofit.create(StoreRequest::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return@runBlocking check
     }
 }

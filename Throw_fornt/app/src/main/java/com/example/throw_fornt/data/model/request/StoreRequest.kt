@@ -1,6 +1,7 @@
 package com.example.throw_fornt.data.model.request
 
 import com.example.throw_fornt.data.model.response.StoreResponse
+import com.example.throw_fornt.data.model.response.testBody
 import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.http.GET
@@ -31,4 +32,12 @@ interface StoreRequest {
     fun bnoRequest(
         @Query("bno") address_id : String
     ) : Call<StoreResponse>
+
+    @GET("fapi")
+    fun testRequest(
+        @Query("key") key: String,
+        @Query("gb") gb:String,
+        @Query("q") q:String,
+        @Query("type") type:String
+    ) : Call<testBody>
 }
