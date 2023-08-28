@@ -3,7 +3,9 @@ package sosteam.throwapi.domain.store.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.store.controller.response.SearchStoreResponse;
 import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.global.exception.exception.NoContentException;
@@ -14,6 +16,7 @@ import sosteam.throwapi.domain.store.util.GeometryUtil;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,7 +40,7 @@ public class StoreGetService {
      * if there are no stores, return 204 (No Content)
      * if there are stores, return 200 (StoreList)
      */
-    public Set<StoreDto> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
+    public ResponseEntity<Set<SearchStoreResponse>> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
         log.debug("Start Searching Stores around = {}", searchStoreInRadiusDto);
 
         // 1:
@@ -71,7 +74,19 @@ public class StoreGetService {
 
         if(stores.isEmpty()) throw new NotFoundException();
         if(stores.get().isEmpty()) throw new NoContentException();
-        return stores.get();
+        return ResponseEntity.ok(
+                stores.get().stream()
+                        .map(store ->
+                                new SearchStoreResponse(
+                                        store.getName(),
+                                        store.getCompanyRegistrationNumber(),
+                                        store.getLatitude(),
+                                        store.getLongitude(),
+                                        store.getZipCode(),
+                                        store.getFullAddress()
+                                )
+                        ).collect(Collectors.toSet())
+        );
     }
 
     /**
@@ -79,12 +94,25 @@ public class StoreGetService {
      * @param name 검색 이름
      * @return 가게 정보들
      */
-    public Set<StoreDto> searchStoreByName(String name) {
+    public ResponseEntity<Set<SearchStoreResponse>> searchStoreByName(String name) {
         log.debug("Start searching Stores which name is {}", name);
         Optional<Set<StoreDto>> stores = storeRepository.searchByName(name);
         if(stores.isEmpty()) throw new NotFoundException();
         if(stores.get().isEmpty()) throw new NoContentException();
-        return stores.get();
+
+        return ResponseEntity.ok(
+                stores.get().stream()
+                        .map(store ->
+                                new SearchStoreResponse(
+                                        store.getName(),
+                                        store.getCompanyRegistrationNumber(),
+                                        store.getLatitude(),
+                                        store.getLongitude(),
+                                        store.getZipCode(),
+                                        store.getFullAddress()
+                                )
+                        ).collect(Collectors.toSet())
+        );
     }
 
     public StoreDto searchByRegistrationNumber(String registrationNumber) {

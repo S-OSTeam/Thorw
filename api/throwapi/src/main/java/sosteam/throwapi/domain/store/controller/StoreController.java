@@ -5,15 +5,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import sosteam.throwapi.domain.store.controller.request.SearchStoreByName;
 import sosteam.throwapi.domain.store.controller.request.SearchStoreByRegistrationNumberRequest;
 import sosteam.throwapi.domain.store.controller.request.SearchStoreInRadiusRequest;
 import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
 import sosteam.throwapi.domain.store.controller.response.SearchStoreResponse;
+import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
-import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -23,7 +26,6 @@ import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 유저의 store와 관련된 컨트롤러
@@ -83,20 +85,7 @@ public class StoreController {
                 searchStoreInRadiusRequest.getLongitude(),
                 searchStoreInRadiusRequest.getDistance()
         );
-        Set<StoreDto> storeDto = storeGetService.searchStoreInRadius(dto);
-        return ResponseEntity.ok(
-                storeDto.stream()
-                        .map(store ->
-                                new SearchStoreResponse(
-                                        store.getName(),
-                                        store.getCompanyRegistrationNumber(),
-                                        store.getLatitude(),
-                                        store.getLongitude(),
-                                        store.getZipCode(),
-                                        store.getFullAddress()
-                                )
-                        ).collect(Collectors.toSet())
-        );
+        return storeGetService.searchStoreInRadius(dto);
     }
 
     /**
@@ -129,20 +118,7 @@ public class StoreController {
      */
     @PostMapping("/name")
     public ResponseEntity<Set<SearchStoreResponse>> searchByName(@RequestBody @Valid SearchStoreByName searchStoreByName) {
-        Set<StoreDto> storeDto = storeGetService.searchStoreByName(searchStoreByName.getName());
-        return ResponseEntity.ok(
-                storeDto.stream()
-                        .map(store ->
-                                new SearchStoreResponse(
-                                        store.getName(),
-                                        store.getCompanyRegistrationNumber(),
-                                        store.getLatitude(),
-                                        store.getLongitude(),
-                                        store.getZipCode(),
-                                        store.getFullAddress()
-                                )
-                        ).collect(Collectors.toSet())
-        );
+        return storeGetService.searchStoreByName(searchStoreByName.getName());
     }
 
     /**
