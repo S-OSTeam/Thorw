@@ -1,7 +1,7 @@
 package com.example.throw_fornt.feature.store.register
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.activity.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.ActivityRegisterBinding
@@ -10,6 +10,7 @@ import com.example.throw_fornt.util.common.Toaster
 
 class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register) {
     private val viewModel: RegisterViewModel by viewModels()
+    private var webView: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
