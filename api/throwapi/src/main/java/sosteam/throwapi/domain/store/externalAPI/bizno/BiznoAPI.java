@@ -1,19 +1,28 @@
 package sosteam.throwapi.domain.store.externalAPI.bizno;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import sosteam.throwapi.domain.store.log.CrnLog;
+import sosteam.throwapi.domain.store.repository.CrnLogRepository;
 import sosteam.throwapi.global.service.IPService;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class BiznoAPI {
+    private final CrnLogRepository crnLogRepository;
 
     @Value("${bizno.api.key}")
     private String apiKey;
 
     public BiznoApiResponse confirmCompanyRegistrationNumber(String number) {
+        // LOG to DB
+        CrnLog crnLog = new CrnLog(IPService.getClientIP(), "test");
+        crnLogRepository.save(crnLog);
+
         log.debug("{},{}", IPService.getClientIP(),number);
         // Call Bizno-api to Confirm CompanyRegistrationNumber
         WebClient webClient = WebClient.builder()
