@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StoreSaveDto {
     private String name;
-
+    private String phone;
+    private String owner;
     private String crn;
-
     private Double latitude;
-
     private Double longitude;
-
     private String zipCode;
-
     private String fullAddress;
 }

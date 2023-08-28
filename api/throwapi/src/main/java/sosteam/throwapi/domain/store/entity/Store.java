@@ -2,11 +2,9 @@ package sosteam.throwapi.domain.store.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
@@ -19,10 +17,18 @@ public class Store extends PrimaryKeyEntity {
     private String name;
 
     @NotNull
+    private String phone;
+
+    @NotNull
+    private String owner;
+
+    @NotNull
     private String companyRegistrationNumber;
 
-    public Store(String name, String companyRegistrationNumber) {
+    public Store(String name, String phone, String owner, String companyRegistrationNumber) {
         this.name = name;
+        this.phone = phone;
+        this.owner = owner;
         this.companyRegistrationNumber = companyRegistrationNumber;
     }
 

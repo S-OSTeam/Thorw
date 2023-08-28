@@ -42,6 +42,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         Projections.constructor(
                                 StoreDto.class,
                                 qStore.name,
+                                qStore.phone,
+                                qStore.owner,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
@@ -64,6 +66,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         Projections.constructor(
                                 StoreDto.class,
                                 qStore.name,
+                                qStore.phone,
+                                qStore.owner,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
@@ -88,6 +92,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                                 Projections.constructor(
                                         StoreDto.class,
                                         qStore.name,
+                                        qStore.phone,
+                                        qStore.owner,
                                         qStore.companyRegistrationNumber,
                                         qAddress.latitude,
                                         qAddress.longitude,

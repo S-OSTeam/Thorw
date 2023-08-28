@@ -61,6 +61,8 @@ public class StoreController {
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
                 request.getName(),
+                request.getPhone(),
+                request.getOwner(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
                 request.getLongitude(),

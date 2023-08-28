@@ -45,6 +45,8 @@ class StoreControllerTest {
             String rn = s1 + "-" + s2 + "-" + s3;
             StoreSaveDto storeSaveDto = new StoreSaveDto(
                     "TestStore" + String.valueOf(i),
+                    "010-1234-1234",
+                    "testOwner",
                     rn,
                     lon,
                     lat,

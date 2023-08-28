@@ -9,20 +9,19 @@ import sosteam.throwapi.domain.store.controller.response.StoreResponse;
 @NoArgsConstructor
 public class StoreDto {
     private String name;
-
+    private String phone;
+    private String owner;
     private String crn;
-
     private Double latitude;
-
     private Double longitude;
-
     private String zipCode;
-
     private String fullAddress;
 
     @QueryProjection
-    public StoreDto(String name, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
+    public StoreDto(String name, String phone, String owner, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
         this.name = name;
+        this.phone = phone;
+        this.owner = owner;
         this.crn = crn;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -33,6 +32,8 @@ public class StoreDto {
     public StoreResponse toResponse(){
         return new StoreResponse(
                 this.getName(),
+                this.getPhone(),
+                this.getOwner(),
                 this.getCrn(),
                 this.getLatitude(),
                 this.getLongitude(),
