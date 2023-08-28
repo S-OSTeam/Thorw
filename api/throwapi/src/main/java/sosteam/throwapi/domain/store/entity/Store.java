@@ -31,7 +31,12 @@ public class Store extends PrimaryKeyEntity {
     private User user;
 
 
-    @OneToOne(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(
+            mappedBy = "store",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @JoinColumn(name = "address_id")
     private Address address;
 
