@@ -3,9 +3,7 @@ package sosteam.throwapi.domain.order.repository.repoCustomImpl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.order.entity.Gifticon;
-import sosteam.throwapi.domain.order.entity.QGifticon;
 import sosteam.throwapi.domain.order.repository.repoCustom.GifticonCustomRepository;
 
 import java.util.Optional;
