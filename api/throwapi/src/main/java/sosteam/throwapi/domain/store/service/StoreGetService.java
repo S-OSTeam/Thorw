@@ -67,15 +67,27 @@ public class StoreGetService {
 
         log.debug("Created LineString = {}", lineString);
 
-        Optional<Set<StoreDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
+        Optional<Set<StoreDto>> stores = storeRepository.searchStoreInRadius(searchStoreInRadiusDto);
 
-        if(storeListOptional.isEmpty()) throw new NotFoundException();
-        if(storeListOptional.get().isEmpty()) throw new NoContentException();
-        return storeListOptional.get();
+        if(stores.isEmpty()) throw new NotFoundException();
+        if(stores.get().isEmpty()) throw new NoContentException();
+        return stores.get();
     }
 
+    /**
+     * 검색 이름이 포함된 가게들을 반환
+     * @param name 검색 이름
+     * @return 가게 정보들
+     */
+    public Set<StoreDto> searchStoreByName(String name) {
+        log.debug("Start searching Stores which name is {}", name);
+        Optional<Set<StoreDto>> stores = storeRepository.searchByName(name);
+        if(stores.isEmpty()) throw new NotFoundException();
+        if(stores.get().isEmpty()) throw new NoContentException();
+        return stores.get();
+    }
 
-    public StoreDto findByRegistrationNumber(String registrationNumber) {
-        return storeRepository.findByRegistrationNumber(registrationNumber);
+    public StoreDto searchByRegistrationNumber(String registrationNumber) {
+        return storeRepository.searchByRegistrationNumber(registrationNumber);
     }
 }

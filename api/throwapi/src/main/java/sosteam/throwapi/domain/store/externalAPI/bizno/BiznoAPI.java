@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import sosteam.throwapi.domain.store.log.CrnLog;
-import sosteam.throwapi.domain.store.repository.CrnLogRepository;
+import sosteam.throwapi.domain.store.log.CrnLogRepository;
 import sosteam.throwapi.global.service.IPService;
 
 import java.util.UUID;

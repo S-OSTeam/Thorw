@@ -22,7 +22,7 @@ public class StoreCreateService {
         log.debug("Start Creating Store = {}", storeSaveDto);
         // if Store is already Exist
         // return 409 : Conflict http status
-        StoreDto dto = storeGetService.findByRegistrationNumber(storeSaveDto.getCompanyRegistrationNumber());
+        StoreDto dto = storeGetService.searchByRegistrationNumber(storeSaveDto.getCompanyRegistrationNumber());
         if (dto != null) throw new StoreAlreadyExistException();
 
         // 1: Create Store Entity
