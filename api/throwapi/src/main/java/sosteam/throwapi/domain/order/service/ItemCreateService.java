@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GifticonCreateService {
+public class ItemCreateService {
 
 }
