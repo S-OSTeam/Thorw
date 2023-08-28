@@ -18,10 +18,12 @@ public class ItemSearchService {
     private final ItemRepository itemRepository;
 
     public Optional<Item> getItemById(UUID itemId) {
+        log.debug("ITEM SEARCH");
         return itemRepository.findById(itemId);
     }
 
     public Set<Item> getAllItems() {
+        log.debug("ITEMS SEARCH");
         return new HashSet<>(itemRepository.findAll());
     }
 }

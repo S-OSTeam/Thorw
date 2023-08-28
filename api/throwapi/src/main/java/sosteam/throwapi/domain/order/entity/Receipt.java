@@ -2,10 +2,12 @@ package sosteam.throwapi.domain.order.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 @Entity
+@Getter
 public class Receipt extends PrimaryKeyEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
