@@ -103,7 +103,7 @@ public class StoreController {
      * 실패 (가게가 없을 시) : 404 NOT_FOUND
      * 실패 (요청으로 들어온 번호가 형식에 안맞을 경우) : 500 INTERNAL_ERROR : 서버 로그에서 확인 가능
      */
-    @PostMapping("/companyregistrationnumber")
+    @PostMapping("/crn")
     public SearchStoreResponse findByCompanyRegistrationNumber(@RequestBody SearchStoreByRegistrationNumberRequest number) {
         StoreDto store =  storeGetService.findByRegistrationNumber(number.getCompanyRegistrationNumber().replaceAll("-",""));
         if(store == null) throw new NoSuchStoreException();
