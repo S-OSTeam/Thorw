@@ -8,6 +8,7 @@ import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.SingleLiveEvent
+import java.math.RoundingMode
 
 class MapViewModel : ViewModel() {
     private val _event: SingleLiveEvent<Event> = SingleLiveEvent()
@@ -23,8 +24,9 @@ class MapViewModel : ViewModel() {
     val lastUserPoint: LiveData<GeoPoint>
         get() = _lastUserPoint
 
-    private val _nearByStores: MutableLiveData<List<MapStoreInfo>> = MutableLiveData()
-    val nearByStores: LiveData<List<MapStoreInfo>>
+    private val _nearByStores: MutableLiveData<Map<Int, List<MapStoreInfo>>> =
+        MutableLiveData()
+    val nearByStores: LiveData<Map<Int, List<MapStoreInfo>>>
         get() = _nearByStores
 
     private val _selectedTrashTypes: MutableLiveData<List<Trash>> =
@@ -61,9 +63,10 @@ class MapViewModel : ViewModel() {
     fun updateCurPosition(geoPoint: GeoPoint) {
         if (updateCurPositionLoading) return
         updateCurPositionLoading = true
+        val adjustGeoPoint = geoPoint.adjustGeoPoint()
         if (_lastUserPoint.value == null) {
-            _curCameraCenterPoint.value = geoPoint
-            _lastUserPoint.value = geoPoint
+            _curCameraCenterPoint.value = adjustGeoPoint
+            _lastUserPoint.value = adjustGeoPoint
             updateCurPositionLoading = false
             refreshNearbyStores()
             return
@@ -72,14 +75,14 @@ class MapViewModel : ViewModel() {
             val distanceFromCameraCenter = DistanceManager.getDistance(
                 cameraCenterPoint.latitude,
                 cameraCenterPoint.longitude,
-                geoPoint.latitude,
-                geoPoint.longitude,
+                adjustGeoPoint.latitude,
+                adjustGeoPoint.longitude,
             )
             Log.d("mendel", "카메라 중심까지 거리: $distanceFromCameraCenter")
             if (distanceFromCameraCenter > visibleMapMinQuarterDistance) {
-                _curCameraCenterPoint.value = geoPoint
+                _curCameraCenterPoint.value = adjustGeoPoint
             }
-            _lastUserPoint.value = geoPoint
+            _lastUserPoint.value = adjustGeoPoint
         }
         updateCurPositionLoading = false
     }
@@ -98,72 +101,49 @@ class MapViewModel : ViewModel() {
         _lastUserPoint.value?.let {
             refreshStoreLoading = true
             // 가게 목록 갱신
-            _nearByStores.value = listOf(
-                MapStoreInfo(
-                    1L,
-                    "가게1",
-                    GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
-                ),
-                MapStoreInfo(
-                    2L,
-                    "가게2",
-                    GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
-                ),
-            )
-            //
+            _nearByStores.value =
+                fakeDataAroundStores(it).groupStoresByGeoPoint().mapKeys { it.key.hashCode() }
             refreshStoreLoading = false
+        }
+    }
+
+    private fun List<MapStoreInfo>.groupStoresByGeoPoint(precision: Int = DEFAULT_PRECISION): Map<GeoPoint, List<MapStoreInfo>> {
+        val groupedStores = mutableMapOf<GeoPoint, MutableList<MapStoreInfo>>()
+
+        for (store in this) {
+            val roundedPoint = store.geoPoint.adjustGeoPoint(precision)
+
+            Log.d("mendel", "${store.storeName}, 조정된 값: $roundedPoint")
+            if (!groupedStores.containsKey(roundedPoint)) {
+                groupedStores[roundedPoint] = mutableListOf()
+            }
+            groupedStores[roundedPoint]?.add(store)
+        }
+
+        return groupedStores
+    }
+
+    private fun GeoPoint.adjustGeoPoint(precision: Int = DEFAULT_PRECISION): GeoPoint {
+        val roundedLatitude =
+            latitude.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toDouble()
+        val roundedLongitude =
+            longitude.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toDouble()
+
+        return GeoPoint(roundedLatitude, roundedLongitude)
+    }
+
+    fun selectMapPoint(groupKey: Int) {
+        nearByStores.value?.let { nearByStores ->
+            val selectedStoreGroup = nearByStores[groupKey] ?: return@let
+            searchedStores = selectedStoreGroup
         }
     }
 
     val searchStores = { content: String? ->
         if (content.isNullOrEmpty().not()) {
-            Log.d("mendel", "검색: $content")
             lastUserPoint.value?.let {
-                Log.d("mendel", "진짜: ${this.hashCode()}")
-
                 // 검색 결과가 0이 아닐때만.
-                searchedStores = listOf(
-                    MapStoreInfo(
-                        1L,
-                        "가게1",
-                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
-                    ),
-                    MapStoreInfo(
-                        2L,
-                        "가게2",
-                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
-                    ),
-                    MapStoreInfo(
-                        3L,
-                        "가게3",
-                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
-                    ),
-                    MapStoreInfo(
-                        4L,
-                        "가게4",
-                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
-                    ),
-                    MapStoreInfo(
-                        5L,
-                        "가게5",
-                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
-                    ),
-                    MapStoreInfo(
-                        6L,
-                        "가게6",
-                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
-                    ),
-                    MapStoreInfo(
-                        7L,
-                        "가게7",
-                        GeoPoint(it.latitude + 0.01, it.longitude + 0.01),
-                    ),
-                    MapStoreInfo(
-                        8L,
-                        "가게8",
-                        GeoPoint(it.latitude - 0.01, it.longitude - 0.01),
-                    ),
-                )
+                searchedStores = fakeDataSearchedResult(it)
             }
         }
     }
@@ -194,5 +174,79 @@ class MapViewModel : ViewModel() {
 
     sealed class Event {
         object ShowMapStoreInfo : Event()
+    }
+
+    companion object {
+        private const val DEFAULT_PRECISION = 5
+        private fun fakeDataAroundStores(userPoint: GeoPoint) = listOf(
+            MapStoreInfo(
+                1L,
+                "가게1",
+                GeoPoint(userPoint.latitude + 0.00020, userPoint.longitude + 0.00020),
+            ),
+            MapStoreInfo(
+                2L,
+                "가게2",
+                GeoPoint(userPoint.latitude + 0.000201, userPoint.longitude + 0.000201),
+            ),
+            MapStoreInfo(
+                3L,
+                "가게3",
+                GeoPoint(userPoint.latitude + 0.000204, userPoint.longitude + 0.000204),
+            ),
+            MapStoreInfo(
+                5L,
+                "가게5",
+                GeoPoint(userPoint.latitude + 0.000204, userPoint.longitude + 0.000204),
+            ),
+            MapStoreInfo(
+                4L,
+                "가게4",
+                GeoPoint(userPoint.latitude - 0.0001, userPoint.longitude - 0.0001),
+            ),
+        )
+
+        private fun fakeDataSearchedResult(userPoint: GeoPoint) = listOf(
+            MapStoreInfo(
+                1L,
+                "가게1",
+                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
+            ),
+            MapStoreInfo(
+                2L,
+                "가게2",
+                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
+            ),
+            MapStoreInfo(
+                3L,
+                "가게3",
+                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
+            ),
+            MapStoreInfo(
+                4L,
+                "가게4",
+                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
+            ),
+            MapStoreInfo(
+                5L,
+                "가게5",
+                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
+            ),
+            MapStoreInfo(
+                6L,
+                "가게6",
+                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
+            ),
+            MapStoreInfo(
+                7L,
+                "가게7",
+                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
+            ),
+            MapStoreInfo(
+                8L,
+                "가게8",
+                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
+            ),
+        )
     }
 }

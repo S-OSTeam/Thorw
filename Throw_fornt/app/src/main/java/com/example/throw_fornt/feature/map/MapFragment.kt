@@ -36,6 +36,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapView
 
 class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
@@ -60,15 +61,13 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
     private var nearByStoreMarkers: Array<MapPOIItem> = arrayOf()
 
+    private lateinit var markerEventListener: MarkerEventListener
+
     private val locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
                 Log.d(
                     "mendel",
-                    "제공자: ${location.provider}, ${location.latitude}, ${location.longitude}",
-                )
-                Toaster.showShort(
-                    requireContext(),
                     "제공자: ${location.provider}, ${location.latitude}, ${location.longitude}",
                 )
                 viewModel.updateCurPosition(GeoPoint(location.latitude, location.longitude))
@@ -86,11 +85,13 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         super.onAttach(context)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
+        markerEventListener = MarkerEventListener(requireContext(), viewModel::selectMapPoint)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+        binding.mapView.setPOIItemEventListener(markerEventListener)
         setupFilterSearchChips()
         checkLocationPermission()
         setupViewModel()
@@ -145,7 +146,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         }
         viewModel.nearByStores.observe(viewLifecycleOwner) {
             binding.mapView.removePOIItems(nearByStoreMarkers)
-            nearByStoreMarkers = it.makeStoreInfoToMarkers()
+            nearByStoreMarkers = it.convertStoreInfoToMarkers()
             binding.mapView.addPOIItems(nearByStoreMarkers)
         }
 
@@ -176,15 +177,21 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         )
     }
 
-    private fun List<MapStoreInfo>.makeStoreInfoToMarkers(): Array<MapPOIItem> {
-        return groupBy { it.geoPoint }.map { samePointStores ->
+    private fun Map<Int, List<MapStoreInfo>>.convertStoreInfoToMarkers(): Array<MapPOIItem> {
+        return map { samePointStores ->
             val mapPoint = MapPoint.mapPointWithGeoCoord(
-                samePointStores.key.latitude,
-                samePointStores.key.longitude,
+                samePointStores.value[0].geoPoint.latitude,
+                samePointStores.value[0].geoPoint.longitude,
             )
             MapPOIItem().apply {
-                itemName = samePointStores.value.joinToString()
-                markerType = MapPOIItem.MarkerType.YellowPin
+                tag = samePointStores.key
+                itemName = samePointStores.value[0].storeName.let {
+                    if (samePointStores.value.size > 1) {
+                        it + "외 ${samePointStores.value.size - 1}개"
+                    } else {
+                        it
+                    }
+                }
                 selectedMarkerType = MapPOIItem.MarkerType.RedPin
                 this.mapPoint = mapPoint
                 markerType = MapPOIItem.MarkerType.CustomImage
@@ -212,6 +219,12 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        curPositionMarker = null
+    }
+
+    // 위치 권한 관련 로직들
     private fun isAllowedLocationPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -247,10 +260,6 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         }
     }
 
-    private fun showSnackBar(@StringRes messageId: Int, action: () -> Unit) {
-        binding.root.showSnackbar(messageId) { action() }
-    }
-
     private fun navigateToPermissionSetting() {
         Intent().apply {
             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -266,13 +275,39 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
+    private fun showSnackBar(@StringRes messageId: Int, action: () -> Unit) {
+        binding.root.showSnackbar(messageId) { action() }
+    }
+
     private fun showToast(@StringRes messageId: Int) {
         Toaster.showShort(requireContext(), requireContext().getString(messageId))
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        curPositionMarker = null
+    // 마커 클릭 이벤트 리스너
+    class MarkerEventListener(val context: Context, private val onClick: (Int) -> Unit) :
+        MapView.POIItemEventListener {
+        override fun onPOIItemSelected(mapView: MapView?, poiItem: MapPOIItem?) {
+            val groupTag = poiItem?.tag ?: return
+            onClick(groupTag)
+        }
+
+        @Deprecated("Deprecated in Java")
+        override fun onCalloutBalloonOfPOIItemTouched(mapView: MapView?, poiItem: MapPOIItem?) {
+        }
+
+        override fun onCalloutBalloonOfPOIItemTouched(
+            mapView: MapView?,
+            poiItem: MapPOIItem?,
+            buttonType: MapPOIItem.CalloutBalloonButtonType?,
+        ) {
+        }
+
+        override fun onDraggablePOIItemMoved(
+            mapView: MapView?,
+            poiItem: MapPOIItem?,
+            mapPoint: MapPoint?,
+        ) {
+        }
     }
 
     companion object {
