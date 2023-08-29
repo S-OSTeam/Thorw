@@ -35,6 +35,10 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
                 .fetch()));
     }
 
+    /**
+     * 아이템 구매시 Gifticon과 Receipt 생성
+     * @param templateToken
+     */
     @Override
     public Optional<Gifticon> createGifticonAndReceipt(String templateToken) {
         // TODO: 2023-08-29 템플릿 변경, user 정보 추가(수형이 코드 필요)
@@ -60,6 +64,11 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
         return Optional.ofNullable(insertedGifticon);
     }
 
+    /**
+     * 템플릿 토큰으로 카카오 기프티콘 생성
+     * @param templateToken
+     * @return 카카오에서 제공하는 API
+     */
     private GifticonSendResponseDto sendKakaoGifticon(String templateToken){
         // TODO: 2023-08-29 기프티콘 정보(수형이 코드 필요)
         GifticonSendRequestDto gifticonRequest=new GifticonSendRequestDto(

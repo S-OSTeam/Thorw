@@ -11,24 +11,12 @@ import sosteam.throwapi.domain.order.exception.NotGiftTraceIdAssociateReceiptExc
 import sosteam.throwapi.domain.order.repository.repo.GifticonRepository;
 import sosteam.throwapi.domain.order.repository.repo.ReceiptRepository;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GifticonSearchService {
     private final GifticonRepository gifticonRepository;
     private final ReceiptRepository receiptRepository;
-
-    public Optional<Gifticon> searchGifticonById(UUID gifticonId){
-        log.debug("SEARCH GIFTICON BY ID");
-        Optional<Gifticon> optionalGifticon=gifticonRepository.findById(gifticonId);
-        if(optionalGifticon.isEmpty()){
-            throw new NoSuchGifticonException();
-        }
-        return optionalGifticon;
-    }
 
     /**
      * giftTraceId로 해당 상품의 상태 알아내기

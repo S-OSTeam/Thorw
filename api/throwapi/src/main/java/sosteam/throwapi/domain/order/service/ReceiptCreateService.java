@@ -14,6 +14,10 @@ public class ReceiptCreateService {
     private ReceiptRepository receiptRepository;
     private ItemRepository itemRepository;
 
+    /**
+     * 상품 구매하고 카카오 기프티콘 생성(Receipt와 Gifticon 생성)
+     * @param productName
+     */
     public void purchaseKakaoGifticonByProductName(String productName){
         String templateToken = itemRepository.searchByProductName(productName).get().getTemplateToken();
         if(templateToken==null){

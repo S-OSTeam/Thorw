@@ -19,11 +19,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReceiptDeleteService {
     private final GifticonRepository gifticonRepository;
-    private final GifticonSearchService gifticonSearchService;
     private final ReceiptRepository receiptRepository;
 
-    private void deleteReceiptByGifticonId(UUID gifticonId) {
+    /**
+     * giftTraceId로 gifticon,receipt 삭제
+     * @param giftTraceId
+     */
+    private void deleteReceiptByGifticonId(String giftTraceId) {
         log.debug("RECEIPT DELETE BY GIFTICON ID");
+
+        UUID gifticonId = gifticonRepository.searchByGiftTraceId(giftTraceId).get().getId();
 
         Gifticon gifticon = gifticonRepository.findById(gifticonId)
                 .orElseThrow(() -> new NoSuchGifticonException());
