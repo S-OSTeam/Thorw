@@ -5,6 +5,6 @@ import sosteam.throwapi.global.exception.exception.CommonException;
 
 public class UserAlreadyExistException extends CommonException {
     public UserAlreadyExistException(){
-        super("USER_ALREADY_EXIST_EXCEPTION", "이미 회원 가입 되어 있는 사용자 입니다.", HttpStatus.CONFLICT);
+        super("USER_ALREADY_EXIST_EXCEPTION", "저장 하려는 데이터 중 이미 있는데이터와 중복되는 값이 존재 합니다.", HttpStatus.CONFLICT);
     }
 }

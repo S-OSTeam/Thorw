@@ -14,10 +14,14 @@ import java.util.UUID;
 public class AuthTokensGenerateService {
     @Value("${jwt.secret.grantType}")
     private static final String BEARER_TYPE = "Bearer";
-    @Value("${jwt.secret.access-token-validity-in-seconds}")
+    @Value("${jwt.secret.access-token-validity-in-seconds}") //43200 초
     private static long ACCESS_TOKEN_EXPIRE_TIME;
-    @Value("${jwt.secret.refresh-token-validity-in-seconds}")
+    @Value("${jwt.secret.refresh-token-validity-in-seconds}") //1209600 초
     private static long REFRESH_TOKEN_EXPIRE_TIME;
+    @Value("${jwt.secret.access-token-kind}") //"accessToken"
+    private static String ACCESS_TOKEN_KIND;
+    @Value("${jwt.secret.refresh-token-kind}") //"refreshToken"
+    private static String REFRESH_TOKEN_KIND;
 
     private final JwtTokenService jwtTokenService;
 
@@ -27,8 +31,8 @@ public class AuthTokensGenerateService {
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
         String subject = memberId.toString();
-        String accessToken = jwtTokenService.generate(subject, accessTokenExpiredAt);
-        String refreshToken = jwtTokenService.generate(subject, refreshTokenExpiredAt);
+        String accessToken = jwtTokenService.generate(subject, ACCESS_TOKEN_KIND, accessTokenExpiredAt);
+        String refreshToken = jwtTokenService.generate(subject, REFRESH_TOKEN_KIND, refreshTokenExpiredAt);
 
         return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME);
     }

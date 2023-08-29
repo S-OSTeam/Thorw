@@ -1,5 +1,6 @@
 package sosteam.throwapi.domain.oauth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class OAuthLoginController {
     private final OAuthLoginService oAuthLoginService;
 
     @PostMapping("/kakao")
-    public ResponseEntity<AuthTokens> loginKakao(@RequestBody OAuthLoginRequest params) {
+    public ResponseEntity<AuthTokens> loginKakao(@RequestBody @Valid OAuthLoginRequest params) {
         log.debug("in OAuth login Kakao");
         log.debug("params = {}", params);
         OAuthLoginDto oAuthLoginDto = new OAuthLoginDto(

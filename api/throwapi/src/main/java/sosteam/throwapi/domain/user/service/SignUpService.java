@@ -51,7 +51,7 @@ public class SignUpService {
         try{
             userResult = userRepository.save(user);
         } catch (Exception e){
-            log.error("Save User already exist");
+            log.error("Save User data values overlap");
             throw new UserAlreadyExistException();
         }
 

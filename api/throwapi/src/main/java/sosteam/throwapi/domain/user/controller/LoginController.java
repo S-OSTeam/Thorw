@@ -1,9 +1,11 @@
 package sosteam.throwapi.domain.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
@@ -27,7 +29,7 @@ public class LoginController {
     private final SignUpService signUpService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<String> SignUp(@RequestBody UserSaveRequest params){
+    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params){
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassWord(),

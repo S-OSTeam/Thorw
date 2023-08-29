@@ -1,9 +1,6 @@
 package sosteam.throwapi.domain.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,10 +19,12 @@ public class UserInfo extends PrimaryKeyEntity {
     private String name;
 
     @NotNull
+    @Column(unique = true)
     private String phoneNumber;
 
     @NotNull
     @Email
+    @Column(unique = true)
     private String email;
 
     @OneToOne(fetch = FetchType.LAZY)
