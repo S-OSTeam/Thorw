@@ -57,7 +57,7 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
                 .values(insertedGifticon, ReceiptStatus.SALE)
                 .execute();
 
-        return insertedGifticon;
+        return Optional.ofNullable(insertedGifticon);
     }
 
     private GifticonSendResponseDto sendKakaoGifticon(String templateToken){
