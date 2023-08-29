@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.hibernate.validator.constraints.UniqueElements;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.List;
 @Getter
 @Entity
 public class Item extends PrimaryKeyEntity {
+
+    @NotNull
+    private String templateToken; // 템플릿 토큰
 
     @NotNull
     private String productName; // 테스트상품명

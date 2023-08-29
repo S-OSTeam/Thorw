@@ -19,4 +19,16 @@ public class Receipt extends PrimaryKeyEntity {
 
     @NotNull
     private ReceiptStatus receiptStatus; // 기프티콘 상태 [SALE,CONFIRMED, SOLD]
+
+    public void modifyGifticon(Gifticon gifticon) {
+        this.gifticon = gifticon;
+    }
+
+    public void modifyUser(User user) {
+        this.user = user;
+    }
+
+    public void modifyReceiptStatus(ReceiptStatus receiptStatus) {
+        this.receiptStatus = receiptStatus;
+    }
 }

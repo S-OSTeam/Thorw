@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface GifticonCustomRepository {
     Optional<Gifticon> searchByGiftTraceId(String giftTraceId);
+    Gifticon saveGifticonWithTraceId(String reserveTraceId);
 }

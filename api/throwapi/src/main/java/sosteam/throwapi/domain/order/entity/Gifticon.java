@@ -19,4 +19,8 @@ public class Gifticon extends PrimaryKeyEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receipt_id")
     private Receipt receipt;
+
+    public void modifyGiftTraceId(String giftTraceId) {
+        this.giftTraceId = giftTraceId;
+    }
 }

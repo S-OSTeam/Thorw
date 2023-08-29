@@ -9,7 +9,6 @@ import sosteam.throwapi.domain.order.repository.repo.ItemRepository;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -17,9 +16,8 @@ import java.util.UUID;
 public class ItemSearchService {
     private final ItemRepository itemRepository;
 
-    public Optional<Item> searchItemById(UUID itemId) {
-        log.debug("ITEM SEARCH");
-        return itemRepository.findById(itemId);
+    public Optional<Item> searchItemByProductName(String productName) {
+        return itemRepository.searchByProductName(productName);
     }
 
     public Set<Item> searchAllItems() {
