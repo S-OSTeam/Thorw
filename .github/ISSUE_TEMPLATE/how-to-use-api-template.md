@@ -22,7 +22,7 @@ describtion
 
 * **Method:**
 
-  [`POST` | 'GET' | `DELETE`]
+  [`POST` | `GET` | `DELETE`]
 
 * **Request Body**
   @Valid()
@@ -72,7 +72,7 @@ describtion
 
 * **Method:**
 
-  [`POST` | 'GET' | `DELETE`]
+  [`POST` | `GET` | `DELETE`]
 
 * **Request Body**
   @Valid()
