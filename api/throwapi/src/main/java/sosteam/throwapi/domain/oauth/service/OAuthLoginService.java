@@ -8,7 +8,6 @@ import sosteam.throwapi.domain.oauth.entity.dto.OAuthLoginDto;
 import sosteam.throwapi.domain.oauth.exception.NonExistentUserInKakao;
 import sosteam.throwapi.domain.oauth.exception.NonValidateTokenException;
 import sosteam.throwapi.domain.oauth.exception.NotSignUpUserException;
-import sosteam.throwapi.domain.oauth.service.kakaoImpl.KakaoLoginParamsService;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
@@ -25,7 +24,6 @@ public class OAuthLoginService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final AuthTokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
-    private final JwtTokenService jwtTokenService;
 
 
     public AuthTokens login(OAuthLoginDto oAuthLoginDto){

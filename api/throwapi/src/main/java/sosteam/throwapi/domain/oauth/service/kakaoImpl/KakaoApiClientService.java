@@ -43,7 +43,7 @@ public class KakaoApiClientService implements OAuthApiClientService {
 
     @Override
     public String reissueAccessToken(String refreshToken){
-        log.info("in reissueAccessToken");
+        log.debug("in reissueAccessToken");
         log.debug("refreshToken = {}", refreshToken);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
@@ -52,8 +52,8 @@ public class KakaoApiClientService implements OAuthApiClientService {
         body.add("refresh_token", refreshToken);
 
         for (String s : body.keySet()) {
-            log.info("AccessToken body key {}", s);
-            log.info("AccessToken body value {}", body.get(s));
+            log.debug("AccessToken body key {}", s);
+            log.debug("AccessToken body value {}", body.get(s));
         }
 
         WebClient webClient = WebClient.builder()
