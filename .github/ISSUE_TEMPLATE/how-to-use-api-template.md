@@ -25,7 +25,7 @@ describtion
   [`POST` | 'GET' | `DELETE`]
 
 * **Request Body**
-
+  @Valid()
   `id=[String] - 자원 일련번호`  
   `.`  
   `.`  
