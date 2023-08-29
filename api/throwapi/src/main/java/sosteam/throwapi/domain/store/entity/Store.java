@@ -12,6 +12,8 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Store extends PrimaryKeyEntity {
+    @NotNull
+    private String storeCode;
 
     @NotNull
     private String storeName;
@@ -23,7 +25,8 @@ public class Store extends PrimaryKeyEntity {
     @NotNull
     private String companyRegistrationNumber;
 
-    public Store(String storeName, String storePhone, String companyRegistrationNumber) {
+    public Store(String storeCode, String storeName, String storePhone, String companyRegistrationNumber) {
+        this.storeCode = storeCode;
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.companyRegistrationNumber = companyRegistrationNumber;
@@ -46,5 +49,12 @@ public class Store extends PrimaryKeyEntity {
     public Address modifyAddress(Address address){
         this.address = address;
         return this.address;
+    }
+
+    public void modify(String storeCode, String storeName, String storePhone, String companyRegistrationNumber) {
+        this.storeCode = storeCode;
+        this.storeName = storeName;
+        this.storePhone = storePhone;
+        this.companyRegistrationNumber = companyRegistrationNumber;
     }
 }

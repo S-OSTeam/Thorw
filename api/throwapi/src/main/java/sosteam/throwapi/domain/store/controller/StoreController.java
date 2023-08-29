@@ -5,18 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import sosteam.throwapi.domain.store.controller.request.StoreNameRequest;
-import sosteam.throwapi.domain.store.controller.request.StoreCrnRequest;
-import sosteam.throwapi.domain.store.controller.request.StoreInRadiusRequest;
-import sosteam.throwapi.domain.store.controller.request.StoreSaveRequest;
+import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.store.controller.request.*;
+import sosteam.throwapi.domain.store.controller.response.StoreModifyResponse;
 import sosteam.throwapi.domain.store.controller.response.StoreResponse;
-import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
-import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -24,6 +19,8 @@ import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
 import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
+import sosteam.throwapi.domain.store.service.StoreModifyService;
+import sosteam.throwapi.domain.store.util.SHA256;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,6 +41,7 @@ import java.util.stream.Collectors;
 public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
+    private final StoreModifyService storeModifyService;
     private final BiznoAPI biznoAPI;
     @PostMapping
     public void saveStore(@RequestBody @Valid StoreSaveRequest request) {
@@ -59,7 +57,7 @@ public class StoreController {
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
-        StoreSaveDto dto = new StoreSaveDto(
+        StoreDto dto = new StoreDto(
                 request.getStoreName(),
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
@@ -119,6 +117,53 @@ public class StoreController {
     public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest request) {
         Set<StoreDto> dtos = storeGetService.searchStoreByName(request.getStoreName());
         Set<StoreResponse> resp = dtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
+        return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * 가게 수정 메소드
+     * @param request 가게코드, 가게 정보
+     * @return 가게코드, 가게 정보
+     * 가게 코드는 가게 정보들로 이루어진 암호문
+     */
+    @PutMapping
+    public ResponseEntity<StoreModifyResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
+        // Bizno RegistrationNumber Confirm API Error checking
+        int resultCode = confirmCompanyRegistrationNumber(request.getCrn());
+        log.debug("BIZNO API RESULT CODE ={}",resultCode);
+        if(resultCode == -10) {
+            throw new NoSuchRegistrationNumberException();
+        } else if(resultCode < 0){
+            throw new BiznoAPIException(resultCode);
+        }
+
+        // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
+        // remove '-'
+        StoreModifyDto dto = new StoreModifyDto(
+                request.getStoreCode(),
+                request.getStoreName(),
+                request.getStorePhone(),
+                request.getCrn().replaceAll("-",""),
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getZipCode(),
+                request.getFullAddress()
+        );
+        // Call modify Method
+        log.debug("StoreModifyRequest = {}", dto);
+        StoreDto storeDto = storeModifyService.modify(dto);
+
+        // Create Response
+        StoreModifyResponse resp = new StoreModifyResponse(
+                SHA256.encrypt(storeDto.concat()),
+                storeDto.getStoreName(),
+                storeDto.getStorePhone(),
+                storeDto.getCrn(),
+                storeDto.getLatitude(),
+                storeDto.getLongitude(),
+                storeDto.getZipCode(),
+                storeDto.getFullAddress()
+        );
         return ResponseEntity.ok(resp);
     }
 

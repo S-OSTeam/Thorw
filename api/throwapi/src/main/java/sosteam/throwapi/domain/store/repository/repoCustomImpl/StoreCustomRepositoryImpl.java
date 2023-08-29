@@ -6,8 +6,10 @@ import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
+import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
@@ -15,6 +17,7 @@ import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Repository
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
@@ -79,6 +82,25 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Optional<Store> searchByStoreCode(String code) {
+        Store store = jpaQueryFactory
+                .selectFrom(qStore)
+                .where(qStore.storeCode.eq(code))
+                .fetchOne();
+        return Optional.ofNullable(store);
+    }
+
+    @Override
+    public Optional<Address> searchAddressByStore(UUID uuid) {
+        Address address = jpaQueryFactory
+                .selectFrom(qAddress)
+                .innerJoin(qAddress.store,qStore)
+                .where(qStore.id.eq(uuid))
+                .fetchOne();
+        return Optional.ofNullable(address);
     }
 
     @Override
