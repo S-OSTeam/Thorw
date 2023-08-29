@@ -46,19 +46,13 @@ public class StoreController {
     @PostMapping
     public void saveStore(@RequestBody @Valid StoreSaveRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
-        int resultCode = confirmCompanyRegistrationNumber(request.getCrn());
-        log.debug("BIZNO API RESULT CODE ={}",resultCode);
-        if(resultCode == -10) {
-            throw new NoSuchRegistrationNumberException();
-        } else if(resultCode < 0){
-            throw new BiznoAPIException(resultCode);
-        }
-
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn());
+        log.info("POST : BIZNO API RESULT : StoreName ={}",storeName);
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
         StoreDto dto = new StoreDto(
-                request.getStoreName(),
+                storeName,
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
@@ -129,19 +123,14 @@ public class StoreController {
     @PutMapping
     public ResponseEntity<StoreModifyResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
-        int resultCode = confirmCompanyRegistrationNumber(request.getCrn());
-        log.debug("BIZNO API RESULT CODE ={}",resultCode);
-        if(resultCode == -10) {
-            throw new NoSuchRegistrationNumberException();
-        } else if(resultCode < 0){
-            throw new BiznoAPIException(resultCode);
-        }
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn());
+        log.info("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         StoreModifyDto dto = new StoreModifyDto(
                 request.getStoreCode(),
-                request.getStoreName(),
+                storeName,
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
@@ -170,19 +159,19 @@ public class StoreController {
     /**
      * BIZNO API를 이용하여 해당 사업자 번호가 국세청에 등록된 번호인지 확인
      * @param number 사업자 등록 번호
-     * @return resultCode
+     * @return result 사업자 등록 번호로 등록된 가게 이름 -> storeName
+     * response.getResultCode() :
      *  -1 : 미등록 사용자 -> Wrong API-KEY
      *  -2 : 파라메터 오류
      *  -3 : 1일 100건 조회수 초과
      *  9 : 기타 오류
      *  -10 : 해당 번호 존재 X
      */
-    public int confirmCompanyRegistrationNumber(String number){
+    public String confirmCompanyRegistrationNumber(String number){
         BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number);
-        int resultCode;
-        if(response == null || response.getTotalCount() == 0) resultCode = -10;
-        else resultCode = response.getResultCode();
-        return resultCode;
+        if( response == null || response.getTotalCount() == 0) throw new NoSuchRegistrationNumberException();
+        if(response.getResultCode() < 0) throw new BiznoAPIException(response.getResultCode());
+        return response.getItems().get(0).getCompany();
     }
 }
 

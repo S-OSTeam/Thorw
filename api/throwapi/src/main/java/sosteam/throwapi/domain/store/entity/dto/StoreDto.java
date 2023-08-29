@@ -50,7 +50,4 @@ public class StoreDto {
                 this.zipCode +
                 this.fullAddress;
     }
-
-
-
 }

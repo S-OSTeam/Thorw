@@ -12,7 +12,7 @@ public class BiznoApiResponse {
     private int resultCode;
     private String resultMsg;
     private int totalCount;
-
+    private List<Items> items;
     @Override
     public String toString() {
         return "BiznoApiResponse{" +
@@ -20,5 +20,13 @@ public class BiznoApiResponse {
                 ", resultMsg='" + resultMsg + '\'' +
                 ", totalCount=" + totalCount +
                 '}';
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class Items {
+        private String company;
     }
 }

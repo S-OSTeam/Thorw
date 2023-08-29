@@ -12,10 +12,6 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 public class StoreSaveRequest {
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z가-힣\\s0-9]*$", message = "영어, 한글, 숫자, 공백만 허용됩니다.")
-    private String storeName;
-
-    @NotNull
     @Pattern(regexp = "^[0-9]*$", message = "전화번호에 숫자가 아닌 문자가 포함되어 있습니다.")
     private String storePhone;
 
