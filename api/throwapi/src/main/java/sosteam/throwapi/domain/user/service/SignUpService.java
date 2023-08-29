@@ -2,6 +2,7 @@ package sosteam.throwapi.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.entity.User;
@@ -15,18 +16,17 @@ import sosteam.throwapi.domain.user.repository.UserRepository;
 @RequiredArgsConstructor
 public class SignUpService {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public User SignUp(UserSaveDto dto){
         // if User already SignUp
         // return 409 : Conflict http status
         log.debug("Start SignUp User = {}", dto);
-        User userExist = userRepository.findByInputId(dto.getInputId());
-        if(userExist == null) throw new UserAlreadyExistException();
 
         // 1. create User Entity
         User user = new User(
                 dto.getInputId(),
-                dto.getInputPassWord(),
+                passwordEncoder.encode(dto.getInputPassWord()),
                 dto.getSnsId(),
                 dto.getSnsCategory()
         );
@@ -46,6 +46,15 @@ public class SignUpService {
         user.modifyUserInfo(userInfo);
         userInfo.modifyUser(user);
 
-        return userRepository.save(user);
+        // 이미 존재하는 회원을 추가 하려고 할 때 409 error
+        User userResult = null;
+        try{
+            userResult = userRepository.save(user);
+        } catch (Exception e){
+            log.error("Save User already exist");
+            throw new UserAlreadyExistException();
+        }
+
+        return userResult;
     }
 }
