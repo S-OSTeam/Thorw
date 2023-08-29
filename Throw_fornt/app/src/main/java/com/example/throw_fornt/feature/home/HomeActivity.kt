@@ -16,14 +16,15 @@ import com.example.throw_fornt.util.common.BindingActivity
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-
 class HomeActivity : BindingActivity<ActivityHomeBinding>(R.layout.activity_home) {
+
     private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
-        setupViewModel()
         getHashKey() // 여기서 로그로 나온 디버그용 해시키 값을 카카오 콘솔에 등록할 것
+        setupViewModel()
     }
 
     private fun setupViewModel() {
