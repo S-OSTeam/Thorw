@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.order.entity.Gifticon;
-import sosteam.throwapi.domain.order.exception.DuplicateGiftcionException;
 import sosteam.throwapi.domain.order.exception.ValidateGifticonException;
 import sosteam.throwapi.domain.order.repository.repo.GifticonRepository;
 
@@ -24,7 +23,6 @@ public class GifticonCreateService {
     public Gifticon createGifticon(Gifticon gifticon) {
         log.debug("GIFTICON CREATE");
         validateGifticon(gifticon); // 유효성 검사
-        checkGifticonDuplication(gifticon); // 중복 검사
         return gifticonRepository.save(gifticon);
     }
 
@@ -35,16 +33,6 @@ public class GifticonCreateService {
     private void validateGifticon(Gifticon gifticon) {
         if (gifticon.getGiftTraceId() == null || gifticon.getGiftTraceId().isEmpty()) {
             throw new ValidateGifticonException();
-        }
-    }
-
-    /**
-     * 중복 검사
-     * @param gifticon
-     */
-    private void checkGifticonDuplication(Gifticon gifticon) {
-        if (gifticonRepository.searchByGiftTraceId(gifticon.getGiftTraceId()).isPresent()) {
-            throw new DuplicateGiftcionException();
         }
     }
 }
