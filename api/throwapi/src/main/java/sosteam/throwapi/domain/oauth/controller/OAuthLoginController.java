@@ -17,9 +17,10 @@ import sosteam.throwapi.domain.oauth.service.kakaoImpl.KakaoLoginParamsService;
 @Slf4j
 public class OAuthLoginController {
     private final OAuthLoginService oAuthLoginService;
+    
 
     @PostMapping("/kakao")
-    public ResponseEntity<AuthTokens> loginKakao(@RequestBody KakaoLoginParamsService params){
+    public ResponseEntity<AuthTokens> loginKakao(@RequestBody KakaoLoginParamsService params) {
         log.debug("in loginKakao");
         AuthTokens result = oAuthLoginService.login(params);
 
