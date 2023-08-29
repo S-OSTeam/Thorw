@@ -4,12 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.oauth.entity.AuthTokens;
+import sosteam.throwapi.domain.oauth.entity.dto.OAuthLoginDto;
 import sosteam.throwapi.domain.oauth.exception.NonExistentUserInKakao;
+import sosteam.throwapi.domain.oauth.exception.NonValidateTokenException;
 import sosteam.throwapi.domain.oauth.exception.NotSignUpUserException;
+import sosteam.throwapi.domain.oauth.service.kakaoImpl.KakaoLoginParamsService;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
+import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.UUID;
 
@@ -18,20 +22,23 @@ import java.util.UUID;
 @Slf4j
 public class OAuthLoginService {
     private final UserRepository userRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final AuthTokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final JwtTokenService jwtTokenService;
 
 
-    public AuthTokens login(OAuthLoginParamsService params){
-        log.debug("in login");
-        log.debug("params = {}", params);
+    public AuthTokens login(OAuthLoginDto oAuthLoginDto){
+        log.debug("in login service");
+        log.debug("oAuthLoginDto = {}", oAuthLoginDto);
 
-        String accessToken = oAuthApiClientService.requestAccessToken(params);
-        log.debug("accessToken = {}", accessToken);
+        // 카카오 token 의 유효성 검사
+        if(!oAuthApiClientService.requestTokenValidation(oAuthLoginDto.getAccessToken())) throw new NonValidateTokenException();
 
-        String snsId = oAuthApiClientService.requestOauthInfo(accessToken); // try catch 로 snsId 가 null 인지 확인 하세욧
+        // 요청으로 들어 온 kakao accessToken 을 이용해 kakao 고유 id 를 뽑아 냄
+        String snsId = oAuthApiClientService.requestOAuthId(oAuthLoginDto.getAccessToken());
 
+        // token 으로 부터 얻어낸 Id 값을 확인 함
         if(snsId == null){
             throw new NonExistentUserInKakao();
         }
@@ -52,6 +59,7 @@ public class OAuthLoginService {
                             .accessToken(authTokens.getAccessToken())
                             .build()
             );
+            log.debug("oauth login Success");
         } else {
             throw new NotSignUpUserException();
         }

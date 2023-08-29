@@ -30,7 +30,7 @@ public class AuthTokensGenerateService {
         String accessToken = jwtTokenService.generate(subject, accessTokenExpiredAt);
         String refreshToken = jwtTokenService.generate(subject, refreshTokenExpiredAt);
 
-        return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+        return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
     public Long extractMemberId(String accessToken) {

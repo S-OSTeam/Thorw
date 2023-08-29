@@ -28,7 +28,7 @@ public class LoginController {
 
     @PostMapping("/signUp")
     public ResponseEntity<String> SignUp(@RequestBody UserSaveRequest params){
-        UserSaveDto dto = new UserSaveDto(
+        UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassWord(),
                 params.getSnsId(),
@@ -40,7 +40,7 @@ public class LoginController {
                 params.getEmail()
         );
 
-        signUpService.SignUp(dto);
+        signUpService.SignUp(userSaveDto);
         return ResponseEntity.ok("정상 회원가입 완료");
     }
 }

@@ -67,15 +67,13 @@ public class KakaoApiClientService implements OAuthApiClientService {
                         .retrieve()
                         .bodyToMono(Map.class)
                         .block();
-
+        log.debug("response = {}", response);
         assert response != null;
         return response.get("access_token").toString();
     }
 
     @Override
-    public String requestOauthInfo(String accessToken) {
-        String url = apiUrl + "/v2/user/me";
-
+    public String requestOAuthId(String accessToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.set("Authorization", "Bearer " + accessToken);
@@ -93,9 +91,31 @@ public class KakaoApiClientService implements OAuthApiClientService {
                         .retrieve()
                         .bodyToMono(Map.class)
                         .block();
-
-
         return response.get("id").toString();
     }
 
+    @Override
+    public boolean requestTokenValidation(String accessToken){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.set("Authorization", "Bearer " + accessToken);
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl(apiUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .build();
+        try{
+            Map<String, Object> response =
+                    webClient.get()
+                            .uri("/v1/user/access_token_info")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .retrieve()
+                            .bodyToMono(Map.class)
+                            .block();
+        } catch (Exception e){
+            log.error("fail to request kakao token info = {}", e.getMessage());
+            return false;
+        }
+        return true;
+    }
 }

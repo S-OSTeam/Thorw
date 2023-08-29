@@ -4,14 +4,18 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
+import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 
 import java.security.Key;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -62,7 +66,6 @@ public class JwtTokenService {
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
-
         return false;
     }
 }
