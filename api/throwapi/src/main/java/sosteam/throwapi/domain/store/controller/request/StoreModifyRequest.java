@@ -2,15 +2,14 @@ package sosteam.throwapi.domain.store.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class StoreSaveRequest {
+public class StoreModifyRequest {
+    @NotNull
+    private String storeCode;
+
     @NotNull
     @Pattern(regexp = "^[0-9]*$", message = "전화번호에 숫자가 아닌 문자가 포함되어 있습니다.")
     private String storePhone;

@@ -2,7 +2,7 @@ package sosteam.throwapi.domain.store.controller;
 
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
-import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 
 import java.util.Random;
@@ -43,15 +43,16 @@ class StoreControllerTest {
             String s2 = String.valueOf(r.nextInt()%100);
             String s3 = String.valueOf(r.nextInt()%100000);
             String rn = s1 + "-" + s2 + "-" + s3;
-            StoreSaveDto storeSaveDto = new StoreSaveDto(
+            StoreDto storeDto = new StoreDto(
                     "TestStore" + String.valueOf(i),
+                    "010-1234-1234",
                     rn,
                     lon,
                     lat,
                     "test",
                     "test"
             );
-            storeCreateService.saveStore(storeSaveDto);
+            storeCreateService.saveStore(storeDto);
         }
     }
 }

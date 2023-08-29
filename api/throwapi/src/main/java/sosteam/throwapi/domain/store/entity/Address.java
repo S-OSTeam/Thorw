@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
@@ -47,5 +46,13 @@ public class Address extends PrimaryKeyEntity {
     public Store modifyStore(Store store){
         this.store = store;
         return this.store;
+    }
+
+    public void modify(Point location, double latitude, double longitude, String fullAddress, String zipCode) {
+        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.fullAddress = fullAddress;
+        this.zipCode = zipCode;
     }
 }
