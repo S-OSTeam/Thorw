@@ -59,10 +59,10 @@ HTTP/1.1 401 Unauthorized
 <!--
 하나 더 추가 한다면 아래처럼 계속 추가
 -->
-<details markdown="1" style="margin-left:14px">
-<summary>[url]</summary>
+<details markdown="1">
+<summary>[summary]</summary>
 
-**[]**
+**[url]**
 ----
 describtion
 
@@ -74,10 +74,8 @@ describtion
 
   [`POST` | 'GET' | `DELETE`]
 
-* **Response**
-
-  **Required:**
-
+* **Request Body**
+  @Valid()
   `id=[String] - 자원 일련번호`  
   `.`  
   `.`  
@@ -94,7 +92,6 @@ Content-type: application/json;charset=UTF-8
    .
 }
 ```
-
 * **error Response:**
 ```
 HTTP/1.1 401 Unauthorized
