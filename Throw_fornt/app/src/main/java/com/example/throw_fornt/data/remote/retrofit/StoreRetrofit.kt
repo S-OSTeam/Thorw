@@ -30,8 +30,8 @@ class StoreRetrofit {
                 .build()
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
             request.registerRequest(
-                store.address_id, store.location_id, store.name,
-                store.company_registration_number, store.type, store.second_password
+                store.addrressId, store.locationId, store.name,
+                store.bno, store.type, store.secondPassword
             ).enqueue(object: Callback<StoreResponse>{
                 override fun onResponse(
                     call: Call<StoreResponse>,

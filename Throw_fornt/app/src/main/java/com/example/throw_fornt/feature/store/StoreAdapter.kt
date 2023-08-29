@@ -12,8 +12,7 @@ import com.example.throw_fornt.R
 import com.example.throw_fornt.data.model.response.StoreModel
 
 //RecyclerView를 list_view_item.xml을 연결해주기 위한 adapter이다
-class StoreAdapter(val items: ArrayList<StoreModel>, val onClick: (StoreModel)->Unit): RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
-    private lateinit var itemClickListener : OnItemClickListener
+class StoreAdapter(private var items: ArrayList<StoreModel>, val onClick: (StoreModel)->Unit): RecyclerView.Adapter<StoreAdapter.StoreViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoreViewHolder{
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_view_item, parent,false)
         return StoreViewHolder(view)
@@ -25,16 +24,12 @@ class StoreAdapter(val items: ArrayList<StoreModel>, val onClick: (StoreModel)->
         holder.storeType.text = items[position].type
         holder.itemView.setOnClickListener{
             onClick(items[position])
-            //itemClickListener.onClick(it, position)
         }
     }
 
-    interface OnItemClickListener {
-        //fun onClick(v: View, position: Int)
-    }
-    // (3) 외부에서 클릭 시 이벤트 설정
-    fun setItemClickListener(onItemClickListener: OnItemClickListener) {
-        this.itemClickListener = onItemClickListener
+    fun updateList(list: ArrayList<StoreModel>){
+        items = list
+        notifyDataSetChanged()
     }
 
     //items의 갯수를 반환하여 RecyclerView에 나타나는 총 갯수를 보여줌

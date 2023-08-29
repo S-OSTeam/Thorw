@@ -11,12 +11,12 @@ interface StoreRequest {
      */
     @GET("/api/...")
     fun registerRequest(
-        @Query("address_id") address_id : String,
-        @Query("location_id") loction_id : String,
+        @Query("address_id") addrressId : String,
+        @Query("location_id") locationId : String,
         @Query("name") name : String,
-        @Query("company_registration_number") company_registration_number : String,
+        @Query("company_registration_number") bno : String,
         @Query("type") type : String,
-        @Query("second_password") second_password : String,
+        @Query("second_password") secondPassword : String,
     ) : Call<StoreResponse>
 
     /*
