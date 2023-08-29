@@ -58,15 +58,15 @@ class MapViewModel : ViewModel() {
             bottomLeft.longitude,
         )
         visibleMapMinQuarterDistance = (listOf(widthDistance, heightDistance).min() / 8)
+        Log.d("mendel", "맵외곽 보이는 거리: $visibleMapMinQuarterDistance")
     }
 
     fun updateCurPosition(geoPoint: GeoPoint) {
         if (updateCurPositionLoading) return
         updateCurPositionLoading = true
-        val adjustGeoPoint = geoPoint.adjustGeoPoint()
         if (_lastUserPoint.value == null) {
-            _curCameraCenterPoint.value = adjustGeoPoint
-            _lastUserPoint.value = adjustGeoPoint
+            _curCameraCenterPoint.value = geoPoint
+            _lastUserPoint.value = geoPoint
             updateCurPositionLoading = false
             refreshNearbyStores()
             return
@@ -75,14 +75,13 @@ class MapViewModel : ViewModel() {
             val distanceFromCameraCenter = DistanceManager.getDistance(
                 cameraCenterPoint.latitude,
                 cameraCenterPoint.longitude,
-                adjustGeoPoint.latitude,
-                adjustGeoPoint.longitude,
+                geoPoint.latitude,
+                geoPoint.longitude,
             )
-            Log.d("mendel", "카메라 중심까지 거리: $distanceFromCameraCenter")
             if (distanceFromCameraCenter > visibleMapMinQuarterDistance) {
-                _curCameraCenterPoint.value = adjustGeoPoint
+                _curCameraCenterPoint.value = geoPoint
             }
-            _lastUserPoint.value = adjustGeoPoint
+            _lastUserPoint.value = geoPoint
         }
         updateCurPositionLoading = false
     }
@@ -112,12 +111,22 @@ class MapViewModel : ViewModel() {
 
         for (store in this) {
             val roundedPoint = store.geoPoint.adjustGeoPoint(precision)
-
             Log.d("mendel", "${store.storeName}, 조정된 값: $roundedPoint")
-            if (!groupedStores.containsKey(roundedPoint)) {
-                groupedStores[roundedPoint] = mutableListOf()
+
+            var addToGroup = false
+            groupedStores.keys.forEach { keyGeoPoint ->
+                if (roundedPoint.latitude in keyGeoPoint.latitude - ADJUST_ERROR_RANGE..keyGeoPoint.latitude + ADJUST_ERROR_RANGE &&
+                    roundedPoint.longitude in keyGeoPoint.longitude - ADJUST_ERROR_RANGE..keyGeoPoint.longitude + ADJUST_ERROR_RANGE
+                ) {
+                    groupedStores[keyGeoPoint]?.add(store)
+                    addToGroup = true
+                    return@forEach
+                }
             }
-            groupedStores[roundedPoint]?.add(store)
+
+            if (addToGroup.not()) {
+                groupedStores[roundedPoint] = mutableListOf(store)
+            }
         }
 
         return groupedStores
@@ -178,6 +187,7 @@ class MapViewModel : ViewModel() {
 
     companion object {
         private const val DEFAULT_PRECISION = 5
+        private const val ADJUST_ERROR_RANGE = 0.00001
         private fun fakeDataAroundStores(userPoint: GeoPoint) = listOf(
             MapStoreInfo(
                 1L,

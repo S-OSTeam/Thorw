@@ -40,13 +40,17 @@ import net.daum.mf.map.api.MapView
 
 class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
+    @SuppressLint("MissingPermission")
     private val locationResultLauncher: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions(),
         ) { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) return@registerForActivityResult
-
+            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
+                requestLocationUpdateService()
+                return@registerForActivityResult
+            }
             if (permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                requestLocationUpdateService()
                 showSnackBar(R.string.map_location_permission_upgrade_require_message) { navigateToPermissionSetting() }
             } else {
                 showSnackBar(R.string.map_location_permission_require_message) { navigateToPermissionSetting() }
@@ -202,16 +206,9 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         }.toTypedArray()
     }
 
-    @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
-
-        if (isAllowedLocationPermission().not()) return
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper(),
-        )
+        requestLocationUpdateService()
     }
 
     override fun onStop() {
@@ -222,6 +219,16 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onDestroyView() {
         super.onDestroyView()
         curPositionMarker = null
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocationUpdateService() {
+        if (isAllowedLocationPermission().not()) return
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper(),
+        )
     }
 
     // 위치 권한 관련 로직들
