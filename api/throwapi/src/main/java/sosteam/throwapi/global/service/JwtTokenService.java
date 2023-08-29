@@ -69,4 +69,10 @@ public class JwtTokenService {
         }
         return false;
     }
+
+//    //accessToken 재발급을 위해 refreshToken 의 권한 확인
+//    public boolean checkRefreshTokenPermission(String refreshToken){
+//        Claims claims = this.parseClaims(refreshToken);
+//        claims.
+//    }
 }

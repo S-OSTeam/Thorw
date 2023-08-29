@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import sosteam.throwapi.domain.oauth.service.OAuthApiClientService;
 import sosteam.throwapi.domain.oauth.service.OAuthLoginParamsService;
 import sosteam.throwapi.global.entity.SNSCategory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -40,19 +42,19 @@ public class KakaoApiClientService implements OAuthApiClientService {
     }
 
     @Override
-    public String requestAccessToken(OAuthLoginParamsService params){
-        log.debug("requestAccessSuccess {}", params);
+    public String reissueAccessToken(String refreshToken){
+        log.info("in reissueAccessToken");
+        log.debug("refreshToken = {}", refreshToken);
 
-        MultiValueMap<String, String> body = params.makeBody();
-        body.add("grant_type", GRANT_TYPE);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
         body.add("client_id", clientId);
-        body.add("redirect_uri", redirectURI);
+        body.add("refresh_token", refreshToken);
 
         for (String s : body.keySet()) {
-            log.debug("AccessToken body key {}", s);
-            log.debug("AccessToken body value {}", body.get(s));
+            log.info("AccessToken body key {}", s);
+            log.info("AccessToken body value {}", body.get(s));
         }
-
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(authUrl)
@@ -118,4 +120,6 @@ public class KakaoApiClientService implements OAuthApiClientService {
         }
         return true;
     }
+
+
 }

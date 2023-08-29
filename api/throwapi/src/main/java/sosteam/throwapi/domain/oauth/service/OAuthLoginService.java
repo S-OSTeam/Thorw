@@ -32,11 +32,27 @@ public class OAuthLoginService {
         log.debug("in login service");
         log.debug("oAuthLoginDto = {}", oAuthLoginDto);
 
+        String snsId = null;
+        String accessToken = null;
+
         // 카카오 token 의 유효성 검사
-        if(!oAuthApiClientService.requestTokenValidation(oAuthLoginDto.getAccessToken())) throw new NonValidateTokenException();
+        if(!oAuthApiClientService.requestTokenValidation(oAuthLoginDto.getAccessToken())){
+            //accessToken 이 유효하지 않을 때 refreshToken 를 통해 재 발급
+            try{
+                accessToken = oAuthApiClientService.reissueAccessToken(oAuthLoginDto.getRefreshToken());
+            } catch (Exception e){
+                log.debug("accessToken, refreshToken are nonValidation");
+                throw new NonValidateTokenException();
+            }
+        }
 
         // 요청으로 들어 온 kakao accessToken 을 이용해 kakao 고유 id 를 뽑아 냄
-        String snsId = oAuthApiClientService.requestOAuthId(oAuthLoginDto.getAccessToken());
+        // 이때 refreshToken 을 이용해 accessToken 을 재 발급 받았다면 재 입력된 AccessToken 이 아닌 재발급 된 accessToken 을 사용한다.
+        if(accessToken == null){
+            snsId = oAuthApiClientService.requestOAuthId(oAuthLoginDto.getAccessToken());
+        } else {
+            snsId = oAuthApiClientService.requestOAuthId(accessToken);
+        }
 
         // token 으로 부터 얻어낸 Id 값을 확인 함
         if(snsId == null){
@@ -65,5 +81,4 @@ public class OAuthLoginService {
         }
         return authTokens;
     }
-
 }

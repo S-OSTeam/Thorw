@@ -4,7 +4,7 @@ import sosteam.throwapi.global.entity.SNSCategory;
 
 public interface OAuthApiClientService {
     SNSCategory oAuthProvider();
-    String requestAccessToken(OAuthLoginParamsService params);
+    String reissueAccessToken(String refreshToken);
     String requestOAuthId(String accessToken);
     boolean requestTokenValidation(String accessToken);
 }
