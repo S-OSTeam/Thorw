@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
+import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
@@ -56,5 +57,13 @@ public class SignUpService {
         }
 
         return userResult;
+    }
+
+    public boolean checkIdDup(IdDuplicationDto idDuplicationDto){
+        User user = userRepository.findByInputId(idDuplicationDto.getInputId());
+        if(user != null){
+            return false;
+        }
+        return true;
     }
 }

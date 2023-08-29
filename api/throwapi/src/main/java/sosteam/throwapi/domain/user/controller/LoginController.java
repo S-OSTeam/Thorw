@@ -7,7 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.user.controller.request.IdDuplicateRequest;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
+import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
+import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.service.SignUpService;
 import sosteam.throwapi.global.entity.Role;
@@ -44,5 +47,15 @@ public class LoginController {
 
         signUpService.SignUp(userSaveDto);
         return ResponseEntity.ok("정상 회원가입 완료");
+    }
+
+    @PostMapping("/idDupTest")
+    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
+        IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
+                params.getInputId()
+        );
+
+        IdDuplicateResponse result = new IdDuplicateResponse(signUpService.checkIdDup(idDuplicationDto));
+        return ResponseEntity.ok(result);
     }
 }
