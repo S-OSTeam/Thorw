@@ -85,10 +85,10 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<Store> searchByStoreCode(String code) {
+    public Optional<Store> searchByExtStoreId(UUID uuid) {
         Store store = jpaQueryFactory
                 .selectFrom(qStore)
-                .where(qStore.storeCode.eq(code))
+                .where(qStore.extStoreId.eq(uuid))
                 .fetchOne();
         return Optional.ofNullable(store);
     }

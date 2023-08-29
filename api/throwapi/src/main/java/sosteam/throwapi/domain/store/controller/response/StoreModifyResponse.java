@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class StoreModifyResponse {
-    private String storeCode;
     private String storeName;
     private String storePhone;
     private String crn;
@@ -13,8 +12,7 @@ public class StoreModifyResponse {
     private String zipCode;
     private String fullAddress;
 
-    public StoreModifyResponse(String storeCode, String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
-        this.storeCode = storeCode;
+    public StoreModifyResponse(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.crn = crn;

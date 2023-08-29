@@ -16,7 +16,7 @@ public interface StoreCustomRepository {
 
     Optional<StoreDto> searchByCRN(String crn);
 
-    Optional<Store> searchByStoreCode(String code);
+    Optional<Store> searchByExtStoreId(UUID uuid);
 
     Optional<Address> searchAddressByStore(UUID uuid);
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.store.controller.request.*;
 import sosteam.throwapi.domain.store.controller.response.StoreModifyResponse;
 import sosteam.throwapi.domain.store.controller.response.StoreResponse;
+import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
@@ -20,9 +21,9 @@ import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 import sosteam.throwapi.domain.store.service.StoreModifyService;
-import sosteam.throwapi.domain.store.util.SHA256;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +45,7 @@ public class StoreController {
     private final StoreModifyService storeModifyService;
     private final BiznoAPI biznoAPI;
     @PostMapping
-    public void saveStore(@RequestBody @Valid StoreSaveRequest request) {
+    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.info("POST : BIZNO API RESULT : StoreName ={}",storeName);
@@ -62,7 +63,9 @@ public class StoreController {
         );
         log.debug("StoreSaveRequest = {}", request);
 
-        storeCreateService.saveStore(dto);
+        Store store = storeCreateService.saveStore(dto);
+
+        return ResponseEntity.ok(store.getExtStoreId());
     }
 
     /**
@@ -129,7 +132,7 @@ public class StoreController {
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         StoreModifyDto dto = new StoreModifyDto(
-                request.getStoreCode(),
+                request.getExtStoreId(),
                 storeName,
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
@@ -144,7 +147,6 @@ public class StoreController {
 
         // Create Response
         StoreModifyResponse resp = new StoreModifyResponse(
-                SHA256.encrypt(storeDto.concat()),
                 storeDto.getStoreName(),
                 storeDto.getStorePhone(),
                 storeDto.getCrn(),

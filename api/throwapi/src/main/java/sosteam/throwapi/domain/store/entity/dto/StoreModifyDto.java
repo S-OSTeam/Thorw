@@ -3,10 +3,12 @@ package sosteam.throwapi.domain.store.entity.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 public class StoreModifyDto {
-    private String storeCode;
+    private UUID extStoreId;
     private String storeName;
     private String storePhone;
     private String crn;
@@ -14,16 +16,4 @@ public class StoreModifyDto {
     private Double longitude;
     private String zipCode;
     private String fullAddress;
-
-    public String concat() {
-        String lat = String.valueOf(this.latitude);
-        String lon = String.valueOf(this.longitude);
-        return this.storeName +
-                this.storePhone +
-                this.crn +
-                lat +
-                lon +
-                this.zipCode +
-                this.fullAddress;
-    }
 }

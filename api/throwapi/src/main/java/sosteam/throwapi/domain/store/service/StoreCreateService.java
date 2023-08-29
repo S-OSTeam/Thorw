@@ -10,9 +10,9 @@ import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.exception.StoreAlreadyExistException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
-import sosteam.throwapi.domain.store.util.SHA256;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,11 +27,11 @@ public class StoreCreateService {
         Optional<StoreDto> result = storeGetService.isExistByCRN(storeDto.getCrn());
         if (result.isPresent()) throw new StoreAlreadyExistException();
 
-        // Make Store Code using sha256
-        String storeCode= SHA256.encrypt(storeDto.concat());
+        // Make external Store id using UUID
+        UUID extStoreId = UUID.randomUUID();
         // 1: Create Store Entity
         Store store = new Store(
-                storeCode,
+                extStoreId,
                 storeDto.getStoreName(),
                 storeDto.getStorePhone(),
                 storeDto.getCrn()

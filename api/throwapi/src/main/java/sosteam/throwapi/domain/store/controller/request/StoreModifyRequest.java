@@ -5,10 +5,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
+import java.util.UUID;
+
 @Data
 public class StoreModifyRequest {
     @NotNull
-    private String storeCode;
+    private UUID extStoreId;
 
     @NotNull
     @Pattern(regexp = "^[0-9]*$", message = "전화번호에 숫자가 아닌 문자가 포함되어 있습니다.")
