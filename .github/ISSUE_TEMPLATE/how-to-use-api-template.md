@@ -12,10 +12,7 @@ assignees: ''
 <details markdown="1">
 <summary>[summary]</summary>
 
-<details markdown="1" style="margin-left:14px">
-<summary>[url]</summary>
-
-**[]**
+**[url]**
 ----
 describtion
 
