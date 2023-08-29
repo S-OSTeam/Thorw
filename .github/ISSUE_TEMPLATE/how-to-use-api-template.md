@@ -42,7 +42,18 @@ Content-type: application/json;charset=UTF-8
    .
 }
 ```
-
+* **error Response:**
+```
+HTTP/1.1 401 Unauthorized
+{
+  "errors": [
+    {
+      "status": "401",
+      "message":  "Unauthorized"
+    }
+  ]
+}
+```
 </details>
 
 <!--
