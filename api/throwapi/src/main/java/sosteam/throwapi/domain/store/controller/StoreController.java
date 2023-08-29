@@ -112,12 +112,12 @@ public class StoreController {
 
     /**
      * 검색 이름이 포함된 가게들의 정보를 반환
-     * @param storeNameRequest 가게이름
+     * @param request 가게이름
      * @return 가게 정보들
      */
     @PostMapping("/name")
-    public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest storeNameRequest) {
-        Set<StoreDto> dtos = storeGetService.searchStoreByName(storeNameRequest.getStoreName());
+    public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest request) {
+        Set<StoreDto> dtos = storeGetService.searchStoreByName(request.getStoreName());
         Set<StoreResponse> resp = dtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }
