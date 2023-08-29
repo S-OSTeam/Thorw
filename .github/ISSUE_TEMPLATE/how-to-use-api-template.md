@@ -24,9 +24,7 @@ describtion
 
   [`POST` | 'GET' | `DELETE`]
 
-* **Response**
-
-  **Required:**
+* **Request Body**
 
   `id=[String] - 자원 일련번호`  
   `.`  
