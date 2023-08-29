@@ -13,7 +13,6 @@ import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.exception.WrongStoreCodeException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
-import sosteam.throwapi.domain.store.util.SHA256;
 
 import java.util.Optional;
 
@@ -29,21 +28,17 @@ public class StoreModifyService {
      * @return 변경된 가게 코드와 가게 데이터
      * 만약 기존 가게 코드가 올바르지 않으면 예외를 발생시킨다.
      *
-     * 각 가게는 가게의 정보(가게,주소)가 합쳐진 후 해쉬 함수를 거친 가게 코드를 가진다
+     * 각 가게는 외부 노출 용 UUID를 가진다.
      * 사용자는 해당 가게 코드를 통해 어느 가게를 고칠것인지 알려준다.
      * 만약 가게 코드가 올바르지 않으면 데이터의 무결성이 안지켜진것이므로 수정 시도를 막는다.
      */
     @Transactional
     public StoreDto modify(StoreModifyDto dto) {
         // Find Store By given storeId
-        Optional<Store> optionalStore = storeRepository.searchByStoreCode(dto.getStoreCode());
+        Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
         if(optionalStore.isEmpty()) throw new WrongStoreCodeException();
         Store store = optionalStore.get();
-        log.info("Previous HashCode : {}", dto.getStoreCode());
-        log.info("Created New HashCode : {}",SHA256.encrypt(dto.concat()));
-        String newStoreCode = SHA256.encrypt(dto.concat());
         store.modify(
-                newStoreCode,
                 dto.getStoreName(),
                 dto.getStorePhone(),
                 dto.getCrn()

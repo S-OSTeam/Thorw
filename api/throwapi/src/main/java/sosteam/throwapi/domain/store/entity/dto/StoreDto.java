@@ -38,16 +38,4 @@ public class StoreDto {
                 this.getFullAddress()
         );
     }
-
-    public String concat() {
-        String lat = String.valueOf(this.latitude);
-        String lon = String.valueOf(this.longitude);
-        return this.storeName +
-                this.storePhone +
-                this.crn +
-                lat +
-                lon +
-                this.zipCode +
-                this.fullAddress;
-    }
 }

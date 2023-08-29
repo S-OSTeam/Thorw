@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
+import java.util.UUID;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Store extends PrimaryKeyEntity {
     @NotNull
-    private String storeCode;
+    private UUID extStoreId;
 
     @NotNull
     private String storeName;
@@ -25,8 +27,8 @@ public class Store extends PrimaryKeyEntity {
     @NotNull
     private String companyRegistrationNumber;
 
-    public Store(String storeCode, String storeName, String storePhone, String companyRegistrationNumber) {
-        this.storeCode = storeCode;
+    public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber) {
+        this.extStoreId = extStoreId;
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.companyRegistrationNumber = companyRegistrationNumber;
@@ -51,8 +53,7 @@ public class Store extends PrimaryKeyEntity {
         return this.address;
     }
 
-    public void modify(String storeCode, String storeName, String storePhone, String companyRegistrationNumber) {
-        this.storeCode = storeCode;
+    public void modify(String storeName, String storePhone, String companyRegistrationNumber) {
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.companyRegistrationNumber = companyRegistrationNumber;
