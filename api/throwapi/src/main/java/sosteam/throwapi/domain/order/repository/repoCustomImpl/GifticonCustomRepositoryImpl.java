@@ -22,9 +22,4 @@ public class GifticonCustomRepositoryImpl implements GifticonCustomRepository {
                 .fetchOne();
         return Optional.ofNullable(foundGifticon);
     }
-
-    @Override
-    public Gifticon saveGifticonWithTraceId(String reserveTraceId) {
-
-    }
 }

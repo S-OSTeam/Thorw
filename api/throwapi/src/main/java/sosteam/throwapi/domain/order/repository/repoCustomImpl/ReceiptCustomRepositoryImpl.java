@@ -13,6 +13,7 @@ import sosteam.throwapi.domain.order.repository.repo.ReceiptRepository;
 import sosteam.throwapi.domain.order.repository.repoCustom.ReceiptCustomRepository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,14 +29,14 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
     private KakaoGifticonOrder kakaoGifticonOrder;
 
     @Override
-    public Set<Receipt> searchByUserId(UUID userId) {
-        return new HashSet<>(jpaQueryFactory.selectFrom(receipt)
+    public Optional<Set<Receipt>> searchByUserId(UUID userId) {
+        return Optional.ofNullable(new HashSet<>(jpaQueryFactory.selectFrom(receipt)
                 .where(receipt.user.id.eq(userId))
-                .fetch());
+                .fetch()));
     }
 
     @Override
-    public Gifticon createGifticonAndReceipt(String templateToken) {
+    public Optional<Gifticon> createGifticonAndReceipt(String templateToken) {
         // TODO: 2023-08-29 템플릿 변경, user 정보 추가(수형이 코드 필요)
         GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789");
 
