@@ -41,9 +41,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
-                                qStore.name,
-                                qStore.phone,
-                                qStore.owner,
+                                qStore.storeName,
+                                qStore.storePhone,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
@@ -65,9 +64,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
-                                qStore.name,
-                                qStore.phone,
-                                qStore.owner,
+                                qStore.storeName,
+                                qStore.storePhone,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
@@ -91,9 +89,8 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         .select(
                                 Projections.constructor(
                                         StoreDto.class,
-                                        qStore.name,
-                                        qStore.phone,
-                                        qStore.owner,
+                                        qStore.storeName,
+                                        qStore.storePhone,
                                         qStore.companyRegistrationNumber,
                                         qAddress.latitude,
                                         qAddress.longitude,
@@ -103,7 +100,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         )
                         .from(qStore)
                         .innerJoin(qStore.address,qAddress)
-                        .where(qStore.name.contains(name))
+                        .where(qStore.storeName.contains(name))
                         .fetch()
         );
         return Optional.of(result);

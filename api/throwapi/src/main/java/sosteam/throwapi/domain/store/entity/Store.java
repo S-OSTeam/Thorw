@@ -14,21 +14,18 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 public class Store extends PrimaryKeyEntity {
 
     @NotNull
-    private String name;
+    private String storeName;
 
     @NotNull
-    private String phone;
+    private String storePhone;
 
-    @NotNull
-    private String owner;
 
     @NotNull
     private String companyRegistrationNumber;
 
-    public Store(String name, String phone, String owner, String companyRegistrationNumber) {
-        this.name = name;
-        this.phone = phone;
-        this.owner = owner;
+    public Store(String storeName, String storePhone, String companyRegistrationNumber) {
+        this.storeName = storeName;
+        this.storePhone = storePhone;
         this.companyRegistrationNumber = companyRegistrationNumber;
     }
 

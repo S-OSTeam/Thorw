@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StoreSaveDto {
-    private String name;
-    private String phone;
-    private String owner;
+    private String storeName;
+    private String storePhone;
     private String crn;
     private Double latitude;
     private Double longitude;

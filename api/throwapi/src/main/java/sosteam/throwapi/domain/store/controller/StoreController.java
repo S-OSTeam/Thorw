@@ -60,9 +60,8 @@ public class StoreController {
         // remove '-'
         // Call save Service
         StoreSaveDto dto = new StoreSaveDto(
-                request.getName(),
-                request.getPhone(),
-                request.getOwner(),
+                request.getStoreName(),
+                request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
                 request.getLongitude(),
@@ -118,7 +117,7 @@ public class StoreController {
      */
     @PostMapping("/name")
     public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest storeNameRequest) {
-        Set<StoreDto> dtos = storeGetService.searchStoreByName(storeNameRequest.getName());
+        Set<StoreDto> dtos = storeGetService.searchStoreByName(storeNameRequest.getStoreName());
         Set<StoreResponse> resp = dtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }

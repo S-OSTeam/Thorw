@@ -29,9 +29,8 @@ public class StoreCreateService {
 
         // 1: Create Store Entity
         Store store = new Store(
-                storeSaveDto.getName(),
-                storeSaveDto.getPhone(),
-                storeSaveDto.getOwner(),
+                storeSaveDto.getStoreName(),
+                storeSaveDto.getStorePhone(),
                 storeSaveDto.getCrn()
         );
 

@@ -13,15 +13,11 @@ import org.hibernate.validator.constraints.Range;
 public class StoreSaveRequest {
     @NotNull
     @Pattern(regexp = "^[a-zA-Z가-힣\\s0-9]*$", message = "영어, 한글, 숫자, 공백만 허용됩니다.")
-    private String name;
+    private String storeName;
 
     @NotNull
     @Pattern(regexp = "^[0-9]*$", message = "전화번호에 숫자가 아닌 문자가 포함되어 있습니다.")
-    private String phone;
-
-    @NotNull
-    @Pattern(regexp = "^[a-zA-Z가-힣\\s]*$", message = "영어, 한글, 공백만 허용됩니다.")
-    private String owner;
+    private String storePhone;
 
     @NotNull
     @Pattern(regexp = "^[0-9]{3}-[0-9]{2}-[0-9]{5}|[0-9]{10}$", message = "올바른 사업자 등록번호 형식이 아닙니다.")
