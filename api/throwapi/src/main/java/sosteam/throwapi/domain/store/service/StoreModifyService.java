@@ -10,7 +10,7 @@ import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
-import sosteam.throwapi.domain.store.exception.WrongStoreCodeException;
+import sosteam.throwapi.domain.store.exception.WrongStoreIdException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 
@@ -36,7 +36,7 @@ public class StoreModifyService {
     public StoreDto modify(StoreModifyDto dto) {
         // Find Store By given storeId
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
-        if(optionalStore.isEmpty()) throw new WrongStoreCodeException();
+        if(optionalStore.isEmpty()) throw new WrongStoreIdException();
         Store store = optionalStore.get();
         store.modify(
                 dto.getStoreName(),

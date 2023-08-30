@@ -19,9 +19,11 @@ import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
 import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
+import sosteam.throwapi.domain.store.service.StoreDeleteService;
 import sosteam.throwapi.domain.store.service.StoreGetService;
 import sosteam.throwapi.domain.store.service.StoreModifyService;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ public class StoreController {
     private final StoreGetService storeGetService;
     private final StoreCreateService storeCreateService;
     private final StoreModifyService storeModifyService;
+    private final StoreDeleteService storeDeleteService;
     private final BiznoAPI biznoAPI;
     @PostMapping
     public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) {
@@ -158,13 +161,32 @@ public class StoreController {
         return ResponseEntity.ok(resp);
     }
 
+    @DeleteMapping
+    public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
+        StoreModifyDto dto = new StoreModifyDto(
+                request.getExtStoreId(),
+                request.getName(),
+                request.getStorePhone(),
+                request.getCrn().replaceAll("-",""),
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getZipCode(),
+                request.getFullAddress()
+        );
+        storeDeleteService.deleteStore(dto);
+        String resp = "Delete Store: " + request.getName() +
+                " [" + request.getCrn() + "] " +
+                "<" + String.valueOf(LocalDateTime.now()) + ">";
+        return ResponseEntity.ok(resp);
+    }
+
     /**
      * BIZNO API를 이용하여 해당 사업자 번호가 국세청에 등록된 번호인지 확인
      * @param number 사업자 등록 번호
      * @return result 사업자 등록 번호로 등록된 가게 이름 -> storeName
      * response.getResultCode() :
      *  -1 : 미등록 사용자 -> Wrong API-KEY
-     *  -2 : 파라메터 오류
+     *  -2 : 파라메터 오류`
      *  -3 : 1일 100건 조회수 초과
      *  9 : 기타 오류
      *  -10 : 해당 번호 존재 X
