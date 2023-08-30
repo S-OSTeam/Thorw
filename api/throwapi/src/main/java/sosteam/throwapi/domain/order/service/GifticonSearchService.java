@@ -24,6 +24,7 @@ public class GifticonSearchService {
      * @return 해당 기프티콘의 상태
      */
     public ReceiptStatus searchReceiptStatusByGiftTraceId(String giftTraceId) {
+        log.debug("SEARCH RECEIPT STATUS BY GIFTTRACEID");
         // giftTraceId로 Gifticon 조회
         Gifticon gifticon = gifticonRepository.searchByGiftTraceId(giftTraceId)
                 .orElseThrow(() -> new NoSuchGifticonException());

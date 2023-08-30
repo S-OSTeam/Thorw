@@ -17,6 +17,7 @@ public class ItemSearchService {
     private final ItemRepository itemRepository;
 
     public Optional<Item> searchItemByProductName(String productName) {
+        log.debug("SEARCH ITEM BY PRODUCT NAME");
         return itemRepository.searchByProductName(productName);
     }
 

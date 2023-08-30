@@ -19,6 +19,7 @@ public class ReceiptCreateService {
      * @param productName
      */
     public void purchaseKakaoGifticonByProductName(String productName){
+        log.debug("PURCHASE KAKAO GIFTICON BY PRODUCTNAME");
         String templateToken = itemRepository.searchByProductName(productName).get().getTemplateToken();
         if(templateToken==null){
             throw new CreateTokenException();
