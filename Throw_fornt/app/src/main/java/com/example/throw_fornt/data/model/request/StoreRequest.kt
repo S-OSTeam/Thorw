@@ -1,33 +1,51 @@
 package com.example.throw_fornt.data.model.request
 
 import com.example.throw_fornt.data.model.response.StoreResponse
+import com.example.throw_fornt.data.model.response.testBody
 import retrofit2.Call
+import retrofit2.http.Field
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface StoreRequest {
     /*
     상점 등록 request
      */
-    @GET("/api/...")
+    @POST("api/store")
     fun registerRequest(
-        @Query("address_id") addrressId : String,
-        @Query("location_id") locationId : String,
-        @Query("name") name : String,
-        @Query("company_registration_number") bno : String,
-        @Query("type") type : String,
-        @Query("second_password") secondPassword : String,
+        @Field("Content-Type") key: String,
+        @Field("storePhone") storePhone : String,
+        @Field("latitudes") latitudes : String,
+        @Field("longitude") longitude : String,
+        @Field("crn") bno : String,
+        @Field("zipCode") zipCode : String,
+        @Field("fullAddress") fullAddress : String,
+        @Field("storeName") storeName: String,
+        @Field("type") type: String,
     ) : Call<StoreResponse>
 
     /*
     상점 데이터 request
      */
-    @GET("/api/...")
+    @POST("/api/...")
     fun storeRequest(
+        @Field("Content-Type") key: String,
     ) : Call<StoreResponse>
 
-    @GET("")
+    @POST("api/store/crn")
     fun bnoRequest(
-        @Query("bno") company_registration_number : String
+        @Field("Content-Type") key: String,
+        @Field("bno") company_registration_number : String
     ) : Call<StoreResponse>
+
+
+
+    @GET("fapi")
+    fun getRequest(
+        @Query("key") key: String,
+        @Query("gb") gb:String,
+        @Query("q") q:String,
+        @Query("type") type:String
+    ) : Call<testBody>
 }

@@ -13,8 +13,11 @@ import java.net.URL
 
 class StoreRetrofit {
     companion object {
+        const val url = "https://bizno.net/api/"
+        const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
-        const val url = ""
+        //const val url = "http://{SERVER_ID}/"
+        //const val apiKey = "application/json"
         lateinit var requestService: StoreRequest
     }
 
@@ -30,8 +33,8 @@ class StoreRetrofit {
                 .build()
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
             request.registerRequest(
-                store.addrressId, store.locationId, store.name,
-                store.bno, store.type, store.secondPassword
+                apiKey, store.storePhone, store.latitudes, store.longitude,
+                store.bno, store.zipCode, store.fullAddress, store.storeName, store.trashType
             ).enqueue(object: Callback<StoreResponse>{
                 override fun onResponse(
                     call: Call<StoreResponse>,

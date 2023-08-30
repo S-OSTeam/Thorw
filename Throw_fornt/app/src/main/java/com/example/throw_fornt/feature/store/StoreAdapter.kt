@@ -20,8 +20,8 @@ class StoreAdapter(private var items: ArrayList<StoreModel>, val onClick: (Store
 
     //list_view_item.xml과 연동된 TextView의 값을 리스트 마다 지정해줌
     override fun onBindViewHolder(holder: StoreViewHolder, position: Int) {
-        holder.storeName.text = items[position].name
-        holder.storeType.text = items[position].type
+        holder.storeName.text = items[position].storeName
+        holder.storeType.text = items[position].trashType
         holder.itemView.setOnClickListener{
             onClick(items[position])
         }

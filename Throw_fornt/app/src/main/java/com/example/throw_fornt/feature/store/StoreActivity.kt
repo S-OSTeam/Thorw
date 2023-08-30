@@ -29,8 +29,8 @@ class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_st
     fun listData(){
         var list = findViewById<RecyclerView>(R.id.store_list)
 
-        items.add(StoreModel("","","test1","","플라스틱",""))
-        items.add(StoreModel("","","test2","","병",""))
+        items.add(StoreModel("","","","","","","test1","플라스틱"))
+        items.add(StoreModel("","","","","","","test2","병"))
 
         val adapter = StoreAdapter(items, viewModel::service)
         adapter.notifyDataSetChanged()
