@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import sosteam.throwapi.domain.oauth.service.OAuthLoginParamsService;
-import sosteam.throwapi.global.entity.SNSCategory;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 
 @Getter
 @NoArgsConstructor

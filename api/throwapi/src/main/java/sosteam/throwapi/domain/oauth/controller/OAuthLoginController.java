@@ -12,7 +12,7 @@ import sosteam.throwapi.domain.oauth.controller.request.OAuthLoginRequest;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.oauth.entity.dto.OAuthLoginDto;
 import sosteam.throwapi.domain.oauth.service.OAuthLoginService;
-import sosteam.throwapi.global.entity.SNSCategory;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 
 @Controller
 @RequestMapping("/oauth")

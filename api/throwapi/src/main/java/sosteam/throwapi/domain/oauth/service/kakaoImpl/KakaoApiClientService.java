@@ -10,10 +10,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import sosteam.throwapi.domain.oauth.service.OAuthApiClientService;
-import sosteam.throwapi.domain.oauth.service.OAuthLoginParamsService;
-import sosteam.throwapi.global.entity.SNSCategory;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service

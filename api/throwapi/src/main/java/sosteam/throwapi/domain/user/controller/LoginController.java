@@ -18,7 +18,7 @@ import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.service.SignUpService;
 import sosteam.throwapi.domain.user.service.TokenService;
 import sosteam.throwapi.global.entity.Role;
-import sosteam.throwapi.global.entity.SNSCategory;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.global.entity.UserStatus;
 
 /**

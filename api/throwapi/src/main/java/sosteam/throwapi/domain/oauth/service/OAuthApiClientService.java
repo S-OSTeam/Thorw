@@ -1,6 +1,6 @@
 package sosteam.throwapi.domain.oauth.service;
 
-import sosteam.throwapi.global.entity.SNSCategory;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 
 public interface OAuthApiClientService {
     SNSCategory oAuthProvider();

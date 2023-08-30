@@ -1,4 +1,4 @@
-package sosteam.throwapi.global.entity;
+package sosteam.throwapi.domain.user.entity;
 
 import lombok.RequiredArgsConstructor;
 

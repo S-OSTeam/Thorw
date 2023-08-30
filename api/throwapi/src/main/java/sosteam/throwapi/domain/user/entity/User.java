@@ -13,7 +13,6 @@ import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import sosteam.throwapi.global.entity.Role;
-import sosteam.throwapi.global.entity.SNSCategory;
 import sosteam.throwapi.global.entity.UserStatus;
 
 import java.time.LocalDateTime;
