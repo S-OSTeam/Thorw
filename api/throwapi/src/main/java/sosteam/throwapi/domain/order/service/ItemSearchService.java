@@ -16,7 +16,7 @@ import java.util.Set;
 public class ItemSearchService {
     private final ItemRepository itemRepository;
 
-    public Optional<Set<Item>> searchItemByProductName(String productName) {
+    public Optional<Item> searchItemByProductName(String productName) {
         return itemRepository.searchByProductName(productName);
     }
 

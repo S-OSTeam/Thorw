@@ -12,10 +12,7 @@ import sosteam.throwapi.domain.order.repository.repo.GifticonRepository;
 import sosteam.throwapi.domain.order.repository.repo.ReceiptRepository;
 import sosteam.throwapi.domain.order.repository.repoCustom.ReceiptCustomRepository;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static sosteam.throwapi.domain.order.entity.QGifticon.gifticon;
 import static sosteam.throwapi.domain.order.entity.QReceipt.receipt;
@@ -24,7 +21,7 @@ import static sosteam.throwapi.domain.order.entity.QReceipt.receipt;
 @RequiredArgsConstructor
 public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
-    private final UserRepository userRepository; // TODO: 2023-08-29 (수형이 코드 필요)
+//    private final UserRepository userRepository; // TODO: 2023-08-29 (수형이 코드 필요)
 
     private KakaoGifticonOrder kakaoGifticonOrder;
 
@@ -74,7 +71,8 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
         GifticonSendRequestDto gifticonRequest=new GifticonSendRequestDto(
                 templateToken,
                 "PHONE",
-                GifticonSendRequestDto.Receiver(userRepository.searchPhoneNumber,userRepository.searchName),
+//                Collections.singletonList(new GifticonSendRequestDto.Receiver(userRepository.searchPhoneNumber,userRepository.searchName)),
+                Collections.singletonList(new GifticonSendRequestDto.Receiver("01012345678", "홍길동")),
                 "123.456.789.123/success",
                 "123.456.789.123/fail",
                 "GIFT",
