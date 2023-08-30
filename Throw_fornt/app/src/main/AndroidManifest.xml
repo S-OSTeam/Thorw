@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-  
+
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Throw_fornt"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".feature.store.register.address.AddressActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
@@ -27,10 +30,6 @@
             android:exported="false" />
         <activity
             android:name=".feature.store.StoreActivity"
-            android:exported="false">
-        </activity>
-        <activity
-            android:name=".feature.home.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +37,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".feature.home.HomeActivity"
+            android:exported="false"></activity>
     </application>
 
 </manifest>

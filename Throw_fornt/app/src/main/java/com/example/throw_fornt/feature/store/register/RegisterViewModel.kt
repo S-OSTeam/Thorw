@@ -63,10 +63,12 @@ class RegisterViewModel : ViewModel() {
 
     //주소검색
     fun search() {
+        _event.value = Event.Search
     }
 
     sealed class Event() {
         object Inquire : Event()
+        object Search : Event()
         data class Fail(val msg: String) : Event()
     }
 }
