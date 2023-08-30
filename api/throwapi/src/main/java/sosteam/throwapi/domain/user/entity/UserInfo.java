@@ -16,11 +16,11 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 @NoArgsConstructor
 public class UserInfo extends PrimaryKeyEntity {
     @NotNull
-    private String name;
+    private String userName;
 
     @NotNull
     @Column(unique = true)
-    private String phoneNumber;
+    private String userPhoneNumber;
 
     @NotNull
     @Email
@@ -32,8 +32,8 @@ public class UserInfo extends PrimaryKeyEntity {
     private User user;
 
     public UserInfo(String name, String phoneNumber, String email){
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.userName = name;
+        this.userPhoneNumber = phoneNumber;
         this.email = email;
     }
 
@@ -43,8 +43,8 @@ public class UserInfo extends PrimaryKeyEntity {
     }
 
     public String modifyPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-        return this.phoneNumber;
+        this.userPhoneNumber = phoneNumber;
+        return this.userPhoneNumber;
     }
 
     public String modifyEmail(String email) {

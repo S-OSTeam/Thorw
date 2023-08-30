@@ -5,14 +5,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.user.controller.request.IdDuplicateRequest;
+import sosteam.throwapi.domain.user.controller.request.ReissueTokenRequest;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
+import sosteam.throwapi.domain.user.controller.response.ReissueTokensResponse;
 import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
+import sosteam.throwapi.domain.user.entity.dto.ReissueTokensDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.service.SignUpService;
+import sosteam.throwapi.domain.user.service.TokenService;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.SNSCategory;
 import sosteam.throwapi.global.entity.UserStatus;
@@ -30,18 +34,19 @@ import sosteam.throwapi.global.entity.UserStatus;
 @RequiredArgsConstructor
 public class LoginController {
     private final SignUpService signUpService;
+    private final TokenService tokenService;
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params){
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
-                params.getInputPassWord(),
+                params.getInputPassword(),
                 params.getSnsId(),
                 SNSCategory.valueOf(params.getSns()),
                 UserStatus.valueOf(params.getUserStatus()),
                 Role.valueOf(params.getRole()),
-                params.getName(),
-                params.getPhoneNumber(),
+                params.getUserName(),
+                params.getUserPhoneNumber(),
                 params.getEmail()
         );
 
@@ -49,7 +54,7 @@ public class LoginController {
         return ResponseEntity.ok("정상 회원가입 완료");
     }
 
-    @PostMapping("/idDupTest")
+    @PostMapping("/idduptest")
     public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
         IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
                 params.getInputId()
@@ -57,5 +62,21 @@ public class LoginController {
 
         IdDuplicateResponse result = new IdDuplicateResponse(signUpService.checkIdDup(idDuplicationDto));
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<ReissueTokensResponse> reissueTokens(@RequestBody @Valid ReissueTokenRequest params){
+        ReissueTokensDto tokensDto = new ReissueTokensDto(
+                SNSCategory.valueOf(params.getSns()),
+                null,
+                params.getRefreshToken()
+        );
+
+        Tokens result = tokenService.reissueTokens(tokensDto);
+        return ResponseEntity.ok(new ReissueTokensResponse(
+                params.getSns(),
+                result.getAccessToken(),
+                result.getRefreshToken()
+        ));
     }
 }

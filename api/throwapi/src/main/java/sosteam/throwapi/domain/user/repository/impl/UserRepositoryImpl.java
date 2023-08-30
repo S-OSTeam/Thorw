@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.custom.UserRepositoryCustom;
 
+import java.util.UUID;
+
 import static sosteam.throwapi.domain.user.entity.QUser.user;
 import static sosteam.throwapi.domain.user.entity.QUserInfo.userInfo;
 
@@ -13,7 +15,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public User findBySNSId(String snsId) {
+    public User searchBySNSId(String snsId) {
         User result = queryFactory
                 .selectFrom(user)
                 .where(user.snsId.eq(snsId))
@@ -35,7 +37,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public User findByInputId(String inputId){
+    public User searchById(UUID id){
+        User result = queryFactory
+                .selectFrom(user)
+                .where(user.id.eq(id))
+                .fetchOne();
+        return result;
+    }
+    @Override
+    public User searchByInputId(String inputId){
         User result = queryFactory
                 .selectFrom(user)
                 .where(user.inputId.eq(inputId))

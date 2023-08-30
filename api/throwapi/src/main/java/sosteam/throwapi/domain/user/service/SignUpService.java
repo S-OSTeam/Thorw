@@ -2,6 +2,7 @@ package sosteam.throwapi.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
@@ -34,8 +35,8 @@ public class SignUpService {
 
         // 2. create UserInfo Entity
         UserInfo userInfo = new UserInfo(
-                dto.getName(),
-                dto.getPhoneNumber(),
+                dto.getUserName(),
+                dto.getUserPhoneNumber(),
                 dto.getEmail()
         );
 
@@ -51,8 +52,8 @@ public class SignUpService {
         User userResult = null;
         try{
             userResult = userRepository.save(user);
-        } catch (Exception e){
-            log.error("Save User data values overlap");
+        } catch (DataIntegrityViolationException e){
+            log.error("Save User data values overlap = {}", e.getMessage());
             throw new UserAlreadyExistException();
         }
 
@@ -60,7 +61,7 @@ public class SignUpService {
     }
 
     public boolean checkIdDup(IdDuplicationDto idDuplicationDto){
-        User user = userRepository.findByInputId(idDuplicationDto.getInputId());
+        User user = userRepository.searchByInputId(idDuplicationDto.getInputId());
         if(user != null){
             return false;
         }

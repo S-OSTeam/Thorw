@@ -3,7 +3,7 @@ package sosteam.throwapi.domain.oauth.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import sosteam.throwapi.domain.oauth.entity.AuthTokens;
+import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Date;
@@ -25,16 +25,16 @@ public class AuthTokensGenerateService {
 
     private final JwtTokenService jwtTokenService;
 
-    public AuthTokens generate(UUID memberId) {
+    public Tokens generate(UUID memberId, String inputId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        String subject = memberId.toString();
-        String accessToken = jwtTokenService.generate(subject, ACCESS_TOKEN_KIND, accessTokenExpiredAt);
-        String refreshToken = jwtTokenService.generate(subject, REFRESH_TOKEN_KIND, refreshTokenExpiredAt);
+        String id = memberId.toString();
+        String accessToken = jwtTokenService.generate(inputId, ACCESS_TOKEN_KIND, accessTokenExpiredAt);
+        String refreshToken = jwtTokenService.generate(id, REFRESH_TOKEN_KIND, refreshTokenExpiredAt);
 
-        return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME);
+        return Tokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
     public Long extractMemberId(String accessToken) {
