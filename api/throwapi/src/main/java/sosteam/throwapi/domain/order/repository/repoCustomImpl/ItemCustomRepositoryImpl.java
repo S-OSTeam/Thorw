@@ -6,7 +6,9 @@ import org.springframework.stereotype.Repository;
 import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.order.repository.repoCustom.ItemCustomRepository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static sosteam.throwapi.domain.order.entity.QItem.item;
 
@@ -16,10 +18,10 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<Item> searchByProductName(String productName) {
-        Item foundItem = queryFactory.selectFrom(item)
-                .where(item.productName.eq(productName))
-                .fetchOne();
-        return Optional.ofNullable(foundItem);
+    public Optional<Set<Item>> searchByProductName(String productName) {
+        Set<Item> foundItems = new HashSet<> (queryFactory.selectFrom(item)
+                .where(item.productName.contains(productName))
+                .fetch());
+        return Optional.ofNullable(foundItems);
     }
 }
