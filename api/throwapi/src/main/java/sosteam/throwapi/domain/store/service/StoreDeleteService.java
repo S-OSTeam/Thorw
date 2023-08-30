@@ -27,8 +27,6 @@ public class StoreDeleteService {
         if(optionalAddress.isEmpty()) throw new NoSuchStoreException();
         Address address = optionalAddress.get();
         // 요청이 들어온 데이터와 삭제하고자하는 데이터가 전부 일치해야한다.
-        log.info("store={}",store.toString());
-        log.info("address={}", address.toString());
         if(store.getStorePhone().equals(dto.getStorePhone()) &&
            store.getStoreName().equals(dto.getStoreName())   &&
            store.getExtStoreId().equals(dto.getExtStoreId()) &&

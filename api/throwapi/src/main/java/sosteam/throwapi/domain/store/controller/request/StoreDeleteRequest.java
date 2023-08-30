@@ -13,7 +13,7 @@ public class StoreDeleteRequest {
     private UUID extStoreId;
 
     @NotNull
-    private String name;
+    private String storeName;
 
     @NotNull
     @Pattern(regexp = "^[0-9]*$", message = "전화번호에 숫자가 아닌 문자가 포함되어 있습니다.")

@@ -51,7 +51,7 @@ public class StoreController {
     public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
-        log.info("POST : BIZNO API RESULT : StoreName ={}",storeName);
+        log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
@@ -130,7 +130,7 @@ public class StoreController {
     public ResponseEntity<StoreModifyResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
-        log.info("PUT: BIZNO API RESULT : StoreName ={}",storeName);
+        log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
@@ -165,7 +165,7 @@ public class StoreController {
     public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
         StoreModifyDto dto = new StoreModifyDto(
                 request.getExtStoreId(),
-                request.getName(),
+                request.getStoreName(),
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
@@ -174,7 +174,7 @@ public class StoreController {
                 request.getFullAddress()
         );
         storeDeleteService.deleteStore(dto);
-        String resp = "Delete Store: " + request.getName() +
+        String resp = "Delete Store: " + request.getStoreName() +
                 " [" + request.getCrn() + "] " +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
         return ResponseEntity.ok(resp);
