@@ -36,7 +36,7 @@ interface StoreRequest {
     @POST("api/store/crn")
     fun bnoRequest(
         @Field("Content-Type") key: String,
-        @Field("bno") company_registration_number : String
+        @Field("crn") crn : String
     ) : Call<StoreResponse>
 
 

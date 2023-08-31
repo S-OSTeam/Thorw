@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".feature.store.management.ManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".feature.store.register.address.AddressActivity"
             android:exported="false" />
 
@@ -39,7 +42,7 @@
         </activity>
         <activity
             android:name=".feature.home.HomeActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

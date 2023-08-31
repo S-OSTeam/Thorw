@@ -13,11 +13,11 @@ import java.net.URL
 
 class StoreRetrofit {
     companion object {
-        const val url = "https://bizno.net/api/"
-        const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
+        //const val url = "https://bizno.net/api/"
+        //const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
-        //const val url = "http://{SERVER_ID}/"
-        //const val apiKey = "application/json"
+        const val url = "http://{SERVER_ID}/"
+        const val apiKey = "application/json"
         lateinit var requestService: StoreRequest
     }
 

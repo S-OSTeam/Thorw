@@ -32,6 +32,7 @@ class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_st
         items.add(StoreModel("","","","","","","test1","플라스틱"))
         items.add(StoreModel("","","","","","","test2","병"))
 
+        //가게 정보 조회 api 넣기
         val adapter = StoreAdapter(items, viewModel::service)
         adapter.notifyDataSetChanged()
 

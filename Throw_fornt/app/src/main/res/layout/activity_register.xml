@@ -97,7 +97,7 @@
                             android:background="@drawable/edit_text_border"
                             android:hint="000-00-00000"
                             android:enabled="@{viewModel.bnoBtn}"
-                            android:text="@{viewModel.bno.toString()}"
+                            android:text="@={viewModel.crn}"
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
@@ -124,7 +124,7 @@
                             android:layout_marginHorizontal="10dp"
                             android:background="@drawable/edit_text_border"
                             android:hint="홍길동"
-                            android:text="@{viewModel.ceoEdit}"
+                            android:text="@={viewModel.ceoEdit}"
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
@@ -151,7 +151,7 @@
                             android:layout_marginHorizontal="10dp"
                             android:background="@drawable/edit_text_border"
                             android:hint="02-1111-1111"
-                            android:text=""
+                            android:text="@={viewModel.storePhone}"
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
@@ -194,13 +194,25 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edit_text_border"
                             android:hint="서울특별시 동작구 상도로 378"
+                            android:text="@={viewModel.fullAddress}"
                             android:padding="16dp"
                             android:textSize="18dp"
                             android:layout_marginTop="15dp"
                             android:onClick="@{()->viewModel.search()}"
                             android:enabled="true"
                             android:layout_marginRight="20dp"/>
-
+                        <EditText
+                            android:id="@+id/sub_address_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edit_text_border"
+                            android:hint="숭실대 입구역"
+                            android:text="@={viewModel.subAddress}"
+                            android:padding="16dp"
+                            android:textSize="18dp"
+                            android:layout_marginTop="15dp"
+                            android:enabled="true"
+                            android:layout_marginRight="20dp"/>
                         <EditText
                             android:id="@+id/address_edit2"
                             android:layout_width="match_parent"
@@ -210,10 +222,11 @@
                             android:background="@drawable/edit_text_border_enabled"
                             android:enabled="false"
                             android:hint="우편 번호"
+                            android:text="@={viewModel.zoneNo}"
                             android:textColor="#8B8B8B"
                             android:padding="16dp"
                             android:textColorHint="#8B8B8B"
-                            android:textSize="18dp" />
+                            android:textSize="18dp"/>
                     </LinearLayout>
 
                     <!--<FrameLayout
@@ -257,7 +270,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="15dp"
-                android:text="가게 등록"></Button>
+                android:text="가게 등록"
+                android:onClick="@{()->viewModel.register()}"/>
         </FrameLayout>
     </LinearLayout>
 
