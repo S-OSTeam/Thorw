@@ -24,8 +24,6 @@ public class TokenService {
 
 
     public Tokens reissueTokens(ReissueTokensDto tokensDto){
-        if(!jwtTokenService.validateToken(tokensDto.getRefreshToken())) throw new NotValidateTokenException();
-
         String subject = jwtTokenService.extractSubject(tokensDto.getRefreshToken());
         log.debug("subject = {}", subject);
         UUID memberId = UUID.fromString(subject);

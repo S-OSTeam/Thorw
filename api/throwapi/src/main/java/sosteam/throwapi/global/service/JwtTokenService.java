@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
 import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 
@@ -37,6 +38,7 @@ public class JwtTokenService {
     }
 
     public String extractSubject(String accessToken) {
+        if(!this.validateToken(accessToken)) throw new NotValidateTokenException();
         Claims claims = parseClaims(accessToken);
         return claims.getSubject();
     }

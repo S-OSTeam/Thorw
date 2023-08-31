@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
 import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
+import sosteam.throwapi.domain.user.entity.dto.UserCngDto;
+import sosteam.throwapi.domain.user.entity.dto.UserInfoDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
@@ -16,13 +17,11 @@ import sosteam.throwapi.domain.user.repository.UserRepository;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SignUpService {
+public class UserInfoService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public User SignUp(UserSaveDto dto){
-        // if User already SignUp
-        // return 409 : Conflict http status
         log.debug("Start SignUp User = {}", dto);
 
         // 1. create User Entity
@@ -67,4 +66,16 @@ public class SignUpService {
         }
         return true;
     }
+
+    public void cngUser(UserCngDto userCngDto){
+        Long result = userRepository.updateByInputId(userCngDto);
+        log.info("result cng User Service = {}", result.toString());
+    }
+
+    public User searchByInputId(UserInfoDto userInfoDto){
+        //inputId 를 기반으로 User 정보를 불러 옴
+        User user = userRepository.searchByInputId(userInfoDto.getInputId());
+        return user;
+    }
+
 }
