@@ -41,7 +41,7 @@ public class OAuthLoginService {
             throw new NotExistentUserInKakao();
         }
 
-        log.info("snsId = {}", snsId);
+        log.debug("snsId = {}", snsId);
 
         Tokens authTokens;
         if(userRepository.existBySNSId(snsId)){
