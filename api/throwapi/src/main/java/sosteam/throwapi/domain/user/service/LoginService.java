@@ -34,7 +34,7 @@ public class LoginService {
             log.debug("login fail no such user");
             throw new LoginFailException();
         }
-
+        //TODO : 나중에 log.error 로 변경 후 에러 파일에 추가 하도록 수정 하자
         // 저장된 비밀번호와 match 여부 확인
         String userPW = user.getPassword();
         log.debug("userPw = {}", userPW);
@@ -42,7 +42,7 @@ public class LoginService {
             log.debug("login fail long password");
             throw new LoginFailException();
         }
-        
+        //TODO : 나중에 log.error 로 변경 후 에러 파일에 추가 하도록 수정 하자
         // 발급된 토큰을 redis 에 저장
         Tokens tokens = tokensGenerateService.generate(user.getId(), user.getInputId());
         refreshTokenRedisRepository.save(
