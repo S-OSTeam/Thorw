@@ -3,6 +3,10 @@ package sosteam.throwapi.domain.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +14,9 @@ import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import sosteam.throwapi.global.entity.Role;
+import sosteam.throwapi.global.entity.UserStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,19 +28,38 @@ import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class User extends PrimaryKeyEntity implements UserDetails {
 
     @NotNull
+    @Column(unique = true)
     private String inputId;
 
     @NotNull
     private String inputPassword;
 
+    @Column(unique = true)
+    private String snsId;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    private SNSCategory sns;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
@@ -46,9 +71,26 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Receipt> receipts;
 
-    public Role setRole(Role role) {
+    public User(String inputId, String inputPassword, String snsId, SNSCategory sns){
+        this.inputId = inputId;
+        this.inputPassword = inputPassword;
+        this.snsId = snsId;
+        this.sns = sns;
+    }
+
+    public UserStatus modifyUserStatus(UserStatus userStatus){
+        this.userStatus = userStatus;
+        return this.userStatus;
+    }
+
+    public Role modifyRole(Role role) {
         this.role = role;
         return this.role;
+    }
+
+    public UserInfo modifyUserInfo(UserInfo userInfo){
+        this.userInfo = userInfo;
+        return this.userInfo;
     }
 
     @Override
@@ -57,6 +99,7 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
         return simpleGrantedAuthorities;
     }
+
 
     @Override
     public String getPassword() {

@@ -2,15 +2,19 @@ package sosteam.throwapi.domain.store.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.store.entity.dto.SearchStoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
-import sosteam.throwapi.global.exception.exception.NoContentException;
-import sosteam.throwapi.global.exception.exception.NotFoundException;
+import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
+import sosteam.throwapi.global.exception.exception.NoContentException;
+import sosteam.throwapi.global.exception.exception.NotFoundException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -30,27 +34,27 @@ public class StoreGetService {
      * -----------------------------------------------------------
      * MBRContains(A,B):
      * if MBR of A contains B, return 1 else 0
-     * @param searchStoreInRadiusDto Current User's Location and demanded distance
+     * @param storeInRadiusDto Current User's Location and demanded distance
      *
      * @return
      * if null, return 404 (NOT FOUND)
      * if there are no stores, return 204 (No Content)
      * if there are stores, return 200 (StoreList)
      */
-    public Set<StoreDto> searchStoreInRadius(SearchStoreInRadiusDto searchStoreInRadiusDto) {
-        log.debug("Start Searching Stores around = {}", searchStoreInRadiusDto);
+    public Set<StoreDto> searchStoreInRadius(StoreInRadiusDto storeInRadiusDto) {
+        log.debug("Start Searching Stores around = {}", storeInRadiusDto);
 
         // 1:
         Point northEast = GeometryUtil.calculate(
-                searchStoreInRadiusDto.getLatitude(),
-                searchStoreInRadiusDto.getLongitude(),
-                searchStoreInRadiusDto.getDistance(),
+                storeInRadiusDto.getLatitude(),
+                storeInRadiusDto.getLongitude(),
+                storeInRadiusDto.getDistance(),
                 Direction.NORTHEAST.getBearing()
         );
         Point southWest = GeometryUtil.calculate(
-                searchStoreInRadiusDto.getLatitude(),
-                searchStoreInRadiusDto.getLongitude(),
-                searchStoreInRadiusDto.getDistance(),
+                storeInRadiusDto.getLatitude(),
+                storeInRadiusDto.getLongitude(),
+                storeInRadiusDto.getDistance(),
                 Direction.SOUTHWEST.getBearing()
         );
         log.debug(String.format("NorthEast(%s %s) SRID:%s", northEast.getX(), northEast.getY(), northEast.getSRID()));
@@ -63,19 +67,39 @@ public class StoreGetService {
 
         LineString lineString = geometryFactory.createLineString(coordinates);
 
-        searchStoreInRadiusDto.setLineString(lineString);
+        storeInRadiusDto.setLineString(lineString);
 
         log.debug("Created LineString = {}", lineString);
 
-        Optional<Set<StoreDto>> storeListOptional = storeRepository.search(searchStoreInRadiusDto);
+        Optional<Set<StoreDto>> stores = storeRepository.searchStoreInRadius(storeInRadiusDto);
 
-        if(storeListOptional.isEmpty()) throw new NotFoundException();
-        if(storeListOptional.get().isEmpty()) throw new NoContentException();
-        return storeListOptional.get();
+        if(stores.isEmpty()) throw new NotFoundException();
+        if(stores.get().isEmpty()) throw new NoContentException();
+        return stores.get();
+    }
+
+    /**
+     * 검색 이름이 포함된 가게들을 반환
+     * @param name 검색 이름
+     * @return 가게 정보들
+     */
+    public Set<StoreDto> searchStoreByName(String name) {
+        log.debug("Start searching Stores which name is {}", name);
+        Optional<Set<StoreDto>> storeDtos = storeRepository.searchByName(name);
+        if(storeDtos.isEmpty()) throw new NotFoundException();
+        if(storeDtos.get().isEmpty()) throw new NoContentException();
+
+        return storeDtos.get();
+    }
+
+    public StoreDto searchByCRN(String crn) {
+        Optional<StoreDto> storeDto = isExistByCRN(crn);
+        if(storeDto.isEmpty()) throw new NoSuchStoreException();
+        return storeDto.get();
     }
 
 
-    public StoreDto findByRegistrationNumber(String registrationNumber) {
-        return storeRepository.findByRegistrationNumber(registrationNumber);
+    public Optional<StoreDto> isExistByCRN(String crn) {
+        return storeRepository.searchByCRN(crn);
     }
 }
