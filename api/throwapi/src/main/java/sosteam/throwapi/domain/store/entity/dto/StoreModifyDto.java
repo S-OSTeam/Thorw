@@ -16,4 +16,5 @@ public class StoreModifyDto {
     private Double longitude;
     private String zipCode;
     private String fullAddress;
+    private String trashType;
 }

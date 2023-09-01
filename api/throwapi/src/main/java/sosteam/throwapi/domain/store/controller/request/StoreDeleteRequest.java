@@ -37,5 +37,9 @@ public class StoreDeleteRequest {
 
     @NotNull
     private String fullAddress;
+
+    @NotNull
+    @Pattern(regexp = "^[0-1]{5}$", message = "일반쓰레기|병|플라스틱|종이|캔 : Provide(o):1 Provide(x):0")
+    private String trashType;
 }
 

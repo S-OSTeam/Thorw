@@ -31,6 +31,7 @@ public class StoreDeleteService {
            store.getStoreName().equals(dto.getStoreName())   &&
            store.getExtStoreId().equals(dto.getExtStoreId()) &&
            store.getCompanyRegistrationNumber().equals(dto.getCrn()) &&
+           store.getTrashType().equals(dto.getTrashType())      &&
            address.getLatitude() == dto.getLatitude()        &&
            address.getLongitude() == dto.getLongitude()      &&
            address.getZipCode().equals(dto.getZipCode())     &&

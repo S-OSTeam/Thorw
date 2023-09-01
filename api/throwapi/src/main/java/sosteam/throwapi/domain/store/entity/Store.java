@@ -27,11 +27,24 @@ public class Store extends PrimaryKeyEntity {
     @NotNull
     private String companyRegistrationNumber;
 
-    public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber) {
+    // 일반쓰레기 | 병 | 플라스틱 | 종이 | 캔
+    @NotNull
+    private String trashType;
+
+
+    public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber, String trashType) {
         this.extStoreId = extStoreId;
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.companyRegistrationNumber = companyRegistrationNumber;
+        this.trashType = trashType;
+    }
+
+    public void modify(String storeName, String storePhone, String companyRegistrationNumber,String trashType) {
+        this.storeName = storeName;
+        this.storePhone = storePhone;
+        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.trashType = trashType;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,9 +66,4 @@ public class Store extends PrimaryKeyEntity {
         return this.address;
     }
 
-    public void modify(String storeName, String storePhone, String companyRegistrationNumber) {
-        this.storeName = storeName;
-        this.storePhone = storePhone;
-        this.companyRegistrationNumber = companyRegistrationNumber;
-    }
 }

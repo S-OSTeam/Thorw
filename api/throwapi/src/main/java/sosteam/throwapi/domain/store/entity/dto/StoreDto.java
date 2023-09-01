@@ -15,9 +15,9 @@ public class StoreDto {
     private Double longitude;
     private String zipCode;
     private String fullAddress;
-
+    private String trashType;
     @QueryProjection
-    public StoreDto(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
+    public StoreDto(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress, String trashType) {
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.crn = crn;
@@ -25,6 +25,7 @@ public class StoreDto {
         this.longitude = longitude;
         this.zipCode = zipCode;
         this.fullAddress = fullAddress;
+        this.trashType = trashType;
     }
 
     public StoreResponse toResponse(){
@@ -35,7 +36,8 @@ public class StoreDto {
                 this.getLatitude(),
                 this.getLongitude(),
                 this.getZipCode(),
-                this.getFullAddress()
+                this.getFullAddress(),
+                this.getTrashType()
         );
     }
 }

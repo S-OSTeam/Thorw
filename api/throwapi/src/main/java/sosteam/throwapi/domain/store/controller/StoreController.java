@@ -1,5 +1,7 @@
 package sosteam.throwapi.domain.store.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +49,10 @@ public class StoreController {
     private final StoreModifyService storeModifyService;
     private final StoreDeleteService storeDeleteService;
     private final BiznoAPI biznoAPI;
+    ObjectMapper mapper = new ObjectMapper();
+
     @PostMapping
-    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) {
+    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) throws JsonProcessingException {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
@@ -62,9 +66,10 @@ public class StoreController {
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
-                request.getFullAddress()
+                request.getFullAddress(),
+                request.getTrashType()
         );
-        log.debug("StoreSaveRequest = {}", request);
+        log.debug("StoreSaveRequest = {}", dto);
 
         Store store = storeCreateService.saveStore(dto);
 
@@ -83,7 +88,8 @@ public class StoreController {
         StoreInRadiusDto dto = new StoreInRadiusDto(
                 request.getLatitude(),
                 request.getLongitude(),
-                request.getDistance()
+                request.getDistance(),
+                request.getTrashType()
         );
         // Convert Dto to Response
         Set<StoreDto> storeDtos = storeGetService.searchStoreInRadius(dto);
@@ -142,7 +148,8 @@ public class StoreController {
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
-                request.getFullAddress()
+                request.getFullAddress(),
+                request.getTrashType()
         );
         // Call modify Method
         log.debug("StoreModifyRequest = {}", dto);
@@ -156,7 +163,8 @@ public class StoreController {
                 storeDto.getLatitude(),
                 storeDto.getLongitude(),
                 storeDto.getZipCode(),
-                storeDto.getFullAddress()
+                storeDto.getFullAddress(),
+                storeDto.getTrashType()
         );
         return ResponseEntity.ok(resp);
     }
@@ -171,7 +179,8 @@ public class StoreController {
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
-                request.getFullAddress()
+                request.getFullAddress(),
+                request.getTrashType()
         );
         storeDeleteService.deleteStore(dto);
         String resp = "Delete Store: " + request.getStoreName() +

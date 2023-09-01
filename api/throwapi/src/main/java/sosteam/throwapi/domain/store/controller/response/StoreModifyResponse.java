@@ -11,8 +11,9 @@ public class StoreModifyResponse {
     private Double longitude;
     private String zipCode;
     private String fullAddress;
+    private String trashType;
 
-    public StoreModifyResponse(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress) {
+    public StoreModifyResponse(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress,String trashType) {
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.crn = crn;
@@ -20,5 +21,6 @@ public class StoreModifyResponse {
         this.longitude = longitude;
         this.zipCode = zipCode;
         this.fullAddress = fullAddress;
+        this.trashType = trashType;
     }
 }

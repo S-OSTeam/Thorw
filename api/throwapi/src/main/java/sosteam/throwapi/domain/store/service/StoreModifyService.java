@@ -41,7 +41,8 @@ public class StoreModifyService {
         store.modify(
                 dto.getStoreName(),
                 dto.getStorePhone(),
-                dto.getCrn()
+                dto.getCrn(),
+                dto.getTrashType()
         );
         Optional<Address> optionalAddress = storeRepository.searchAddressByStore(store.getId());
         if(optionalAddress.isEmpty()) throw new NoSuchStoreException();
@@ -64,7 +65,8 @@ public class StoreModifyService {
                 dto.getLatitude(),
                 dto.getLongitude(),
                 dto.getZipCode(),
-                dto.getFullAddress()
+                dto.getFullAddress(),
+                dto.getTrashType()
         );
     }
 }
