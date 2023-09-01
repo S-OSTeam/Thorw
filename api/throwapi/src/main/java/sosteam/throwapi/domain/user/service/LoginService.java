@@ -3,6 +3,7 @@ package sosteam.throwapi.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
@@ -11,6 +12,8 @@ import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.exception.NoSuchUserException;
 import sosteam.throwapi.domain.user.exception.LoginFailException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
+import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
+import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 import sosteam.throwapi.global.service.TokensGenerateService;
 
 @Slf4j
@@ -20,6 +23,8 @@ public class LoginService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final TokensGenerateService tokensGenerateService;
+
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     public Tokens throwLogin(ThrowLoginDto throwLoginDto){ //아이디 비번 일치 하는지 확인 후 일치 하면 Tokens 을
         // inputId 를 이용해 User 정보를 불러 옴
@@ -37,7 +42,16 @@ public class LoginService {
             log.error("login fail long password");
             throw new LoginFailException();
         }
-
-        return tokensGenerateService.generate(user.getId(), user.getInputId());
+        
+        // 발급된 토큰을 redis 에 저장
+        Tokens tokens = tokensGenerateService.generate(user.getId(), user.getInputId());
+        refreshTokenRedisRepository.save(
+                RedisRefreshToken.builder()
+                        .id(user.getInputId())
+                        .refreshToken(tokens.getRefreshToken())
+                        .accessToken(tokens.getAccessToken())
+                        .build()
+        );
+        return tokens;
     }
 }
