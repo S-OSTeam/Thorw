@@ -1,9 +1,12 @@
 package sosteam.throwapi.domain.store.repository.repoCustomImpl;
 
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sosteam.throwapi.domain.store.entity.Address;
@@ -19,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Repository
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
@@ -39,23 +43,24 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 storeInRadiusDto.getLineString(),
                 qAddress.location
         );
-
         Set<StoreDto> result = new HashSet<>(jpaQueryFactory
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
+                                qStore.extStoreId,
                                 qStore.storeName,
                                 qStore.storePhone,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
                                 qAddress.zipCode,
-                                qAddress.fullAddress
+                                qAddress.fullAddress,
+                                qStore.trashType
                         )
                 )
                 .from(qStore)
                 .innerJoin(qStore.address, qAddress)
-                .where(mbrContains.eq("1"))
+                .where(mbrContains.eq("1"),qStore.trashType.like(storeInRadiusDto.getTrashType()))
                 .fetch());
 
         return Optional.of(result);
@@ -67,13 +72,15 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
+                                qStore.extStoreId,
                                 qStore.storeName,
                                 qStore.storePhone,
                                 qStore.companyRegistrationNumber,
                                 qAddress.latitude,
                                 qAddress.longitude,
                                 qAddress.zipCode,
-                                qAddress.fullAddress
+                                qAddress.fullAddress,
+                                qStore.trashType
                         )
                 )
                 .from(qStore)
@@ -111,13 +118,15 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         .select(
                                 Projections.constructor(
                                         StoreDto.class,
+                                        qStore.extStoreId,
                                         qStore.storeName,
                                         qStore.storePhone,
                                         qStore.companyRegistrationNumber,
                                         qAddress.latitude,
                                         qAddress.longitude,
                                         qAddress.zipCode,
-                                        qAddress.fullAddress
+                                        qAddress.fullAddress,
+                                        qStore.trashType
                                 )
                         )
                         .from(qStore)

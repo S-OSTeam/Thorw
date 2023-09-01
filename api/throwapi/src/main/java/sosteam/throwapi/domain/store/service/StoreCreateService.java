@@ -34,7 +34,8 @@ public class StoreCreateService {
                 extStoreId,
                 storeDto.getStoreName(),
                 storeDto.getStorePhone(),
-                storeDto.getCrn()
+                storeDto.getCrn(),
+                storeDto.getTrashType()
         );
 
         // 2: Create Address Entity
@@ -52,11 +53,11 @@ public class StoreCreateService {
                 storeDto.getZipCode()
         );
 
-        // 3: Mapping Store and Address
+        // 4: Mapping Store and Address
         store.modifyAddress(address);
         address.modifyStore(store);
 
-        // 4: save Store Entity
+        // 5: save Store Entity
         return storeRepository.save(store);
     }
 }

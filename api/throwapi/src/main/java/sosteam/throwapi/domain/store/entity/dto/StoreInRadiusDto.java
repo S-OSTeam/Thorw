@@ -17,10 +17,13 @@ public class StoreInRadiusDto {
 
     private LineString lineString;
 
-    public StoreInRadiusDto(double latitude, double longitude, double distance) {
+    private String trashType;
+
+    public StoreInRadiusDto(double latitude, double longitude, double distance,String trashType) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
         this.lineString = null;
+        this.trashType = trashType;
     }
 }

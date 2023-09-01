@@ -1,5 +1,7 @@
 package sosteam.throwapi.domain.store.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,12 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.store.controller.request.*;
-import sosteam.throwapi.domain.store.controller.response.StoreModifyResponse;
 import sosteam.throwapi.domain.store.controller.response.StoreResponse;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
-import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -47,8 +47,10 @@ public class StoreController {
     private final StoreModifyService storeModifyService;
     private final StoreDeleteService storeDeleteService;
     private final BiznoAPI biznoAPI;
+    ObjectMapper mapper = new ObjectMapper();
+
     @PostMapping
-    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) {
+    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) throws JsonProcessingException {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
@@ -56,15 +58,17 @@ public class StoreController {
         // remove '-'
         // Call save Service
         StoreDto dto = new StoreDto(
+                null,
                 storeName,
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
-                request.getFullAddress()
+                request.getFullAddress(),
+                request.getTrashType()
         );
-        log.debug("StoreSaveRequest = {}", request);
+        log.debug("StoreSaveRequest = {}", dto);
 
         Store store = storeCreateService.saveStore(dto);
 
@@ -80,10 +84,14 @@ public class StoreController {
     public ResponseEntity<Set<StoreResponse>> searchStoreInRadius(@RequestBody @Valid StoreInRadiusRequest request) {
         log.debug("storeSearchDto={}", request);
         // Call search Service
+        // 필터링 기능 추가
+        // 0을 _로 바꾼 뒤 각 쓰레기 종류를 제공하는 가게들을 찾늗다.
+        // ex) 10110 -> like "1_11_"
         StoreInRadiusDto dto = new StoreInRadiusDto(
                 request.getLatitude(),
                 request.getLongitude(),
-                request.getDistance()
+                request.getDistance(),
+                request.getTrashType().replace("0","_")
         );
         // Convert Dto to Response
         Set<StoreDto> storeDtos = storeGetService.searchStoreInRadius(dto);
@@ -127,14 +135,14 @@ public class StoreController {
      * 가게 코드는 가게 정보들로 이루어진 암호문
      */
     @PutMapping
-    public ResponseEntity<StoreModifyResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
+    public ResponseEntity<StoreResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
-        StoreModifyDto dto = new StoreModifyDto(
+        StoreDto dto = new StoreDto(
                 request.getExtStoreId(),
                 storeName,
                 request.getStorePhone(),
@@ -142,40 +150,19 @@ public class StoreController {
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
-                request.getFullAddress()
+                request.getFullAddress(),
+                request.getTrashType()
         );
         // Call modify Method
         log.debug("StoreModifyRequest = {}", dto);
         StoreDto storeDto = storeModifyService.modify(dto);
-
-        // Create Response
-        StoreModifyResponse resp = new StoreModifyResponse(
-                storeDto.getStoreName(),
-                storeDto.getStorePhone(),
-                storeDto.getCrn(),
-                storeDto.getLatitude(),
-                storeDto.getLongitude(),
-                storeDto.getZipCode(),
-                storeDto.getFullAddress()
-        );
-        return ResponseEntity.ok(resp);
+        return ResponseEntity.ok(storeDto.toResponse());
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
-        StoreModifyDto dto = new StoreModifyDto(
-                request.getExtStoreId(),
-                request.getStoreName(),
-                request.getStorePhone(),
-                request.getCrn().replaceAll("-",""),
-                request.getLatitude(),
-                request.getLongitude(),
-                request.getZipCode(),
-                request.getFullAddress()
-        );
-        storeDeleteService.deleteStore(dto);
-        String resp = "Delete Store: " + request.getStoreName() +
-                " [" + request.getCrn() + "] " +
+        storeDeleteService.deleteStore(request.getExtStoreId());
+        String resp = "Delete Store: " + request.getExtStoreId() +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
         return ResponseEntity.ok(resp);
     }

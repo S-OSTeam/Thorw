@@ -20,11 +20,11 @@ public class StoreSaveRequest {
     private String crn;
 
     @NotNull
-    @Range(min = -90,max = 90, message = "위도 범위 : -90 ~ 90")
+    @Range(min = -90, max = 90, message = "위도 범위 : -90 ~ 90")
     private Double latitude;
 
     @NotNull
-    @Range(min = -180,max = 180, message = "경도 범위 : -180 ~ 180")
+    @Range(min = -180, max = 180, message = "경도 범위 : -180 ~ 180")
     private Double longitude;
 
     @NotNull
@@ -33,4 +33,9 @@ public class StoreSaveRequest {
 
     @NotNull
     private String fullAddress;
+
+    @NotNull
+    @Pattern(regexp = "^[0-1]{5}$", message = "일반쓰레기|병|플라스틱|종이|캔 : Provide(o):1 Provide(x):0")
+    private String trashType;
+
 }
