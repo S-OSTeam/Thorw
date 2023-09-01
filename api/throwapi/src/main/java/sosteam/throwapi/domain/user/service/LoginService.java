@@ -31,7 +31,7 @@ public class LoginService {
         // 그 후 존재 하는 유저인지 예외 처리
         User user = userRepository.searchByInputId(throwLoginDto.getInputId());
         if(user == null){
-            log.error("login fail no such user");
+            log.debug("login fail no such user");
             throw new LoginFailException();
         }
 
@@ -39,7 +39,7 @@ public class LoginService {
         String userPW = user.getPassword();
         log.debug("userPw = {}", userPW);
         if(!passwordEncoder.matches(throwLoginDto.getInputPassword(), userPW)){
-            log.error("login fail long password");
+            log.debug("login fail long password");
             throw new LoginFailException();
         }
         
