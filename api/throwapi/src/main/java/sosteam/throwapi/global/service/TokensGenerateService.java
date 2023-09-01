@@ -1,4 +1,4 @@
-package sosteam.throwapi.domain.oauth.service;
+package sosteam.throwapi.global.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AuthTokensGenerateService {
+public class TokensGenerateService {
     @Value("${jwt.secret.grantType}")
     private static final String BEARER_TYPE = "Bearer";
     @Value("${jwt.secret.access-token-validity-in-seconds}") //43200 초

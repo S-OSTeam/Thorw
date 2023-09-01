@@ -1,4 +1,4 @@
-package sosteam.throwapi.domain.user.controller.request;
+package sosteam.throwapi.domain.user.controller.request.login;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

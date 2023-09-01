@@ -1,6 +1,5 @@
-package sosteam.throwapi.domain.user.controller.request;
+package sosteam.throwapi.domain.user.entity.dto.user;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IdDuplicateRequest {
-    @NotNull
+public class UserInfoDto {
     private String inputId;
 }

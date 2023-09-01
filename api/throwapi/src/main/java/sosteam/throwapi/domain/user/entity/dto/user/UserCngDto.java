@@ -1,25 +1,17 @@
-package sosteam.throwapi.domain.user.entity.dto;
+package sosteam.throwapi.domain.user.entity.dto.user;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sosteam.throwapi.global.entity.Role;
-import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.global.entity.UserStatus;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSaveDto {
+public class UserCngDto {
     private String inputId;
-    private String inputPassWord;
-    private String snsId;
-    private SNSCategory snsCategory;
-    private UserStatus userStatus;
-    private Role role;
-
-    private String userName;
     private String userPhoneNumber;
     private String email;
 }
-

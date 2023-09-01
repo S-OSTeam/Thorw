@@ -1,12 +1,10 @@
 package sosteam.throwapi.domain.user.repository.impl;
 
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.UserInfo;
-import sosteam.throwapi.domain.user.entity.dto.UserCngDto;
+import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.domain.user.repository.custom.UserRepositoryCustom;
 
 import java.time.LocalDateTime;

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
 import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
@@ -27,6 +28,7 @@ public class JwtTokenService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
 
     public String generate(String subject, String kind, Date expiredAt) {
         return Jwts.builder()

@@ -1,4 +1,4 @@
-package sosteam.throwapi.domain.user.controller.request;
+package sosteam.throwapi.domain.user.controller.request.user;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -18,6 +18,10 @@ public class UserSaveRequest {
     @NotNull
     @Pattern(regexp = "^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\\\(\\\\)\\-_=+]).{8,16}$", message = "올바른 비밀번호 형식이 아닙니다.")
     private String inputPassword;
+
+    @NotNull
+    @Pattern(regexp = "^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\\\(\\\\)\\-_=+]).{8,16}$", message = "올바른 비밀번호 형식이 아닙니다.")
+    private String inputPasswordCheck;
 
     @Pattern(regexp = "^[0-9]+$", message = "올바른 snsId 형식이 아닙니다.")
     private String snsId;
