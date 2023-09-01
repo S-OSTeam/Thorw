@@ -1,14 +1,13 @@
 package sosteam.throwapi.domain.user.service;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
-import sosteam.throwapi.domain.oauth.service.AuthTokensGenerateService;
+import sosteam.throwapi.global.service.TokensGenerateService;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.ReissueTokensDto;
+import sosteam.throwapi.domain.user.entity.dto.login.ReissueTokensDto;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.global.service.JwtTokenService;
 
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class TokenService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
-    private final AuthTokensGenerateService tokensGenerateService;
+    private final TokensGenerateService tokensGenerateService;
 
 
     public Tokens reissueTokens(ReissueTokensDto tokensDto){

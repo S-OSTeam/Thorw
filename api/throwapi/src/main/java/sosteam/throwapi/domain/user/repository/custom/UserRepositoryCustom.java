@@ -1,7 +1,7 @@
 package sosteam.throwapi.domain.user.repository.custom;
 
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.UserCngDto;
+import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 
 import java.util.UUID;
 

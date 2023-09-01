@@ -1,4 +1,4 @@
-package sosteam.throwapi.domain.user.entity.dto;
+package sosteam.throwapi.domain.user.entity.dto.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

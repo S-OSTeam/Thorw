@@ -12,6 +12,7 @@ import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
+import sosteam.throwapi.global.service.TokensGenerateService;
 
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 public class OAuthLoginService {
     private final UserRepository userRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final AuthTokensGenerateService authTokensGenerateService;
+    private final TokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
 
 
