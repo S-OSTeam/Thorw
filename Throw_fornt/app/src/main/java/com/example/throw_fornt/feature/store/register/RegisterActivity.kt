@@ -39,7 +39,7 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
     }
 
     private fun register(data: StoreModel){
-        val res = StoreModel(data.storePhone,lat,lon,data.bno,data.zipCode,data.fullAddress,data.storeName,data.trashType)
+        val res = StoreModel(data.storePhone,lat,lon,data.bno,data.zipCode,data.fullAddress,data.storeName,data.trashType,"","","")
         storeHelper.registerResponse(res)
     }
 

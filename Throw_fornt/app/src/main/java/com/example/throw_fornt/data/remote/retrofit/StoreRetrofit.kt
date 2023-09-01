@@ -1,5 +1,6 @@
 package com.example.throw_fornt.data.remote.retrofit
 
+import android.util.Log
 import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
@@ -16,7 +17,7 @@ class StoreRetrofit {
         //const val url = "https://bizno.net/api/"
         //const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
-        const val url = "http://{SERVER_ID}/"
+        const val url = "http://{SERVER_ID}"
         const val apiKey = "application/json"
         lateinit var requestService: StoreRequest
     }
@@ -27,18 +28,19 @@ class StoreRetrofit {
     fun registerResponse(store: StoreModel){
         try {
             val urls = URL(url)
+            Log.d("storeData", "storePhone: ${store.storePhone}, lat: ${store.latitudes}, lon: ${store.longitude}, bno: ${store.bno}, zipCode: ${store.zipCode}, address: ${store.fullAddress}, type: ${store.trashType}")
             val retrofit = Retrofit.Builder()
                 .baseUrl(urls)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
             request.registerRequest(
-                apiKey, store.storePhone, store.latitudes, store.longitude,
-                store.bno, store.zipCode, store.fullAddress, store.storeName, store.trashType
-            ).enqueue(object: Callback<StoreResponse>{
+                apiKey, store.storePhone, store.latitudes.toDouble(), store.longitude.toDouble(),
+                store.bno, store.zipCode, store.fullAddress, store.trashType,
+            ).enqueue(object: Callback<StoreModel>{
                 override fun onResponse(
-                    call: Call<StoreResponse>,
-                    response: Response<StoreResponse>
+                    call: Call<StoreModel>,
+                    response: Response<StoreModel>
                 ) {
                     if(response.isSuccessful && response.body()?.code=="200"){
                         //성공 토스트 넣기
@@ -48,7 +50,7 @@ class StoreRetrofit {
                     }
                 }
 
-                override fun onFailure(call: Call<StoreResponse>, t: Throwable) {
+                override fun onFailure(call: Call<StoreModel>, t: Throwable) {
                     //실패 토스트 넣기
                 }
             })

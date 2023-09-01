@@ -206,7 +206,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/edit_text_border"
-                            android:hint="숭실대 입구역"
+                            android:hint="101호"
                             android:text="@={viewModel.subAddress}"
                             android:padding="16dp"
                             android:textSize="18dp"
@@ -274,5 +274,4 @@
                 android:onClick="@{()->viewModel.register()}"/>
         </FrameLayout>
     </LinearLayout>
-
 </layout>

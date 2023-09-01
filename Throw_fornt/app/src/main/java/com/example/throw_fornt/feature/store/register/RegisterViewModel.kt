@@ -48,8 +48,8 @@ class RegisterViewModel : ViewModel() {
     //사업자등록번호 조회
     fun bnoInquire() {
         storeHelper.bnoResponse()
-        //real()
         real()
+        //test()
     }
 
     fun changeSuccess(btn: Boolean, text: String) {
@@ -69,11 +69,14 @@ class RegisterViewModel : ViewModel() {
         else if(storePhone.value.isNullOrEmpty()) _event.value = Event.Fail("전화번호 ${errorMsg}")
         else if(fullAddress.value.isNullOrEmpty()) _event.value = Event.Fail("지번주소 ${errorMsg}")
         else if(zoneNo.value.isNullOrEmpty()) _event.value = Event.Fail("우편번호 ${errorMsg}\n지번주소를 한번 더 확인해주세요.")
-        else if(subAddress.value.isNullOrEmpty()) subAddress.value = ""
         else{
+            if(subAddress.value.isNullOrEmpty()) subAddress.value = ""
+
             val data = StoreModel(
                 storePhone.value.toString(),"","",crn.value.toString(),
-                zoneNo.value.toString(), fullAddress.value.toString()+subAddress.value.toString(), "", ""
+                zoneNo.value.toString(), fullAddress.value.toString()+subAddress.value.toString(),
+                "", "00000","",
+                "",""
             )
             _event.value = Event.Register(data)
         }
@@ -97,7 +100,6 @@ class RegisterViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<testBody>, t: Throwable) {
-                true
                 _event.value = Event.Fail("조회실패")
             }
         })
@@ -105,8 +107,8 @@ class RegisterViewModel : ViewModel() {
     private fun real(){
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
         val res = StoreRetrofit.requestService
-        res.bnoRequest(StoreRetrofit.apiKey,crn.value.toString()).enqueue(object : Callback<StoreResponse> {
-            override fun onResponse(call: Call<StoreResponse>, response: Response<StoreResponse>) {
+        res.bnoRequest(StoreRetrofit.apiKey, crn.value.toString()).enqueue(object : Callback<StoreModel> {
+            override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
                 if (response.isSuccessful) {
                     changeSuccess(false, "인증 완료")
                 } else {
@@ -114,8 +116,7 @@ class RegisterViewModel : ViewModel() {
                 }
             }
 
-            override fun onFailure(call: Call<StoreResponse>, t: Throwable) {
-                true
+            override fun onFailure(call: Call<StoreModel>, t: Throwable) {
                 _event.value = Event.Fail("조회실패")
             }
         })

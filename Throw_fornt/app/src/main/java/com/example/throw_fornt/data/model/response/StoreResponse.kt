@@ -1,5 +1,8 @@
 package com.example.throw_fornt.data.model.response
 
+import android.os.Parcel
+import android.os.Parcelable
+import com.example.throw_fornt.feature.store.register.address.AddressResult
 import com.google.gson.annotations.SerializedName
 
 //가게 조회 모델
@@ -11,8 +14,54 @@ data class StoreModel(
     @SerializedName("zipCode")val zipCode: String,
     @SerializedName("fullAddress")val fullAddress: String,
     @SerializedName("storeName")val storeName: String,
-    @SerializedName("type")val trashType: String,
-)
+    @SerializedName("trashType")val trashType: String,
+    @SerializedName("extStoreId")val uuid: String,
+    @SerializedName("code")val code:String,         //결과 코드
+    @SerializedName("message")val msg:String,           //결과 메세지
+):Parcelable{
+    constructor(parcel: Parcel) : this(
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(storePhone)
+        parcel.writeString(latitudes)
+        parcel.writeString(longitude)
+        parcel.writeString(bno)
+        parcel.writeString(zipCode)
+        parcel.writeString(fullAddress)
+        parcel.writeString(storeName)
+        parcel.writeString(trashType)
+        parcel.writeString(uuid)
+        parcel.writeString(code)
+        parcel.writeString(msg)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<StoreModel> {
+        override fun createFromParcel(parcel: Parcel): StoreModel {
+            return StoreModel(parcel)
+        }
+
+        override fun newArray(size: Int): Array<StoreModel?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 //api호출시 데이터 response값을 받는 모델
 data class StoreResponse(
