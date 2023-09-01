@@ -11,6 +11,7 @@ import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
 import sosteam.throwapi.domain.user.entity.dto.UserCngDto;
 import sosteam.throwapi.domain.user.entity.dto.UserInfoDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
+import sosteam.throwapi.domain.user.exception.NoSuchUserException;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 
@@ -75,6 +76,8 @@ public class UserInfoService {
     public User searchByInputId(UserInfoDto userInfoDto){
         //inputId 를 기반으로 User 정보를 불러 옴
         User user = userRepository.searchByInputId(userInfoDto.getInputId());
+        if(user == null) throw new NoSuchUserException();
+
         return user;
     }
 

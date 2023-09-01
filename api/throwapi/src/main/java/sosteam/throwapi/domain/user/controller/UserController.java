@@ -77,7 +77,6 @@ public class UserController {
         );
 
         User result = userInfoService.searchByInputId(userInfoDto);
-        if(result == null) throw new NoSuchUserException();
 
         return ResponseEntity.ok(new UserInfoResponse(
                 result.getInputId(),
@@ -105,8 +104,7 @@ public class UserController {
                 inputId
         );
         // 존재 하는 회원인지 확인
-        User checkExist = userInfoService.searchByInputId(userInfoDto);
-        if(checkExist == null) throw new NoSuchUserException();
+        userInfoService.searchByInputId(userInfoDto);
 
         UserCngDto userCngDto = new UserCngDto(
                 inputId,
