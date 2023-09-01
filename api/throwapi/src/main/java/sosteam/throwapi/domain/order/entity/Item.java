@@ -13,7 +13,9 @@ import org.hibernate.validator.constraints.UniqueElements;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -42,7 +44,7 @@ public class Item extends PrimaryKeyEntity {
     private Long price; // 상품 가격
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    private List<Gifticon> gifticons;
+    private Set<Gifticon> gifticons;
 
     public Item(String templateToken, String productName, String brandName, String brandImageUrl, String productImageUrl, String productThumbImageUrl, Long price) {
         this.templateToken = templateToken;
@@ -52,6 +54,11 @@ public class Item extends PrimaryKeyEntity {
         this.productImageUrl = productImageUrl;
         this.productThumbImageUrl = productThumbImageUrl;
         this.price = price;
-        this.gifticons=new ArrayList<>();
+        this.gifticons=new HashSet<>();
+    }
+
+    public void addGifticon(Gifticon gifticon){
+        gifticons.add(gifticon);
+        gifticon.modifyItem(this);
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.order.entity.Gifticon;
+import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.order.kakaoAPI.KakaoGifticonOrderService;
 import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendRequestDto;
@@ -28,7 +29,7 @@ public class ReceiptCreateService {
      * templateToken을 통해 Gifticon과 Receipt 생성
      * @param templateToken
      */
-    public Optional<Gifticon> createGifticonAndReceipt(String templateToken) {
+    public Optional<Gifticon> createGifticonAndReceipt(String templateToken, Item item) {
         log.debug("SEARCH BY PRODUCT NAME");
         // TODO: 2023-08-29 템플릿 변경, user 정보 추가(수형이 코드 필요)
 //        GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789");
@@ -59,6 +60,7 @@ public class ReceiptCreateService {
         // TODO: 2023-09-01 User 추가
         User saveUser=new User();
         Gifticon saveGifticon = new Gifticon(kakaoResponse.getReserveTraceId().toString());
+        saveGifticon.modifyItem(item);
         Receipt saveReceipt=new Receipt();
         saveReceipt.modifyUser(saveUser);
         saveReceipt.modifyGifticon(saveGifticon);

@@ -43,7 +43,7 @@ public class ReceiptCreateServiceTest {
         log.debug("SEARCH TEMPLATETOKEN");
         String searchTemplateTokenByProductName = itemSearchService.searchTemplateTokenByProductName(testProductName);
         log.debug("GIFTICON AND RECEIPT CREATE");
-        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(searchTemplateTokenByProductName);
+        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(searchTemplateTokenByProductName,item);
 
         // then
         assertEquals("SEARCH TEMPLATETOKEN",searchTemplateTokenByProductName,testTemplateToken);

@@ -35,4 +35,8 @@ public class Gifticon extends PrimaryKeyEntity {
     public void modifyReceipt(Receipt receipt) {
         this.receipt=receipt;
     }
+
+    public void modifyItem(Item item) {
+        this.item=item;
+    }
 }

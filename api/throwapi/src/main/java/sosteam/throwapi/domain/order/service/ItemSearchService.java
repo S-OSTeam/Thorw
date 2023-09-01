@@ -31,6 +31,10 @@ public class ItemSearchService {
         return templateToken;
     }
 
+    /**
+     * 상품 이름으로 아이템 찾기
+     * @param productName
+     */
     public Optional<Item> searchItemByProductName(String productName) {
         log.debug("SEARCH ITEM BY PRODUCT NAME");
         return itemRepository.searchByProductName(productName);

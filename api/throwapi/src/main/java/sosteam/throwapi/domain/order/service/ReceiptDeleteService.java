@@ -25,7 +25,7 @@ public class ReceiptDeleteService {
      * giftTraceId로 gifticon,receipt 삭제
      * @param giftTraceId
      */
-    private void deleteReceiptByGifticonId(String giftTraceId) {
+    public void deleteReceiptByGifticonId(String giftTraceId) {
         log.debug("RECEIPT DELETE BY GIFTICON ID");
 
         UUID gifticonId = gifticonRepository.searchByGiftTraceId(giftTraceId).get().getId();
