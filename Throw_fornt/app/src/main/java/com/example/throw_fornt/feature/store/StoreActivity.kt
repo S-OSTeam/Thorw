@@ -32,8 +32,8 @@ class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_st
     fun listData(){
         var list = findViewById<RecyclerView>(R.id.store_list)
 
-        items.add(StoreModel("02-820-0920","37.4945402275658","126.95977107078","000-00-00000","07027","상도동 509","test1","플라스틱","","",""))
-        items.add(StoreModel("02-820-0920","37.4945402275658","126.95977107078","000-00-00000","07027","상도동 509","test2","병","","",""))
+        items.add(StoreModel("02-820-0920","37.4945402275658","126.95977107078","000-00-00000","07027","상도동 509","101호","test1","플라스틱","","",""))
+        items.add(StoreModel("02-820-0920","37.4945402275658","126.95977107078","000-00-00000","07027","상도동 509","102호","test2","병","","",""))
 
         //가게 정보 조회 api 넣기
         val adapter = StoreAdapter(items, viewModel::service)
@@ -43,6 +43,7 @@ class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_st
         list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
+    //수정 및 삭제, 등록 화면으로 이동하기 위한 함수
     fun changeActivity(event: StoreViewModel.Event){
         when (event){
             is StoreViewModel.Event.Register -> register()
@@ -57,6 +58,7 @@ class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_st
 
     private fun storeService(storeItem: StoreModel){
         val intent: Intent = Intent(this, ManagementActivity::class.java)
+        //ManagementActivity에 선택한 내 가게 data 전달
         intent.putExtra("data",storeItem)
         startActivity(intent)
     }

@@ -13,6 +13,7 @@ data class StoreModel(
     @SerializedName("crn")val bno: String,
     @SerializedName("zipCode")val zipCode: String,
     @SerializedName("fullAddress")val fullAddress: String,
+    @SerializedName("subAddress")val subAddress: String,
     @SerializedName("storeName")val storeName: String,
     @SerializedName("trashType")val trashType: String,
     @SerializedName("extStoreId")val uuid: String,
@@ -20,6 +21,7 @@ data class StoreModel(
     @SerializedName("message")val msg:String,           //결과 메세지
 ):Parcelable{
     constructor(parcel: Parcel) : this(
+        parcel.readString()?:"",
         parcel.readString()?:"",
         parcel.readString()?:"",
         parcel.readString()?:"",
@@ -41,6 +43,7 @@ data class StoreModel(
         parcel.writeString(bno)
         parcel.writeString(zipCode)
         parcel.writeString(fullAddress)
+        parcel.writeString(subAddress)
         parcel.writeString(storeName)
         parcel.writeString(trashType)
         parcel.writeString(uuid)

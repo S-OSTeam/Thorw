@@ -19,6 +19,7 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         binding.lifecycleOwner = this
         viewModel.event.observe(this) { handleEvent(it) }
 
+        //ManagementActivity를 실행되면 AlertDialog창을 띄워서 수정할지 삭제할지 물어본다.
         val builder = AlertDialog.Builder(this)
         builder.setTitle("수정 및 삭제")
             .setMessage("수정할지 삭제할지 선택해주세요.")
@@ -33,7 +34,9 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         builder.show()
     }
 
+    //수정하기 위한 프로그램
     fun modify(){
+        //StoreActivity에서 내가 선택한 가게 값을 전달받아 ManagementViewModel.selectItem함수를 호출하여 edit에 값을 입력해준다.
         val intent: Intent = getIntent()
         val receive = intent?.getParcelableExtra<StoreModel>("data")
         if(receive!=null) viewModel.selectItem(receive)

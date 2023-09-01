@@ -101,7 +101,7 @@
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
-                    <LinearLayout
+                    <!--<LinearLayout
                         android:id="@+id/ceo_information"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                             android:text="@={viewModel.ceoEdit}"
                             android:padding="16dp"
                             android:textSize="18dp" />
-                    </LinearLayout>
+                    </LinearLayout>!-->
                     <LinearLayout
                         android:id="@+id/number_information"
                         android:layout_width="match_parent"

@@ -31,12 +31,14 @@ class ManagementViewModel(): ViewModel() {
     //우편번호
     val zoneNo: MutableLiveData<String> = MutableLiveData()
 
+    //binding된 editText의 text값을 변경해주기 위한 함수
     fun selectItem(item: StoreModel){
         crn.value = item.bno
+        //내 정보 조회가 안되서 테스트 데이터
         ceoEdit.value = "김국밥"
         storePhone.value = item.storePhone
         fullAddress.value = item.fullAddress
-        subAddress.value = "101호"
+        subAddress.value = item.subAddress
         zoneNo.value = item.zipCode
     }
     sealed class Event(){

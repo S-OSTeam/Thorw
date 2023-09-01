@@ -14,20 +14,22 @@ import java.net.URL
 
 class StoreRetrofit {
     companion object {
+        //사업자등록번호 조회 테스트 api
         //const val url = "https://bizno.net/api/"
         //const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
+
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "http://{SERVER_ID}"
         const val apiKey = "application/json"
         lateinit var requestService: StoreRequest
     }
 
-    /*
-    가게 등록을 위한 api호출
-     */
+
+    //가게 등록을 위한 api호출
     fun registerResponse(store: StoreModel){
         try {
             val urls = URL(url)
+            //가게 등록하기 위한 데이터 값을 log로 표시
             Log.d("storeData", "storePhone: ${store.storePhone}, lat: ${store.latitudes}, lon: ${store.longitude}, bno: ${store.bno}, zipCode: ${store.zipCode}, address: ${store.fullAddress}, type: ${store.trashType}")
             val retrofit = Retrofit.Builder()
                 .baseUrl(urls)
@@ -36,7 +38,7 @@ class StoreRetrofit {
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
             request.registerRequest(
                 apiKey, store.storePhone, store.latitudes.toDouble(), store.longitude.toDouble(),
-                store.bno, store.zipCode, store.fullAddress, store.trashType,
+                store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
             ).enqueue(object: Callback<StoreModel>{
                 override fun onResponse(
                     call: Call<StoreModel>,
@@ -59,16 +61,14 @@ class StoreRetrofit {
         }
     }
 
-    /*
-    내 가게 조회를 위한 api호출
-     */
+
+    //내 가게 조회를 위한 api호출\
     fun storeResponse(): Boolean {
         return false
     }
 
-    /*
-    사업자등록번호 조회 api 호출
-     */
+
+    //사업자등록번호 조회 api 호출
     fun bnoResponse(){
         try {
             val urls = URL(url)

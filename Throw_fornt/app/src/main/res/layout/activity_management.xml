@@ -111,10 +111,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="10dp"
-                            android:background="@drawable/edit_text_border"
+                            android:background="@drawable/edit_text_border_enabled"
                             android:hint="홍길동"
+                            android:textColor="#8B8B8B"
+                            android:enabled="false"
                             android:padding="16dp"
                             android:textSize="18dp"
+                            android:textColorHint="#8B8B8B"
                             android:text="@={viewModel.ceoEdit}"/>
                     </LinearLayout>
                     <LinearLayout
@@ -223,7 +226,7 @@
                             <TextView
                                 android:id="@+id/type_title"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:text="쓰레기 종류를 선택해주세요."
                                 android:textSize="25dp"
                                 android:textStyle="bold" />

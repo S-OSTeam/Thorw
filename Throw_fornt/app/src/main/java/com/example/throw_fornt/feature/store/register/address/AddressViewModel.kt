@@ -25,6 +25,7 @@ class AddressViewModel : ViewModel() {
     val event: LiveData<Event>
         get() = _event
 
+    //카카오 주소 검색 api를 이용해서 주소값을 받아오는 함수
     fun search(content: String) {
         addressHelper.searchAddress()
         val res = AddressRetrofit.requestService
@@ -46,6 +47,7 @@ class AddressViewModel : ViewModel() {
         })
     }
 
+    //SearchView에 검색할 데이터를 AddressBindingAdapter를 통해서 content에 전달받는다
     val searchAddress = { content: String? ->
         if (content.isNullOrEmpty().not()) {
             search(content.toString())

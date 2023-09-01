@@ -15,6 +15,7 @@ import retrofit2.Response
 
 class RegisterViewModel : ViewModel() {
     private val errorMsg: String = "칸이 비어있습니다."
+
     //StoreRetrofit 변수
     private val storeHelper: StoreRetrofit = StoreRetrofit()
 
@@ -33,14 +34,16 @@ class RegisterViewModel : ViewModel() {
 
     //사업자등록번호 binding
     val crn: MutableLiveData<String> = MutableLiveData("")
-    //대표자명 binding
-    val ceoEdit: MutableLiveData<String> = MutableLiveData("")
+
     //가게 전호번호 binding
     val storePhone: MutableLiveData<String> = MutableLiveData("")
+
     //지번 주소 binding
     val fullAddress: MutableLiveData<String> = MutableLiveData("")
+
     //상세 주소
     val subAddress: MutableLiveData<String> = MutableLiveData("")
+
     //우편번호
     val zoneNo: MutableLiveData<String> = MutableLiveData("")
 
@@ -63,20 +66,22 @@ class RegisterViewModel : ViewModel() {
     }
 
     //가게등록
-    fun register(){
-        if(crn.value.isNullOrEmpty()) _event.value = Event.Fail("사용자 등록번호 ${errorMsg}")
-        else if(ceoEdit.value.isNullOrEmpty()) _event.value = Event.Fail("대표자명이 없습니다.")
-        else if(storePhone.value.isNullOrEmpty()) _event.value = Event.Fail("전화번호 ${errorMsg}")
-        else if(fullAddress.value.isNullOrEmpty()) _event.value = Event.Fail("지번주소 ${errorMsg}")
-        else if(zoneNo.value.isNullOrEmpty()) _event.value = Event.Fail("우편번호 ${errorMsg}\n지번주소를 한번 더 확인해주세요.")
-        else{
-            if(subAddress.value.isNullOrEmpty()) subAddress.value = ""
+    fun register() {
+        //edit에 값이 비어있는지 확인하기 위한 처리
+        if (crn.value.isNullOrEmpty()) _event.value = Event.Fail("사용자 등록번호 ${errorMsg}")
+        else if (storePhone.value.isNullOrEmpty()) _event.value = Event.Fail("전화번호 ${errorMsg}")
+        else if (fullAddress.value.isNullOrEmpty()) _event.value = Event.Fail("지번주소 ${errorMsg}")
+        else if (zoneNo.value.isNullOrEmpty()) _event.value =
+            Event.Fail("우편번호 ${errorMsg}\n지번주소를 한번 더 확인해주세요.")
+        else {
+            if (subAddress.value.isNullOrEmpty()) subAddress.value = ""
 
+            //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
             val data = StoreModel(
-                storePhone.value.toString(),"","",crn.value.toString(),
-                zoneNo.value.toString(), fullAddress.value.toString()+subAddress.value.toString(),
-                "", "00000","",
-                "",""
+                storePhone.value.toString(), "", "", crn.value.toString(),
+                zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
+                "", "00000", "",
+                "", ""
             )
             _event.value = Event.Register(data)
         }
@@ -85,40 +90,46 @@ class RegisterViewModel : ViewModel() {
     sealed class Event() {
         object Search : Event()
         data class Fail(val msg: String) : Event()
-        data class Register(val register: StoreModel): Event()
+        data class Register(val register: StoreModel) : Event()
     }
 
-    private fun test(){
+    private fun test() {
         val res = StoreRetrofit.requestService
-        res.getRequest(StoreRetrofit.apiKey, "1", crn.value.toString(),"json").enqueue(object : Callback<testBody> {
-            override fun onResponse(call: Call<testBody>, response: Response<testBody>) {
-                if (response.isSuccessful) {
-                    changeSuccess(false, "인증 완료")
-                } else {
-                    _event.value = Event.Fail("조회 실패")
+        res.getRequest(StoreRetrofit.apiKey, "1", crn.value.toString(), "json")
+            .enqueue(object : Callback<testBody> {
+                override fun onResponse(call: Call<testBody>, response: Response<testBody>) {
+                    if (response.isSuccessful) {
+                        changeSuccess(false, "인증 완료")
+                    } else {
+                        _event.value = Event.Fail("조회 실패")
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<testBody>, t: Throwable) {
-                _event.value = Event.Fail("조회실패")
-            }
-        })
+                override fun onFailure(call: Call<testBody>, t: Throwable) {
+                    _event.value = Event.Fail("조회실패")
+                }
+            })
     }
-    private fun real(){
+
+    private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
-        val res = StoreRetrofit.requestService
-        res.bnoRequest(StoreRetrofit.apiKey, crn.value.toString()).enqueue(object : Callback<StoreModel> {
-            override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
-                if (response.isSuccessful) {
-                    changeSuccess(false, "인증 완료")
-                } else {
-                    _event.value = Event.Fail("조회 실패")
-                }
-            }
 
-            override fun onFailure(call: Call<StoreModel>, t: Throwable) {
-                _event.value = Event.Fail("조회실패")
-            }
-        })
+        val res = StoreRetrofit.requestService
+        res.bnoRequest(StoreRetrofit.apiKey, crn.value.toString())
+            .enqueue(object : Callback<StoreModel> {
+                override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
+                    if (response.isSuccessful) {
+                        changeSuccess(false, "인증 완료")
+                    } else {
+                        crn.value = ""
+                        _event.value = Event.Fail("조회 실패")
+                    }
+                }
+
+                override fun onFailure(call: Call<StoreModel>, t: Throwable) {
+                    crn.value = ""
+                    _event.value = Event.Fail("조회실패")
+                }
+            })
     }
 }
