@@ -43,6 +43,9 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 storeInRadiusDto.getLineString(),
                 qAddress.location
         );
+        // 필터링 기능 추가
+        // 0을 _로 바꾼 뒤 각 쓰레기 종류를 제공하는 가게들을 찾늗다.
+        // ex) 10110 -> like "1_11_"
         String likeStr = storeInRadiusDto.getTrashType().replace("0", "_");
         Set<StoreDto> result = new HashSet<>(jpaQueryFactory
                 .select(
