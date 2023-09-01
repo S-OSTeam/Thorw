@@ -22,6 +22,7 @@ public class UserSaveRequest {
     @Pattern(regexp = "^[0-9]+$", message = "올바른 snsId 형식이 아닙니다.")
     private String snsId;
 
+    @NotNull
     @Pattern(regexp = "^(NORMAL)|(KAKAO)|(GOOGLE)|(NAVER)", message = "sns 종류에 해당하지 않는 값이 입력 되었습니다.")
     private String sns;
 

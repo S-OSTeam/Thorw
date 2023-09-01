@@ -1,25 +1,21 @@
 package sosteam.throwapi.domain.user.controller;
 
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
-import sosteam.throwapi.domain.user.controller.request.IdDuplicateRequest;
-import sosteam.throwapi.domain.user.controller.request.ReissueTokenRequest;
-import sosteam.throwapi.domain.user.controller.request.UserSaveRequest;
-import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
+import sosteam.throwapi.domain.oauth.service.AuthTokensGenerateService;
+import sosteam.throwapi.domain.user.controller.request.UserInfoRequest;
 import sosteam.throwapi.domain.user.controller.response.ReissueTokensResponse;
-import sosteam.throwapi.domain.user.entity.dto.IdDuplicationDto;
-import sosteam.throwapi.domain.user.entity.dto.ReissueTokensDto;
-import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
-import sosteam.throwapi.domain.user.service.SignUpService;
+import sosteam.throwapi.domain.user.entity.dto.*;
+import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.domain.user.service.TokenService;
-import sosteam.throwapi.global.entity.Role;
-import sosteam.throwapi.domain.user.entity.SNSCategory;
-import sosteam.throwapi.global.entity.UserStatus;
+import sosteam.throwapi.global.service.JwtTokenService;
+
+import java.util.UUID;
 
 /**
  * 일반 로그인 및 sns 로그인 구현
@@ -33,50 +29,35 @@ import sosteam.throwapi.global.entity.UserStatus;
 @RequestMapping("/login")
 @RequiredArgsConstructor
 public class LoginController {
-    private final SignUpService signUpService;
     private final TokenService tokenService;
-
-    @PostMapping("/signup")
-    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params){
-        UserSaveDto userSaveDto = new UserSaveDto(
-                params.getInputId(),
-                params.getInputPassword(),
-                params.getSnsId(),
-                SNSCategory.valueOf(params.getSns()),
-                UserStatus.valueOf(params.getUserStatus()),
-                Role.valueOf(params.getRole()),
-                params.getUserName(),
-                params.getUserPhoneNumber(),
-                params.getEmail()
-        );
-
-        signUpService.SignUp(userSaveDto);
-        return ResponseEntity.ok("정상 회원가입 완료");
-    }
-
-    @PostMapping("/idduptest")
-    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
-        IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
-                params.getInputId()
-        );
-
-        IdDuplicateResponse result = new IdDuplicateResponse(signUpService.checkIdDup(idDuplicationDto));
-        return ResponseEntity.ok(result);
-    }
+    private final UserRepository userRepository;
+    private final AuthTokensGenerateService authTokensGenerateService;
 
     @PostMapping("/reissue")
-    public ResponseEntity<ReissueTokensResponse> reissueTokens(@RequestBody @Valid ReissueTokenRequest params){
+    public ResponseEntity<ReissueTokensResponse> reissueTokens(
+            @RequestHeader(name = "grant_type", required = true)
+            @Pattern(regexp = "^(refresh_token)", message = "reissue API 요청시 grant_type 은 refreshToken 만 가능")
+            String grantType,
+
+            @RequestHeader(name = "refresh_token", required = true)
+            String refreshToken
+    ){
         ReissueTokensDto tokensDto = new ReissueTokensDto(
-                SNSCategory.valueOf(params.getSns()),
-                null,
-                params.getRefreshToken()
+                refreshToken
         );
 
         Tokens result = tokenService.reissueTokens(tokensDto);
         return ResponseEntity.ok(new ReissueTokensResponse(
-                params.getSns(),
                 result.getAccessToken(),
                 result.getRefreshToken()
         ));
     }
+
+//    @PostMapping("testToken")
+//    public ResponseEntity<Tokens> testToken(@RequestBody UserInfoRequest params){
+//        UUID id = userRepository.searchUUIDByInputId(params.getInputId());
+//        Tokens tokens = authTokensGenerateService.generate(id, params.getInputId());
+//        return ResponseEntity.ok(tokens);
+//    }
+
 }
