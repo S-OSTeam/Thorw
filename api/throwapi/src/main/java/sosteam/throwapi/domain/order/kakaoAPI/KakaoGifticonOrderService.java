@@ -1,6 +1,7 @@
 package sosteam.throwapi.domain.order.kakaoAPI;
 
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sosteam.throwapi.domain.order.exception.KakaoException;
 import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendResponseDto;
@@ -8,14 +9,15 @@ import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendRequestDto;
 
 import java.util.Collections;
 
-public class KakaoGifticonOrder {
+@Service
+public class KakaoGifticonOrderService {
     private static final String GIFT_SEND_API_URL = "https://gateway-giftbiz.kakao.com/openapi/giftbiz/v1/template/order";
     // TODO: 2023-08-29 인증키를 받아야함
     private static final String AUTHORIZATION_HEADER_VALUE = "KakaoAK abcdefghijk1234567890";
 
     private RestTemplate restTemplate;
 
-    public KakaoGifticonOrder() {
+    public KakaoGifticonOrderService() {
         this.restTemplate = new RestTemplate();
     }
 

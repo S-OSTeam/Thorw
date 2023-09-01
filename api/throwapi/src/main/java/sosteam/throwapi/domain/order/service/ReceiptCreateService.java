@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Receipt;
-import sosteam.throwapi.domain.order.kakaoAPI.KakaoGifticonOrder;
+import sosteam.throwapi.domain.order.kakaoAPI.KakaoGifticonOrderService;
 import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendRequestDto;
 import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendResponseDto;
-import sosteam.throwapi.domain.order.repository.repo.GifticonRepository;
 import sosteam.throwapi.domain.order.repository.repo.ReceiptRepository;
 import sosteam.throwapi.domain.user.entity.User;
 
@@ -22,9 +21,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ReceiptCreateService {
-    private final KakaoGifticonOrder kakaoGifticonOrder;
+    private final KakaoGifticonOrderService kakaoGifticonOrder;
     private final ReceiptRepository receiptRepository;
-    private final GifticonRepository gifticonRepository;
 
     /**
      * templateToken을 통해 Gifticon과 Receipt 생성

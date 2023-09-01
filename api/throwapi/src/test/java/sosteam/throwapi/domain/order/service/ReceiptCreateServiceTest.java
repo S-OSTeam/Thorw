@@ -47,7 +47,7 @@ public class ReceiptCreateServiceTest {
 
         // then
         assertEquals("SEARCH TEMPLATETOKEN",searchTemplateTokenByProductName,testTemplateToken);
-        assertEquals("GIFTICON CREATE",gifticon.get().getGiftTraceId(),"123456L");
+        assertEquals("GIFTICON CREATE",gifticon.get().getGiftTraceId(),"123456");
 
     }
 }
