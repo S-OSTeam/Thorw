@@ -84,11 +84,14 @@ public class StoreController {
     public ResponseEntity<Set<StoreResponse>> searchStoreInRadius(@RequestBody @Valid StoreInRadiusRequest request) {
         log.debug("storeSearchDto={}", request);
         // Call search Service
+        // 필터링 기능 추가
+        // 0을 _로 바꾼 뒤 각 쓰레기 종류를 제공하는 가게들을 찾늗다.
+        // ex) 10110 -> like "1_11_"
         StoreInRadiusDto dto = new StoreInRadiusDto(
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getDistance(),
-                request.getTrashType()
+                request.getTrashType().replace("0","_")
         );
         // Convert Dto to Response
         Set<StoreDto> storeDtos = storeGetService.searchStoreInRadius(dto);
@@ -158,20 +161,8 @@ public class StoreController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
-        StoreDto dto = new StoreDto(
-                request.getExtStoreId(),
-                request.getStoreName(),
-                request.getStorePhone(),
-                request.getCrn().replaceAll("-",""),
-                request.getLatitude(),
-                request.getLongitude(),
-                request.getZipCode(),
-                request.getFullAddress(),
-                request.getTrashType()
-        );
-        storeDeleteService.deleteStore(dto);
-        String resp = "Delete Store: " + request.getStoreName() +
-                " [" + request.getCrn() + "] " +
+        storeDeleteService.deleteStore(request.getExtStoreId());
+        String resp = "Delete Store: " + request.getExtStoreId() +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
         return ResponseEntity.ok(resp);
     }
