@@ -14,13 +14,13 @@ import java.util.*;
 public class ReceiptSearchService {
     private final ReceiptRepository receiptRepository;
 
-    public Optional<Receipt> getReceiptById(UUID receiptId) {
-        log.debug("RECEIPT SEARCH");
-        return receiptRepository.findById(receiptId);
-    }
-
-    public Set<Receipt> getAllReceipts() {
+    public Set<Receipt> searchAllReceipts() {
         log.debug("RECEIPTS SEARCH");
         return new HashSet<>(receiptRepository.findAll());
+    }
+
+    public Set<Receipt> searchUserReceipts(UUID userId){
+        log.debug("RECEIPTS SEARCH BY USER ID");
+        return new HashSet<>(receiptRepository.searchByUserId(userId).get());
     }
 }
