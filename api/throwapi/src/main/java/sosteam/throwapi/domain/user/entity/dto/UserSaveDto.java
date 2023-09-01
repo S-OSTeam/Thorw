@@ -12,7 +12,8 @@ import sosteam.throwapi.global.entity.UserStatus;
 @NoArgsConstructor
 public class UserSaveDto {
     private String inputId;
-    private String inputPassWord;
+    private String inputPassword;
+    private String inputPasswordCheck;
     private String snsId;
     private SNSCategory snsCategory;
     private UserStatus userStatus;

@@ -12,6 +12,7 @@ import sosteam.throwapi.domain.user.entity.dto.UserCngDto;
 import sosteam.throwapi.domain.user.entity.dto.UserInfoDto;
 import sosteam.throwapi.domain.user.entity.dto.UserSaveDto;
 import sosteam.throwapi.domain.user.exception.NoSuchUserException;
+import sosteam.throwapi.domain.user.exception.SignUpPasswordException;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 
@@ -24,11 +25,12 @@ public class UserInfoService {
 
     public User SignUp(UserSaveDto dto){
         log.debug("Start SignUp User = {}", dto);
+        if(!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new SignUpPasswordException();
 
         // 1. create User Entity
         User user = new User(
                 dto.getInputId(),
-                passwordEncoder.encode(dto.getInputPassWord()),
+                passwordEncoder.encode(dto.getInputPassword()),
                 dto.getSnsId(),
                 dto.getSnsCategory()
         );
@@ -62,7 +64,7 @@ public class UserInfoService {
 
     public boolean checkIdDup(IdDuplicationDto idDuplicationDto){
         User user = userRepository.searchByInputId(idDuplicationDto.getInputId());
-        if(user != null){
+        if(user == null){
             return false;
         }
         return true;

@@ -48,6 +48,7 @@ public class UserController {
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassword(),
+                params.getInputPasswordCheck(),
                 params.getSnsId(),
                 SNSCategory.valueOf(params.getSns()),
                 UserStatus.valueOf(params.getUserStatus()),
