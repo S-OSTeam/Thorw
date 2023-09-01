@@ -51,6 +51,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
+                                qStore.extStoreId,
                                 qStore.storeName,
                                 qStore.storePhone,
                                 qStore.companyRegistrationNumber,
@@ -75,6 +76,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .select(
                         Projections.constructor(
                                 StoreDto.class,
+                                qStore.extStoreId,
                                 qStore.storeName,
                                 qStore.storePhone,
                                 qStore.companyRegistrationNumber,
@@ -120,6 +122,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                         .select(
                                 Projections.constructor(
                                         StoreDto.class,
+                                        qStore.extStoreId,
                                         qStore.storeName,
                                         qStore.storePhone,
                                         qStore.companyRegistrationNumber,

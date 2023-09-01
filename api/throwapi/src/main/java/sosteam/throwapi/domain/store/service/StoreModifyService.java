@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
-import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.exception.WrongStoreIdException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
@@ -33,7 +32,7 @@ public class StoreModifyService {
      * 만약 가게 코드가 올바르지 않으면 데이터의 무결성이 안지켜진것이므로 수정 시도를 막는다.
      */
     @Transactional
-    public StoreDto modify(StoreModifyDto dto) {
+    public StoreDto modify(StoreDto dto) {
         // Find Store By given storeId
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
         if(optionalStore.isEmpty()) throw new WrongStoreIdException();
@@ -59,6 +58,7 @@ public class StoreModifyService {
                 dto.getZipCode()
         );
         return new StoreDto(
+                dto.getExtStoreId(),
                 dto.getStoreName(),
                 dto.getStorePhone(),
                 dto.getCrn(),

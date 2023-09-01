@@ -9,12 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.store.controller.request.*;
-import sosteam.throwapi.domain.store.controller.response.StoreModifyResponse;
 import sosteam.throwapi.domain.store.controller.response.StoreResponse;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
-import sosteam.throwapi.domain.store.entity.dto.StoreModifyDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -60,6 +58,7 @@ public class StoreController {
         // remove '-'
         // Call save Service
         StoreDto dto = new StoreDto(
+                null,
                 storeName,
                 request.getStorePhone(),
                 request.getCrn().replaceAll("-",""),
@@ -133,14 +132,14 @@ public class StoreController {
      * 가게 코드는 가게 정보들로 이루어진 암호문
      */
     @PutMapping
-    public ResponseEntity<StoreModifyResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
+    public ResponseEntity<StoreResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
-        StoreModifyDto dto = new StoreModifyDto(
+        StoreDto dto = new StoreDto(
                 request.getExtStoreId(),
                 storeName,
                 request.getStorePhone(),
@@ -154,24 +153,12 @@ public class StoreController {
         // Call modify Method
         log.debug("StoreModifyRequest = {}", dto);
         StoreDto storeDto = storeModifyService.modify(dto);
-
-        // Create Response
-        StoreModifyResponse resp = new StoreModifyResponse(
-                storeDto.getStoreName(),
-                storeDto.getStorePhone(),
-                storeDto.getCrn(),
-                storeDto.getLatitude(),
-                storeDto.getLongitude(),
-                storeDto.getZipCode(),
-                storeDto.getFullAddress(),
-                storeDto.getTrashType()
-        );
-        return ResponseEntity.ok(resp);
+        return ResponseEntity.ok(storeDto.toResponse());
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
-        StoreModifyDto dto = new StoreModifyDto(
+        StoreDto dto = new StoreDto(
                 request.getExtStoreId(),
                 request.getStoreName(),
                 request.getStorePhone(),

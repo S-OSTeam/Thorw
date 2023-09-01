@@ -5,9 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sosteam.throwapi.domain.store.controller.response.StoreResponse;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 public class StoreDto {
+    private UUID extStoreId;
     private String storeName;
     private String storePhone;
     private String crn;
@@ -17,7 +20,8 @@ public class StoreDto {
     private String fullAddress;
     private String trashType;
     @QueryProjection
-    public StoreDto(String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress, String trashType) {
+    public StoreDto(UUID extStoreId, String storeName, String storePhone, String crn, Double latitude, Double longitude, String zipCode, String fullAddress, String trashType) {
+        this.extStoreId = extStoreId;
         this.storeName = storeName;
         this.storePhone = storePhone;
         this.crn = crn;
@@ -30,6 +34,7 @@ public class StoreDto {
 
     public StoreResponse toResponse(){
         return new StoreResponse(
+                this.getExtStoreId(),
                 this.getStoreName(),
                 this.getStorePhone(),
                 this.getCrn(),
