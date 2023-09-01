@@ -97,7 +97,7 @@ public class UserController {
             @RequestHeader(name = "access_token", required = true)
             String accessToken,
 
-            @RequestBody UserCngRequest params
+            @RequestBody @Valid UserCngRequest params
     ){
         String inputId = jwtTokenService.extractSubject(accessToken);
 
