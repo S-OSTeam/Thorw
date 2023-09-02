@@ -7,5 +7,5 @@ import java.util.Set;
 
 public interface ItemCustomRepository {
     Optional<Item> searchByProductName(String productName);
-    Optional<Set<Item>> searchByProductNameUser(String productName);
+    Optional<Set<Item>> searchByProductNameContaining(String productName);
 }

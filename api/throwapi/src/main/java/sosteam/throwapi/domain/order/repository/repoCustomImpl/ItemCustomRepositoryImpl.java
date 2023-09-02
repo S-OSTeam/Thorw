@@ -26,7 +26,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public Optional<Set<Item>> searchByProductNameUser(String productName) {
+    public Optional<Set<Item>> searchByProductNameContaining(String productName) {
         Set<Item> foundItems = new HashSet<>(queryFactory.selectFrom(item)
                 .where(item.productName.contains(productName))
                 .fetch());

@@ -44,4 +44,13 @@ public class ItemSearchService {
         log.debug("ITEMS SEARCH");
         return new HashSet<>(itemRepository.findAll());
     }
+
+    /**
+     * 상품 이름으로 아이템들 찾기(user에게 제공해줄 것)
+     * @param productName
+     */
+    public Optional<Set<Item>> searchByProductNameContaining(String productName) {
+        log.debug("SEARCH ITEMS CONTAINING PRODUCT NAME");
+        return itemRepository.searchByProductNameContaining(productName);
+    }
 }
