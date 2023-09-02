@@ -8,19 +8,26 @@ import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.exception.InvalidRequestException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.exception.WrongStoreIdException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
+import sosteam.throwapi.domain.user.entity.User;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
+import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreModifyService {
     private final StoreRepository storeRepository;
-
+    private final UserInfoService userInfoService;
+    private final JwtTokenService jwtTokenService;
     /**
      * 가게 정보를 수정하는 메소드
      * @param dto 기존 가게 코드와 가게 데이터
@@ -32,11 +39,22 @@ public class StoreModifyService {
      * 만약 가게 코드가 올바르지 않으면 데이터의 무결성이 안지켜진것이므로 수정 시도를 막는다.
      */
     @Transactional
-    public StoreDto modify(StoreDto dto) {
+    public StoreDto modify(String accessToken,StoreDto dto) {
+        // 요청 사용자 정보 가져오기
+        UserInfoDto userInfoDto = new UserInfoDto(
+                jwtTokenService.extractSubject(accessToken)
+        );
+        User user = userInfoService.searchByInputId(userInfoDto);
+
         // Find Store By given storeId
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
         if(optionalStore.isEmpty()) throw new WrongStoreIdException();
         Store store = optionalStore.get();
+
+        // check if the store's owner is same with request-user
+        Optional<UUID> userId = storeRepository.searchUserByStore(store);
+        if(!user.getId().equals(userId)) throw new InvalidRequestException("MODIFY");
+
         store.modify(
                 dto.getStoreName(),
                 dto.getStorePhone(),
