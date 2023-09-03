@@ -65,7 +65,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserInfoResponse> searchByInputId(
             @RequestHeader(name = "Authorization", required = true)
-            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer {accessToken}")
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token
     ){
         String accessToken = token.substring(7);
@@ -88,7 +88,7 @@ public class UserController {
     @PostMapping("/cnginfo")
     public ResponseEntity<String> cngUserInfo(
             @RequestHeader(name = "Authorization", required = true)
-            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer {accessToken}")
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token,
             @RequestBody @Valid UserCngRequest params
     ){

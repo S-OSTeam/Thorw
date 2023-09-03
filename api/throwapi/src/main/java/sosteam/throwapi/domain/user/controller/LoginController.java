@@ -69,7 +69,7 @@ public class LoginController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(
             @RequestHeader(name = "Authorization", required = true)
-            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer {accessToken}")
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token
     ){
         String accessToken = token.substring(7);

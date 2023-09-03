@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
+import sosteam.throwapi.global.entity.Role;
 
 import java.security.Key;
 import java.util.Collection;
@@ -76,14 +77,14 @@ public class JwtTokenService {
     public Long getExpiration(String token){
         Long expiration = this.parseClaims(token).getExpiration().getTime();
         Long now = new Date().getTime();
-        return (expiration - now);
+        return (now - expiration);
     }
 
     public Authentication getAuthentication(sosteam.throwapi.domain.user.entity.User user1){
         UserDetails userDetails = User.builder()
                 .username(user1.getInputId())
                 .password(user1.getPassword())
-                .roles(user1.getRole().toString())
+                .roles(user1.getRole().getKey())
                 .build();
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);

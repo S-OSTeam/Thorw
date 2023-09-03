@@ -1,11 +1,13 @@
 package sosteam.throwapi.global.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,11 +15,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 import sosteam.throwapi.domain.user.service.TokenService;
+import sosteam.throwapi.global.exception.exception.CommonException;
+import sosteam.throwapi.global.exception.exception.CommonExceptionResponse;
+import sosteam.throwapi.global.security.redis.exception.LogoutException;
 import sosteam.throwapi.global.security.redis.service.RedisUtilService;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.io.IOException;
 import java.util.UUID;
+
 
 @Slf4j
 @Component
@@ -33,9 +39,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     )throws IOException, ServletException {
-        String accessToken = request.getHeader("access_token");
-        if(accessToken != null){
-            this.checkAccessToken(accessToken);
+        String Tokens = request.getHeader("Authorization");
+        if(Tokens != null){
+            String accessToken = Tokens.substring(7);
+            try{
+                if(!this.checkAccessToken(accessToken)){
+                    this.sendResponse(response, "접근 권한이 없습니다.","NOT_HAVE_AUTHORIZATION" ,HttpStatus.UNAUTHORIZED);
+                    return;
+                }
+            } catch (Exception e){
+                log.debug("doFilterInternal = {}", e.getMessage());
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -46,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         User user = userRepository.searchByInputId(inputId);
         UUID memberId = user.getId();
 
-        String isLogout = redisUtilService.getData(inputId);
+        String isLogout = redisUtilService.getData(accessToken);
         String refreshToken = redisUtilService.getData(memberId.toString());
         log.debug("isLogout = {}, refreshToken = {}", isLogout, refreshToken);
 
@@ -54,14 +68,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 if(jwtTokenService.validateToken(accessToken)){
                     Authentication authentication = jwtTokenService.getAuthentication(user);
+                    log.debug("authentication = {}", authentication);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return true;
                 }
             } catch (Exception e){
-                log.error("checkAccessToken fail = {}", e.getMessage());
+                log.debug("checkAccessToken fail = {}", e.getMessage());
                 return false;
             }
         }
         return false;
+    }
+    private void sendResponse(HttpServletResponse response, String message, String code, HttpStatus status) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        CommonExceptionResponse result = new CommonExceptionResponse(code, message);
+
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(mapper.writeValueAsString(result));
     }
 }

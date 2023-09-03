@@ -13,7 +13,11 @@ public class RedisUtilService {
     private final RedisTemplate redisTemplate;
 
     public String getData(String key){
-        return redisTemplate.opsForValue().get(key).toString();
+        Object result = redisTemplate.opsForValue().get(key);
+        if(result != null){
+            return result.toString();
+        }
+        return null;
     }
 
     public void setData(String key, String value){
