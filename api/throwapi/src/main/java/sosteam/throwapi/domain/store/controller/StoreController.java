@@ -52,14 +52,15 @@ public class StoreController {
 
     @PostMapping
     public ResponseEntity<UUID> saveStore(
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken,
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
 
             @RequestBody @Valid StoreSaveRequest request
     ) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
+        String accessToken = auth.split(" ")[1];
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
@@ -84,9 +85,10 @@ public class StoreController {
 
     @GetMapping("/mystores")
     public ResponseEntity<Set<StoreResponse>> searchMyStores(
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken
+            @RequestHeader(name = "Authorization", required = true)
+            String auth
     ) {
+        String accessToken = auth.split(" ")[1];
         Set<StoreDto> storeDtos = storeGetService.searchMyStores(accessToken);
         Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
@@ -153,11 +155,12 @@ public class StoreController {
      */
     @PutMapping
     public ResponseEntity<StoreResponse> modifyStore(
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken,
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
 
             @RequestBody @Valid StoreModifyRequest request
     ) {
+        String accessToken = auth.split(" ")[1];
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
@@ -183,11 +186,12 @@ public class StoreController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteStore(
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken,
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
 
             @RequestBody @Valid StoreDeleteRequest request
     ) {
+        String accessToken = auth.split(" ")[1];
         storeDeleteService.deleteStore(accessToken,request.getExtStoreId());
         String resp = "Delete Store: " + request.getExtStoreId() +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
