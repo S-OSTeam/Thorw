@@ -19,4 +19,8 @@ public interface StoreCustomRepository {
     Optional<Store> searchByExtStoreId(UUID uuid);
 
     Optional<Address> searchAddressByStore(UUID uuid);
+
+    Optional<Set<StoreDto>> searchMyStores(UUID uuid);
+
+    Optional<UUID> searchUserByStore(Store store);
 }
