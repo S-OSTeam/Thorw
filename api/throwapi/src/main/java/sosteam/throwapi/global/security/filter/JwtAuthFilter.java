@@ -39,16 +39,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     )throws IOException, ServletException {
+        String regexp = "^(Bearer)\s.+$";
         String Tokens = request.getHeader("Authorization");
         if(Tokens != null){
-            String accessToken = Tokens.substring(7);
-            try{
-                if(!this.checkAccessToken(accessToken)){
-                    this.sendResponse(response, "접근 권한이 없습니다.","NOT_HAVE_AUTHORIZATION" ,HttpStatus.UNAUTHORIZED);
-                    return;
+            if(Tokens.matches(regexp)){
+                String accessToken = Tokens.substring(7);
+                try{
+                    if(!this.checkAccessToken(accessToken)){
+                        this.sendResponse(response, "접근 권한이 없습니다.","NOT_HAVE_AUTHORIZATION" ,HttpStatus.UNAUTHORIZED);
+                        return;
+                    }
+                } catch (Exception e){
+                    log.debug("doFilterInternal = {}", e.getMessage());
                 }
-            } catch (Exception e){
-                log.debug("doFilterInternal = {}", e.getMessage());
+            } else {
+                this.sendResponse(response, "Authorization 포멧이 맞지 않습니다","INVALID_REQUEST" ,HttpStatus.BAD_REQUEST);
+                return;
             }
         }
 
