@@ -83,7 +83,7 @@ public class StoreController {
         return ResponseEntity.ok(store.getExtStoreId());
     }
 
-    @GetMapping("/mystores")
+    @GetMapping("/user")
     public ResponseEntity<Set<StoreResponse>> searchMyStores(
             @RequestHeader(name = "Authorization", required = true)
             String auth
