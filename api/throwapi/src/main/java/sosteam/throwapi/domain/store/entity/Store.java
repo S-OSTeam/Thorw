@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
@@ -15,6 +17,8 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Store extends PrimaryKeyEntity {
     @NotNull
+    @Column(name = "ext_store_id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID extStoreId;
 
     @NotNull
@@ -51,6 +55,10 @@ public class Store extends PrimaryKeyEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public User modifyUser(User user) {
+        this.user = user;
+        return this.user;
+    }
 
     @OneToOne(
             mappedBy = "store",

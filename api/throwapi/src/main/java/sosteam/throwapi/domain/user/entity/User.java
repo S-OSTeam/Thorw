@@ -93,6 +93,11 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         return this.userInfo;
     }
 
+    public List<Store> modifyStore(List<Store> stores) {
+        this.stores = stores;
+        return this.stores;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
