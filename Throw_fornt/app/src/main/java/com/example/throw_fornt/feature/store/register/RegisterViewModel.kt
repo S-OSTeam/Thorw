@@ -47,6 +47,21 @@ class RegisterViewModel : ViewModel() {
     //우편번호
     val zoneNo: MutableLiveData<String> = MutableLiveData("")
 
+    //일반쓰레기
+    val general: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    //병
+    val bottle: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    //플라스틱
+    val plastic: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    //종이
+    val paper: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    //캔
+    val can: MutableLiveData<Boolean> = MutableLiveData(false)
+
 
     //사업자등록번호 조회
     fun bnoInquire() {
@@ -67,6 +82,8 @@ class RegisterViewModel : ViewModel() {
 
     //가게등록
     fun register() {
+        var trashCode: String = ""
+        trashCode = checkBoxClick()
         //edit에 값이 비어있는지 확인하기 위한 처리
         if (crn.value.isNullOrEmpty()) _event.value = Event.Fail("사용자 등록번호 ${errorMsg}")
         else if (storePhone.value.isNullOrEmpty()) _event.value = Event.Fail("전화번호 ${errorMsg}")
@@ -77,14 +94,24 @@ class RegisterViewModel : ViewModel() {
             if (subAddress.value.isNullOrEmpty()) subAddress.value = ""
 
             //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
-            val data = StoreModel(
-                storePhone.value.toString(), "", "", crn.value.toString(),
+            val data = StoreModel("",
+                storePhone.value.toString(), "", "","", crn.value.toString(),
                 zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
-                "", "00000", "",
-                "", ""
+                trashCode, "", "",
             )
             _event.value = Event.Register(data)
         }
+    }
+
+    //trashType 예)10100으로 변환 (일쓰->병->플라스틱->종이->캔 순서)
+    fun checkBoxClick(): String{
+        var trashCode:String = ""
+        trashCode += if(general.value!!) "1" else "0"
+        trashCode += if(bottle.value!!) "1" else "0"
+        trashCode += if(plastic.value!!) "1" else "0"
+        trashCode += if(paper.value!!) "1" else "0"
+        trashCode += if(can.value!!) "1" else "0"
+        return trashCode
     }
 
     sealed class Event() {
@@ -93,32 +120,36 @@ class RegisterViewModel : ViewModel() {
         data class Register(val register: StoreModel) : Event()
     }
 
+    //사업자 등록번호 조회 test모드
     private fun test() {
         val res = StoreRetrofit.requestService
         res.getRequest(StoreRetrofit.apiKey, "1", crn.value.toString(), "json")
             .enqueue(object : Callback<testBody> {
                 override fun onResponse(call: Call<testBody>, response: Response<testBody>) {
-                    if (response.isSuccessful) {
+                    if (response.isSuccessful && response.body()?.items!!.size>0) {
                         changeSuccess(false, "인증 완료")
                     } else {
+                        crn.value = ""
                         _event.value = Event.Fail("조회 실패")
                     }
                 }
 
                 override fun onFailure(call: Call<testBody>, t: Throwable) {
+                    crn.value = ""
                     _event.value = Event.Fail("조회실패")
                 }
             })
     }
 
+    //사업자 등록번호 조회 real모드
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
         val res = StoreRetrofit.requestService
-        res.bnoRequest(StoreRetrofit.apiKey, crn.value.toString())
+        res.bnoRequest(crn.value.toString())
             .enqueue(object : Callback<StoreModel> {
                 override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
-                    if (response.isSuccessful) {
+                    if (response.isSuccessful && response.body()?.code=="200") {
                         changeSuccess(false, "인증 완료")
                     } else {
                         crn.value = ""

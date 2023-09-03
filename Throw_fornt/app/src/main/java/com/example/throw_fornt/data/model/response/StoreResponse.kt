@@ -7,18 +7,18 @@ import com.google.gson.annotations.SerializedName
 
 //가게 조회 모델
 data class StoreModel(
-    @SerializedName("storePhone")val storePhone: String,
-    @SerializedName("latitudes")val latitudes: String,
-    @SerializedName("longitude")val longitude: String,
-    @SerializedName("crn")val bno: String,
-    @SerializedName("zipCode")val zipCode: String,
-    @SerializedName("fullAddress")val fullAddress: String,
-    @SerializedName("subAddress")val subAddress: String,
-    @SerializedName("storeName")val storeName: String,
-    @SerializedName("trashType")val trashType: String,
-    @SerializedName("extStoreId")val uuid: String,
-    @SerializedName("code")val code:String,         //결과 코드
-    @SerializedName("message")val msg:String,           //결과 메세지
+    @SerializedName("extStoreId")val uuid: String,              //가게 고유 id
+    @SerializedName("storePhone")val storePhone: String,        //가게 전화번호
+    @SerializedName("storeName")val storeName: String,          //가게 이름
+    @SerializedName("latitudes")val latitudes: String,          //위도 (-90~90)
+    @SerializedName("longitude")val longitude: String,          //경도 (-180~180)
+    @SerializedName("crn")val bno: String,                      //사업자등록번호
+    @SerializedName("zipCode")val zipCode: String,              //우편번호
+    @SerializedName("fullAddress")val fullAddress: String,      //지번주소
+    @SerializedName("subAddress")val subAddress: String,        //세부주소
+    @SerializedName("trashType")val trashType: String,          //일쓰->병->플라스틱->종이->캔
+    @SerializedName("code")val code:String,                     //에러시 결과 코드
+    @SerializedName("message")val msg:String,                   //에러시 결과 메세지
 ):Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readString()?:"",
@@ -37,16 +37,16 @@ data class StoreModel(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(uuid)
         parcel.writeString(storePhone)
+        parcel.writeString(storeName)
         parcel.writeString(latitudes)
         parcel.writeString(longitude)
         parcel.writeString(bno)
         parcel.writeString(zipCode)
         parcel.writeString(fullAddress)
         parcel.writeString(subAddress)
-        parcel.writeString(storeName)
         parcel.writeString(trashType)
-        parcel.writeString(uuid)
         parcel.writeString(code)
         parcel.writeString(msg)
     }

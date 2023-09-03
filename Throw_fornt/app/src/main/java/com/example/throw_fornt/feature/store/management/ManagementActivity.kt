@@ -10,6 +10,7 @@ import com.example.throw_fornt.R
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.databinding.ActivityManagementBinding
 import com.example.throw_fornt.util.common.BindingActivity
+import com.example.throw_fornt.util.common.Toaster
 
 class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.activity_management) {
     private val viewModel: ManagementViewModel by viewModels()
@@ -17,7 +18,6 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        viewModel.event.observe(this) { handleEvent(it) }
 
         //ManagementActivity를 실행되면 AlertDialog창을 띄워서 수정할지 삭제할지 물어본다.
         val builder = AlertDialog.Builder(this)
@@ -40,6 +40,7 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         val intent: Intent = getIntent()
         val receive = intent?.getParcelableExtra<StoreModel>("data")
         if(receive!=null) viewModel.selectItem(receive)
+        viewModel.event.observe(this) { handleEvent(it) }
     }
 
     fun remove(){
@@ -47,6 +48,16 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
     }
 
     fun handleEvent(event: ManagementViewModel.Event){
+        when(event){
+            is ManagementViewModel.Event.Modify -> successModify(event.modify)
+            is ManagementViewModel.Event.Fail -> failMsg(event.msg)
+        }
+    }
 
+    fun successModify(modify: StoreModel){
+
+    }
+    fun failMsg(msg: String){
+        Toaster.showLong(this@ManagementActivity, msg)
     }
 }

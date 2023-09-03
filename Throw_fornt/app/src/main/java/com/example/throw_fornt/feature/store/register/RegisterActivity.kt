@@ -41,7 +41,7 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
     //RegisterViewModel에서 전달받은 값을 가지고 등록함수를 호출
     private fun register(data: StoreModel){
         //서버에 넘겨줘야되는 데이터를 위도경도를 추가하여 StoreRetrofit에 데이터 전달
-        val res = StoreModel(data.storePhone,lat,lon,data.bno,data.zipCode,data.fullAddress,data.subAddress,data.storeName,data.trashType,"","","")
+        val res = StoreModel("",data.storePhone,data.storeName,lat,lon,data.bno,data.zipCode,data.fullAddress,data.subAddress,data.trashType,"","")
         storeHelper.registerResponse(res)
     }
 
