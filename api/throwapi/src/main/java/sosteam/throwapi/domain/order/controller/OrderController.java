@@ -17,9 +17,7 @@ import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.order.service.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -103,10 +101,11 @@ public class OrderController {
      * @param request
      */
     @DeleteMapping
-    public ResponseEntity<String> deleteReceiptAndGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
+    public ResponseEntity<Map<String, Object>> deleteReceiptAndGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
         receiptDeleteService.deleteReceiptByGifticonId(request.getGiftTraceId());
-        String response="Delete Receipt and Gifticon: "+request.getGiftTraceId()+
-                "<" + String.valueOf(LocalDateTime.now()) + ">";
+        Map<String, Object> response = new HashMap<>();
+        response.put("giftTraceId", request.getGiftTraceId());
+        response.put("deletedAt", LocalDateTime.now());
         return ResponseEntity.ok(response);
     }
 }
