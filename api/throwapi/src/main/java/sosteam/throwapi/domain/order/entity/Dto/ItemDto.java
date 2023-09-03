@@ -4,7 +4,7 @@ import sosteam.throwapi.domain.order.controller.response.ItemResponse;
 import sosteam.throwapi.domain.order.entity.Item;
 
 public class ItemDto {
-    public static ItemResponse toItemResponse(Item item) {
+    public static ItemResponse from(Item item) {
         ItemResponse response = new ItemResponse();
         response.setItemId(item.getId());
         response.setProductName(item.getProductName());

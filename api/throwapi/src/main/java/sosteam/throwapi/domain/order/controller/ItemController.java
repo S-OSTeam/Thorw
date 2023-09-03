@@ -34,7 +34,7 @@ public class ItemController {
     public ResponseEntity<Set<ItemResponse>> searchItemList(){
         Set<Item> items = itemSearchService.searchAllItems();
         Set<ItemResponse> responses = items.stream()
-                .map(ItemDto::toItemResponse)
+                .map(ItemDto::from)
                 .collect(Collectors.toSet());
         return ResponseEntity.ok(responses);
     }
@@ -47,7 +47,7 @@ public class ItemController {
         Set<Item> items = itemSearchService.searchByProductNameContaining(request.getProductName())
                 .orElse(Collections.emptySet());
         Set<ItemResponse> responses = items.stream()
-                .map(ItemDto::toItemResponse)
+                .map(ItemDto::from)
                 .collect(Collectors.toSet());
         return ResponseEntity.ok(responses);
     }
