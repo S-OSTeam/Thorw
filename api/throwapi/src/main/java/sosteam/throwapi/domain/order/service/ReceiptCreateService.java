@@ -32,29 +32,7 @@ public class ReceiptCreateService {
     public Optional<Gifticon> createGifticonAndReceipt(String templateToken, Item item) {
         log.debug("SEARCH BY PRODUCT NAME");
         // TODO: 2023-08-29 템플릿 변경, user 정보 추가(수형이 코드 필요)
-//        GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789");
-
-        //-----------------test 코드-----------------
-        GifticonSendResponseDto.TemplateReceiver receiver1 = new GifticonSendResponseDto.TemplateReceiver(
-                1, // sequence
-                "externalKey1", // externalKey
-                "Name1", // name
-                "ReceiverId1" // receiverId
-        );
-
-        GifticonSendResponseDto.TemplateReceiver receiver2 = new GifticonSendResponseDto.TemplateReceiver(
-                2, // sequence
-                "externalKey2", // externalKey
-                "Name2", // name
-                "ReceiverId2" // receiverId
-        );
-
-        // GifticonSendResponseDto 예시 객체 생성
-        GifticonSendResponseDto kakaoResponse = new GifticonSendResponseDto(
-                123456L, // reserveTraceId
-                Arrays.asList(receiver1, receiver2) // templateReceivers
-        );
-        //-----------------test 코드-----------------
+        GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789");
 
         // 해당 응답에서 reserveTraceId를 사용하여 Gifticon 엔터티를 생성하고 저장
         // TODO: 2023-09-01 User 추가
