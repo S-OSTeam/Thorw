@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.user.exception.LoginFailException;
+import sosteam.throwapi.global.security.redis.exception.DuplicationLoginException;
 
 import java.time.Duration;
 
@@ -22,7 +24,10 @@ public class RedisUtilService {
 
     public void setData(String key, String value){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(key, value);
+//        valueOperations.set(key, value);
+        if(!valueOperations.setIfAbsent(key, value)){
+            throw new DuplicationLoginException();
+        }
     }
 
     public void setDataExpire(String key, String value, Long duration){
