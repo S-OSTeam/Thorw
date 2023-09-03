@@ -10,6 +10,7 @@ import sosteam.throwapi.domain.order.controller.request.GifticonDeleteRequest;
 import sosteam.throwapi.domain.order.controller.request.ReceiptSearchRequest;
 import sosteam.throwapi.domain.order.controller.response.GifticonResponse;
 import sosteam.throwapi.domain.order.controller.response.ReceiptResponse;
+import sosteam.throwapi.domain.order.entity.Dto.GifticonDto;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.order.entity.Receipt;
@@ -59,14 +60,8 @@ public class OrderController {
             });
         }
 
-        GifticonResponse response = new GifticonResponse();
-        response.setProductName(item.getProductName());
-        response.setBrandName(item.getBrandName());
-        response.setBrandImageUrl(item.getBrandImageUrl());
-        response.setProductImageUrl(item.getProductImageUrl());
-        response.setProductThumbImageUrl(item.getProductThumbImageUrl());
-        response.setPrice(item.getPrice());
-        response.setGifticons(gifticonInfos);
+        GifticonResponse response = GifticonDto.from(item, gifticonInfos);
+
 
         return ResponseEntity.ok(response);
     }
