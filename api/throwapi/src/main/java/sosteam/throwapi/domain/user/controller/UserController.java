@@ -64,13 +64,11 @@ public class UserController {
     //inputId 를 이용해 User 의 info 를 반환 하는 API
     @GetMapping
     public ResponseEntity<UserInfoResponse> searchByInputId(
-            @RequestHeader(name = "grant_type", required = true)
-            @Pattern(regexp = "^(access_token)", message = "reissue API 요청시 grant_type 은 access_token 만 가능")
-            String grantType,
-
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer {accessToken}")
+            String token
     ){
+        String accessToken = token.substring(7);
         //accessToken 을 이용해 inputId 를 구함
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
@@ -89,15 +87,12 @@ public class UserController {
 
     @PostMapping("/cnginfo")
     public ResponseEntity<String> cngUserInfo(
-            @RequestHeader(name = "grant_type", required = true)
-            @Pattern(regexp = "^(access_token)", message = "reissue API 요청시 grant_type 은 access_token 만 가능")
-            String grantType,
-
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken,
-
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer {accessToken}")
+            String token,
             @RequestBody @Valid UserCngRequest params
     ){
+        String accessToken = token.substring(7);
         String inputId = jwtTokenService.extractSubject(accessToken);
 
         UserInfoDto userInfoDto = new UserInfoDto(

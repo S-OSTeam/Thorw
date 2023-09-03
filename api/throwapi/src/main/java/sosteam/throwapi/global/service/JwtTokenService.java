@@ -3,26 +3,25 @@ package sosteam.throwapi.global.service;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
-import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
-import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 
 import java.security.Key;
-import java.security.SignatureException;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @Slf4j
 public class JwtTokenService {
     private final Key key;
+
 
     public JwtTokenService(@Value("${jwt.secret.key}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -74,9 +73,20 @@ public class JwtTokenService {
         return false;
     }
 
-//    //accessToken 재발급을 위해 refreshToken 의 권한 확인
-//    public boolean checkRefreshTokenPermission(String refreshToken){
-//        Claims claims = this.parseClaims(refreshToken);
-//        claims.
-//    }
+    public Long getExpiration(String token){
+        Long expiration = this.parseClaims(token).getExpiration().getTime();
+        Long now = new Date().getTime();
+        return (expiration - now);
+    }
+
+    public Authentication getAuthentication(sosteam.throwapi.domain.user.entity.User user1){
+        UserDetails userDetails = User.builder()
+                .username(user1.getInputId())
+                .password(user1.getPassword())
+                .roles(user1.getRole().toString())
+                .build();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+    }
+
 }

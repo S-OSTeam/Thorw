@@ -21,7 +21,6 @@ public class TokenService {
     private final JwtTokenService jwtTokenService;
     private final TokensGenerateService tokensGenerateService;
 
-
     public Tokens reissueTokens(ReissueTokensDto tokensDto){
         String subject = jwtTokenService.extractSubject(tokensDto.getRefreshToken());
         log.debug("subject = {}", subject);
