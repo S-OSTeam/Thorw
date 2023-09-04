@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest
 @Transactional
 public class ReceiptCreateServiceTest {
     @Autowired
