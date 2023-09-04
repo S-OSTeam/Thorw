@@ -44,7 +44,7 @@ public class MailController {
         return ResponseEntity.ok("10m start count");
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<String> testtest(){
         return ResponseEntity.ok("why not?");
     }
