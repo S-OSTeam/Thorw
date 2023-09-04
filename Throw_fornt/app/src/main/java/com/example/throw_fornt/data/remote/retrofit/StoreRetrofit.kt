@@ -22,13 +22,13 @@ class StoreRetrofit {
 
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
-        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgwNzk5NH0.M8R4hDbUbKWTzr_S-WDPvNKvFBLF1kv0uhZ0creb0LdRioDxCnmyRCFbNsiqBiEnljg-uHRItzLIeP2nwBlSog"
+        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
         lateinit var requestService: StoreRequest
     }
 
 
     //가게 등록을 위한 api호출
-    fun registerResponse(store: StoreModel){
+    fun registerResponse(){
         try {
             val client = OkHttpClient.Builder().addInterceptor { chain ->
                 val newRequest = chain.request().newBuilder()
@@ -39,36 +39,13 @@ class StoreRetrofit {
 
             val urls = URL(url)
             //가게 등록하기 위한 데이터 값을 log로 표시
-            Log.d("storeData", "storePhone: ${store.storePhone}, lat: ${store.latitudes}, lon: ${store.longitude}, bno: ${store.bno}, zipCode: ${store.zipCode}, address: ${store.fullAddress}, type: ${store.trashType}")
             val retrofit = Retrofit.Builder()
                 .client(client)
                 .baseUrl(urls)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            val request: StoreRequest = retrofit.create(StoreRequest::class.java)
-            val body: Register
-            body = Register(store.storePhone, store.bno, store.latitudes.toDouble(), store.longitude.toDouble(),
-                store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType)
+            requestService = retrofit.create(StoreRequest::class.java)
 
-            request.registerRequest(body).enqueue(object: Callback<String>{
-                override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>
-                ) {
-                    if(response.isSuccessful&&response.body().isNullOrEmpty()){
-                        true
-                        //TODO 성공 토스트 넣기
-                    }
-                    else{
-                        true
-                        //TODO 실패 토스트 넣기
-                    }
-                }
-
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    //TODO 실패 토스트 넣기
-                }
-            })
         } catch (e: Exception) {
             e.printStackTrace()
         }
