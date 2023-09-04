@@ -2,6 +2,7 @@ package sosteam.throwapi.domain.user.repository.custom;
 
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
+import sosteam.throwapi.global.entity.UserStatus;
 
 import java.util.UUID;
 
@@ -15,6 +16,8 @@ public interface UserRepositoryCustom {
     UUID searchUUIDByInputId(String inputId);
 
     Long updateByInputId(UserCngDto userCngDto);
+
+    Long updateUserStatusByInputId(String inputId, UserStatus userStatus);
 
     boolean existBySNSId(String snsId);
 

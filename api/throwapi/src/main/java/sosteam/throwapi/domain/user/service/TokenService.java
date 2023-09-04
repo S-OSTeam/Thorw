@@ -20,6 +20,7 @@ public class TokenService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
     private final TokensGenerateService tokensGenerateService;
+    private final UserInfoService userInfoService;
 
     public Tokens reissueTokens(ReissueTokensDto tokensDto){
         String subject = jwtTokenService.extractSubject(tokensDto.getRefreshToken());
@@ -28,9 +29,16 @@ public class TokenService {
         log.debug("memberId = {}", memberId);
 
         User user = userRepository.searchById(memberId);
+
+        //user 계정의 상태를 확인 한다
+        userInfoService.isUserStatusNormal(user.getUserStatus());
+
         if(user == null){
             throw new NotValidateTokenException();
         }
+
+        //user 계정의 현재 상태를 확인
+        userInfoService.isUserStatusNormal(user.getUserStatus());
         return tokensGenerateService.generate(memberId, user.getInputId());
     }
 }
