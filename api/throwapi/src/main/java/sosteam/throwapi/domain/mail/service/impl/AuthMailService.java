@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.mail.exception.MailServiceUnavailableException;
 import sosteam.throwapi.domain.mail.service.MailService;
 import sosteam.throwapi.global.service.RandomStringService;
 
@@ -41,6 +42,7 @@ public class AuthMailService implements MailService {
             message.setText(msgg, "utf-8", "html");
         } catch (MessagingException e) {
             log.debug("{}", e.getStackTrace());
+            throw new MailServiceUnavailableException();
         }
 
         return message;
