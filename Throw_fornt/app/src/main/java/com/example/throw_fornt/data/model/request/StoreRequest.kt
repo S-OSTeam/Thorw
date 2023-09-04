@@ -1,33 +1,84 @@
 package com.example.throw_fornt.data.model.request
 
+import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
+import com.example.throw_fornt.data.model.response.testBody
+import com.google.gson.annotations.SerializedName
 import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface StoreRequest {
-    /*
-    상점 등록 request
-     */
-    @GET("/api/...")
+
+    //상점 등록 request
+    @POST("store")
     fun registerRequest(
-        @Query("address_id") addrressId : String,
-        @Query("location_id") locationId : String,
-        @Query("name") name : String,
-        @Query("company_registration_number") bno : String,
-        @Query("type") type : String,
-        @Query("second_password") secondPassword : String,
-    ) : Call<StoreResponse>
+        @Body register: Register,
+    ) : Call<String>
 
-    /*
-    상점 데이터 request
-     */
-    @GET("/api/...")
+    //내 가게 조회 request
+    @POST("/api/...")
     fun storeRequest(
-    ) : Call<StoreResponse>
+        @Header("Content-Type") key: String,
+    ) : Call<StoreModel>
 
-    @GET("")
+    //사업자등록번호 조회 request
+    @POST("store/crn")
     fun bnoRequest(
-        @Query("bno") company_registration_number : String
-    ) : Call<StoreResponse>
+        @Body crn: HashMap<String, String>
+    ) : Call<StoreModel>
+
+
+    //가게 수정 request
+    @PUT("store")
+    fun mondifyRequest(
+        @Field("extStoreId") uuid: String,
+        @Field("storePhone") storePhone: String,
+        @Field("latitudes") latitudes : Double,
+        @Field("longitude") longitude : Double,
+        @Field("crn") bno : String,
+        @Field("zipCode") zipCode : String,
+        @Field("fullAddress") fullAddress : String,
+        @Field("trashType") type: String,
+    ): Call<StoreModel>
+
+    //가게 삭제 request
+    @DELETE("store")
+    fun deleteRequest(
+        @Field("extStoreId") uuid: String,
+        @Field("storeName") storeName: String,
+        @Field("storePhone") storePhone: String,
+        @Field("latitudes") latitudes : Double,
+        @Field("longitude") longitude : Double,
+        @Field("crn") bno : String,
+        @Field("zipCode") zipCode : String,
+        @Field("fullAddress") fullAddress : String,
+        @Field("trashType") type: String,
+    ): Call<StoreModel>
+
+    @GET("fapi")
+    fun getRequest(
+        @Query("key") key: String,
+        @Query("gb") gb:String,
+        @Query("q") q:String,
+        @Query("type") type:String
+    ) : Call<testBody>
 }
+
+data class Register(
+    @SerializedName("storePhone")val storePhone: String,        //가게 전화번호
+    @SerializedName("crn")val crn: String,                      //사업자등록번호
+    @SerializedName("latitude")val latitude: Double,          //위도 (-90~90)
+    @SerializedName("longitude")val longitude: Double,          //경도 (-180~180)
+    @SerializedName("zipCode")val zipCode: String,              //우편번호
+    @SerializedName("fullAddress")val fullAddress: String,      //지번주소
+    @SerializedName("trashType")val trashType: String,          //일쓰->병->플라스틱->종이->캔
+)

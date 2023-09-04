@@ -97,35 +97,35 @@
                             android:background="@drawable/edit_text_border"
                             android:hint="000-00-00000"
                             android:enabled="@{viewModel.bnoBtn}"
-                            android:text="@{viewModel.bno.toString()}"
+                            android:text="@={viewModel.crn}"
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ceo_information"
+                        android:id="@+id/number_information"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/ceo_text"
+                            android:id="@+id/number_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="대표자명"
+                            android:text="전화번호"
                             android:textSize="15dp"
                             android:textStyle="bold" />
 
                         <EditText
-                            android:id="@+id/ceo_edit"
+                            android:id="@+id/number_edit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="10dp"
                             android:background="@drawable/edit_text_border"
-                            android:hint="홍길동"
-                            android:text="@{viewModel.ceoEdit}"
+                            android:hint="02-1111-1111"
+                            android:text="@={viewModel.storePhone}"
                             android:padding="16dp"
                             android:textSize="18dp" />
                     </LinearLayout>
@@ -167,29 +167,46 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/edit_text_border"
-                            android:hint="서울특별시 중구 세종대로 110"
+                            android:hint="서울특별시 동작구 상도로 378"
+                            android:text="@={viewModel.fullAddress}"
                             android:padding="16dp"
                             android:textSize="18dp"
                             android:layout_marginTop="15dp"
                             android:onClick="@{()->viewModel.search()}"
-                            android:enabled="false"
+                            android:enabled="true"
+                            android:layout_marginRight="20dp"/>
+                        <EditText
+                            android:id="@+id/sub_address_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edit_text_border"
+                            android:hint="101호"
+                            android:text="@={viewModel.subAddress}"
+                            android:padding="16dp"
+                            android:textSize="18dp"
+                            android:layout_marginTop="15dp"
+                            android:enabled="true"
                             android:layout_marginRight="20dp"/>
                         <EditText
                             android:id="@+id/address_edit2"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/edit_text_border"
-                            android:hint="서울 시청(1층)"
-                            android:padding="16dp"
-                            android:textSize="18dp"
+                            android:layout_height="match_parent"
                             android:layout_marginTop="10dp"
-                            android:layout_marginRight="20dp"/>
+                            android:layout_marginRight="20dp"
+                            android:background="@drawable/edit_text_border_enabled"
+                            android:enabled="false"
+                            android:hint="우편 번호"
+                            android:text="@={viewModel.zoneNo}"
+                            android:textColor="#8B8B8B"
+                            android:padding="16dp"
+                            android:textColorHint="#8B8B8B"
+                            android:textSize="18dp"/>
                     </LinearLayout>
-
-                    <FrameLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="40dp">
+                        android:layout_marginTop="40dp"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -213,7 +230,67 @@
                                 android:textSize="15dp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-                    </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginRight="20dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="5dp">
+                                <CheckBox
+                                    android:id="@+id/general"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="일반 쓰레기"
+                                    android:textSize="18dp"
+                                    android:checked="@={viewModel.general}"/>
+                                <CheckBox
+                                    android:id="@+id/bottle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="병           "
+                                    android:textSize="18dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:checked="@={viewModel.bottle}"/>
+                                <CheckBox
+                                    android:id="@+id/plastic"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="플라스틱"
+                                    android:textSize="18dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:checked="@={viewModel.plastic}"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                                <CheckBox
+                                    android:id="@+id/paper"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="종이           "
+                                    android:textSize="18dp"
+                                    android:checked="@={viewModel.paper}"/>
+                                <CheckBox
+                                    android:id="@+id/can"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="캔           "
+                                    android:textSize="18dp"
+                                    android:layout_marginLeft="11dp"
+                                    android:checked="@={viewModel.can}"/>
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
@@ -227,8 +304,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="15dp"
-                android:text="가게 등록"></Button>
+                android:text="가게 등록"
+                android:onClick="@{()->viewModel.register()}"/>
         </FrameLayout>
     </LinearLayout>
-
 </layout>
