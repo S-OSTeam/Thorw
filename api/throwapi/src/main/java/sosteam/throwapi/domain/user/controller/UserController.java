@@ -49,6 +49,7 @@ public class UserController {
 
             @RequestBody @Valid PWCheckRequest params
     ){
+        // accessToken 을 뽑아 내어 inputId 를 구함(구할 때 token 에 대한 유효성 검사를 진행 함)
         String accessToken = token.substring(7);
         String inputId = jwtTokenService.extractSubject(accessToken);
 
@@ -57,6 +58,7 @@ public class UserController {
                 params.getInputPassword()
         );
 
+        //pw 가 일치 하는지 확인
         PWCheckResponse result = new PWCheckResponse(userInfoService.checkPWAgain(pwCheckDto));
         return ResponseEntity.ok(result);
     }
