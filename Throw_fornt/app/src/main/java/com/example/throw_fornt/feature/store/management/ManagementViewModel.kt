@@ -171,7 +171,7 @@ class ManagementViewModel(): ViewModel() {
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
-        val res = StoreRetrofit.bnoService
+        val res = StoreRetrofit.requestService
         val body = HashMap<String, String>()
         body.put("crn", crn.value.toString())
 

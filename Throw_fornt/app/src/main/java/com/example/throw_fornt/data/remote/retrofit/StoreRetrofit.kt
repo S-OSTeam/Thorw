@@ -11,6 +11,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.lang.Exception
 import java.net.URL
 
@@ -23,13 +24,11 @@ class StoreRetrofit {
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
         const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
-        lateinit var bnoService: StoreRequest
-        lateinit var registerService: StoreRequest
-        lateinit var modifyService: StoreRequest
+        lateinit var requestService: StoreRequest
     }
 
     //client 객체
-    val client = OkHttpClient.Builder().addInterceptor { chain ->
+    private val client = OkHttpClient.Builder().addInterceptor { chain ->
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $apiKey")
             .build()
@@ -37,18 +36,24 @@ class StoreRetrofit {
     }.build()
 
     //url 객체
-    val urls = URL(url)
+    private val urls = URL(url)
     //retrofit 객체
-    val retrofit = Retrofit.Builder()
+    private val retrofit = Retrofit.Builder()
         .client(client)
         .baseUrl(urls)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+    private val registerService = retrofit.create(StoreRequest::class.java)
+
+    private val modifyService = retrofit.create(StoreRequest::class.java)
+
+    private val bnoService = retrofit.create(StoreRequest::class.java)
+
     //가게 등록을 위한 api호출
     fun registerResponse(){
         try {
-            registerService = retrofit.create(StoreRequest::class.java)
+            requestService = registerService
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -57,7 +62,6 @@ class StoreRetrofit {
     //가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel){
         try {
-            modifyService = retrofit.create(StoreRequest::class.java)
             modifyService.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
                 store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
             ).enqueue(object: Callback<StoreModel>{
@@ -92,7 +96,7 @@ class StoreRetrofit {
     //사업자등록번호 조회 api 호출
     fun bnoResponse(){
         try {
-            bnoService = retrofit.create(StoreRequest::class.java)
+            requestService = bnoService
         } catch (e: Exception) {
             e.printStackTrace()
         }

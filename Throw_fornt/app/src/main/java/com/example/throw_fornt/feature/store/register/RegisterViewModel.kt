@@ -111,7 +111,7 @@ class RegisterViewModel : ViewModel() {
                 zoneNo.value.toString(), fullAddress.value.toString() + "(${subAddress.value.toString()})", trashCode
             )
 
-            StoreRetrofit.registerService.registerRequest(body).enqueue(object : Callback<String> {
+            StoreRetrofit.requestService.registerRequest(body).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
                     response: Response<String>
@@ -185,7 +185,7 @@ class RegisterViewModel : ViewModel() {
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
-        val res = StoreRetrofit.bnoService
+        val res = StoreRetrofit.requestService
         val body = HashMap<String, String>()
         body["crn"] = crn.value.toString()
 
