@@ -3,6 +3,7 @@ package com.example.throw_fornt.feature.store.management
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.testBody
 import com.example.throw_fornt.data.remote.retrofit.StoreRetrofit
@@ -11,6 +12,10 @@ import com.example.throw_fornt.util.common.SingleLiveEvent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
+import java.net.URL
 
 class ManagementViewModel(): ViewModel() {
     private val errorMsg: String = "칸이 비어있습니다."
@@ -133,19 +138,31 @@ class ManagementViewModel(): ViewModel() {
 
     //사업자 등록번호 조회 test모드
     private fun test() {
-        val res = StoreRetrofit.requestService
-        res.getRequest(StoreRetrofit.apiKey, "1", crn.value.toString(), "json")
+        lateinit var requestService: StoreRequest
+        try {
+            val urls = URL("https://bizno.net/api/")
+            val retrofit = Retrofit.Builder()
+                .baseUrl(urls)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            requestService = retrofit.create(StoreRequest::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        requestService.getRequest("ZG1sdG4zNDI2QGdtYWlsLmNvbSAg", "1", crn.value.toString(), "json")
             .enqueue(object : Callback<testBody> {
                 override fun onResponse(call: Call<testBody>, response: Response<testBody>) {
                     if (response.isSuccessful && response.body()?.items!!.size>0) {
                         changeSuccess(false, "인증 완료")
                     } else {
                         crn.value = ""
+                        _event.value = Event.Fail("조회 실패")
                     }
                 }
 
                 override fun onFailure(call: Call<testBody>, t: Throwable) {
                     crn.value = ""
+                    _event.value = Event.Fail("조회실패")
                 }
             })
     }
@@ -154,7 +171,7 @@ class ManagementViewModel(): ViewModel() {
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
-        val res = StoreRetrofit.requestService
+        val res = StoreRetrofit.bnoService
         val body = HashMap<String, String>()
         body.put("crn", crn.value.toString())
 

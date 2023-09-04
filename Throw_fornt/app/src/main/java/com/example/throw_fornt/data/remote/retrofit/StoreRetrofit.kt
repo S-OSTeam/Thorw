@@ -23,7 +23,9 @@ class StoreRetrofit {
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
         const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
-        lateinit var requestService: StoreRequest
+        lateinit var bnoService: StoreRequest
+        lateinit var registerService: StoreRequest
+        lateinit var modifyService: StoreRequest
     }
 
     //client 객체
@@ -46,7 +48,7 @@ class StoreRetrofit {
     //가게 등록을 위한 api호출
     fun registerResponse(){
         try {
-            requestService = retrofit.create(StoreRequest::class.java)
+            registerService = retrofit.create(StoreRequest::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -55,8 +57,8 @@ class StoreRetrofit {
     //가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel){
         try {
-            val request: StoreRequest = retrofit.create(StoreRequest::class.java)
-            request.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
+            modifyService = retrofit.create(StoreRequest::class.java)
+            modifyService.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
                 store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
             ).enqueue(object: Callback<StoreModel>{
                 override fun onResponse(
@@ -90,7 +92,7 @@ class StoreRetrofit {
     //사업자등록번호 조회 api 호출
     fun bnoResponse(){
         try {
-            requestService = retrofit.create(StoreRequest::class.java)
+            bnoService = retrofit.create(StoreRequest::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
         }
