@@ -3,7 +3,6 @@ package sosteam.throwapi.domain.order.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.order.controller.request.GifticonCreateRequest;
@@ -45,7 +44,7 @@ public class OrderController {
      */
     @PostMapping("/purchase")
     public ResponseEntity<GifticonResponse> purchaseGifticon(@RequestBody @Valid GifticonCreateRequest request) {
-        String templateToken = itemSearchService.searchTemplateTokenByProductName(request.getProductName());
+        String templateToken = itemSearchService.searchTTByProductName(request.getProductName());
         Optional<Item> itemOptional = itemSearchService.searchItemByProductName(request.getProductName());
         UserInfoDto userInfoDto=new UserInfoDto(request.getUserInputId());
 

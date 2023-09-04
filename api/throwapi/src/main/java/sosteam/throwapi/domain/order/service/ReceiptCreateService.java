@@ -31,7 +31,7 @@ public class ReceiptCreateService {
 
     /**
      * templateToken을 통해 Gifticon과 Receipt 생성
-     * @param templateToken
+     * @param gifticonCreateDto
      */
     public Optional<Gifticon> createGifticonAndReceipt(GifticonCreateDto gifticonCreateDto) {
         log.debug("SEARCH BY PRODUCT NAME");

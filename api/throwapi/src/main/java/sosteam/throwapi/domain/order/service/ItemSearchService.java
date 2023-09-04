@@ -21,7 +21,7 @@ public class ItemSearchService {
      * productName으로 TemplateToken 찾기
      * @param productName
      */
-    public String searchTemplateTokenByProductName(String productName){
+    public String searchTTByProductName(String productName){
         log.debug("PURCHASE KAKAO GIFTICON BY PRODUCTNAME");
         String templateToken = null;
         templateToken = itemRepository.searchByProductName(productName).get().getTemplateToken();

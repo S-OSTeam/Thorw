@@ -43,7 +43,7 @@ public class ReceiptCreateServiceTest {
 
         // when
         log.debug("SEARCH TEMPLATETOKEN");
-        String searchTemplateTokenByProductName = itemSearchService.searchTemplateTokenByProductName(testProductName);
+        String searchTemplateTokenByProductName = itemSearchService.searchTTByProductName(testProductName);
         log.debug("GIFTICON AND RECEIPT CREATE");
         UserInfoDto userInfoDto=new UserInfoDto("1234");
 
