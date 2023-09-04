@@ -9,12 +9,17 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.exception.NoStoreOfUserException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
+import sosteam.throwapi.domain.user.entity.User;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
+import sosteam.throwapi.domain.user.service.UserInfoService;
 import sosteam.throwapi.global.exception.exception.NoContentException;
 import sosteam.throwapi.global.exception.exception.NotFoundException;
+import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +29,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class StoreGetService {
     private final StoreRepository storeRepository;
+    private final UserInfoService userInfoService;
+    private final JwtTokenService jwtTokenService;
 
     /**
      * 1: Make two points that are (distance) km apart from the current location
@@ -101,5 +108,17 @@ public class StoreGetService {
 
     public Optional<StoreDto> isExistByCRN(String crn) {
         return storeRepository.searchByCRN(crn);
+    }
+
+    public Set<StoreDto> searchMyStores(String accessToken) {
+        // 요청 사용자 정보 가져오기
+        UserInfoDto userInfoDto = new UserInfoDto(
+                jwtTokenService.extractSubject(accessToken)
+        );
+        User user = userInfoService.searchByInputId(userInfoDto);
+        Optional<Set<StoreDto>> storeDtos = storeRepository.searchMyStores(user.getId());
+        if(storeDtos.isEmpty()) throw new NoStoreOfUserException();
+        if(storeDtos.get().isEmpty()) throw new NoContentException();
+        return storeDtos.get();
     }
 }

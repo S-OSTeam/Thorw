@@ -1,6 +1,5 @@
 package sosteam.throwapi.domain.store.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import sosteam.throwapi.domain.store.controller.response.StoreResponse;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
 import sosteam.throwapi.domain.store.exception.BiznoAPIException;
 import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
@@ -46,18 +46,26 @@ public class StoreController {
     private final StoreCreateService storeCreateService;
     private final StoreModifyService storeModifyService;
     private final StoreDeleteService storeDeleteService;
+
     private final BiznoAPI biznoAPI;
     ObjectMapper mapper = new ObjectMapper();
 
     @PostMapping
-    public ResponseEntity<UUID> saveStore(@RequestBody @Valid StoreSaveRequest request) throws JsonProcessingException {
+    public ResponseEntity<UUID> saveStore(
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
+
+            @RequestBody @Valid StoreSaveRequest request
+    ) {
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
+        String accessToken = auth.split(" ")[1];
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
-        StoreDto dto = new StoreDto(
+        StoreSaveDto dto = new StoreSaveDto(
+                accessToken,
                 null,
                 storeName,
                 request.getStorePhone(),
@@ -73,6 +81,17 @@ public class StoreController {
         Store store = storeCreateService.saveStore(dto);
 
         return ResponseEntity.ok(store.getExtStoreId());
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<Set<StoreResponse>> searchMyStores(
+            @RequestHeader(name = "Authorization", required = true)
+            String auth
+    ) {
+        String accessToken = auth.split(" ")[1];
+        Set<StoreDto> storeDtos = storeGetService.searchMyStores(accessToken);
+        Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
+        return ResponseEntity.ok(resp);
     }
 
     /**
@@ -135,7 +154,13 @@ public class StoreController {
      * 가게 코드는 가게 정보들로 이루어진 암호문
      */
     @PutMapping
-    public ResponseEntity<StoreResponse> modifyStore(@RequestBody @Valid StoreModifyRequest request) {
+    public ResponseEntity<StoreResponse> modifyStore(
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
+
+            @RequestBody @Valid StoreModifyRequest request
+    ) {
+        String accessToken = auth.split(" ")[1];
         // Bizno RegistrationNumber Confirm API Error checking
         String storeName = confirmCompanyRegistrationNumber(request.getCrn());
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
@@ -155,13 +180,19 @@ public class StoreController {
         );
         // Call modify Method
         log.debug("StoreModifyRequest = {}", dto);
-        StoreDto storeDto = storeModifyService.modify(dto);
+        StoreDto storeDto = storeModifyService.modify(accessToken,dto);
         return ResponseEntity.ok(storeDto.toResponse());
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteStore(@RequestBody @Valid StoreDeleteRequest request) {
-        storeDeleteService.deleteStore(request.getExtStoreId());
+    public ResponseEntity<String> deleteStore(
+            @RequestHeader(name = "Authorization", required = true)
+            String auth,
+
+            @RequestBody @Valid StoreDeleteRequest request
+    ) {
+        String accessToken = auth.split(" ")[1];
+        storeDeleteService.deleteStore(accessToken,request.getExtStoreId());
         String resp = "Delete Store: " + request.getExtStoreId() +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
         return ResponseEntity.ok(resp);
