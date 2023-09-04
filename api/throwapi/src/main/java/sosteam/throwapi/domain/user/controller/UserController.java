@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
 import sosteam.throwapi.domain.user.controller.request.user.IdDuplicateRequest;
 import sosteam.throwapi.domain.user.controller.request.user.PWCheckRequest;
 import sosteam.throwapi.domain.user.controller.request.user.UserCngRequest;
@@ -16,6 +17,7 @@ import sosteam.throwapi.domain.user.controller.response.PWCheckResponse;
 import sosteam.throwapi.domain.user.controller.response.UserInfoResponse;
 import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
+import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.*;
 import sosteam.throwapi.domain.user.service.UserInfoService;
 import sosteam.throwapi.global.entity.Role;
@@ -64,7 +66,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params) {
+    public ResponseEntity<String> signUp(@RequestBody @Valid UserSaveRequest params) {
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassword(),
@@ -80,6 +82,33 @@ public class UserController {
 
         userInfoService.SignUp(userSaveDto);
         return ResponseEntity.ok("정상 회원가입 완료");
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<String> signOut(
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token
+    ){
+        String accessToken = token.substring(7);
+        SignOutDto signOutDto = new SignOutDto(
+                jwtTokenService.extractSubject(accessToken)
+        );
+
+        userInfoService.signOut(signOutDto);
+
+        return ResponseEntity.ok("정상 회원 탈퇴 완료! 회원 정보는 한달관 보관됩니다.");
+    }
+
+    @PostMapping("/restorestatus")
+    public ResponseEntity<String> restoreUserStatus(@RequestBody @Valid ThrowLoginRequest params){
+        ThrowLoginDto throwLoginDto = new ThrowLoginDto(
+                params.getInputId(),
+                params.getInputPassword()
+        );
+
+        userInfoService.restoreUserStatus(throwLoginDto);
+        return ResponseEntity.ok("계정이 활성화 되었습니다.");
     }
 
     //inputId 를 이용해 User 의 info 를 반환 하는 API

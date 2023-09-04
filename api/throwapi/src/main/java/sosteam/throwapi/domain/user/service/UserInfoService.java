@@ -7,12 +7,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
+import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.*;
-import sosteam.throwapi.domain.user.exception.NoSuchUserException;
-import sosteam.throwapi.domain.user.exception.PasswordDifFromConfirmException;
-import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
-import sosteam.throwapi.domain.user.exception.UserAuthNotFoundException;
+import sosteam.throwapi.domain.user.exception.*;
 import sosteam.throwapi.domain.user.repository.UserRepository;
+import sosteam.throwapi.global.entity.UserStatus;
 
 @Slf4j
 @Service
@@ -65,6 +64,19 @@ public class UserInfoService {
         return userResult;
     }
 
+    public void signOut(SignOutDto signOutDto){
+        User user = userRepository.searchByInputId(signOutDto.getInputId());
+        if (user == null) throw new NoSuchUserException();
+
+        //user 계정의 상태를 확인 한다
+        this.isUserStatusNormal(user.getUserStatus());
+
+        log.info("inputId = {}, UserStatus = {}", signOutDto.getInputId(), UserStatus.SIGNOUT);
+
+        Long result = userRepository.updateUserStatusByInputId(signOutDto.getInputId(), UserStatus.SIGNOUT);
+    }
+
+
     public boolean checkIdDup(IdDuplicationDto idDuplicationDto) {
         User user = userRepository.searchByInputId(idDuplicationDto.getInputId());
         return user != null;
@@ -72,13 +84,29 @@ public class UserInfoService {
 
     public void cngUser(UserCngDto userCngDto) {
         Long result = userRepository.updateByInputId(userCngDto);
-        log.info("result cng User Service = {}", result.toString());
+        log.debug("result cng User Service = {}", result.toString());
     }
+
+    public void restoreUserStatus(ThrowLoginDto throwLoginDto){
+        User user = userRepository.searchByInputId(throwLoginDto.getInputId());
+        // 존재 하는 user 인지 확인
+        if (user == null) throw new NoSuchUserException();
+
+//        userAuthSearchService.IsSuccessIsTrue(user.getUserInfo().getEmail());
+
+
+        //user 의 status 를 normal 로 변경
+        Long result = userRepository.updateUserStatusByInputId(throwLoginDto.getInputId(), UserStatus.NORMAL);
+    }
+
 
     public User searchByInputId(UserInfoDto userInfoDto) {
         //inputId 를 기반으로 User 정보를 불러 옴
         User user = userRepository.searchByInputId(userInfoDto.getInputId());
         if (user == null) throw new NoSuchUserException();
+
+        //user 계정의 상태를 확인 한다
+        this.isUserStatusNormal(user.getUserStatus());
 
         return user;
     }
@@ -91,6 +119,18 @@ public class UserInfoService {
         return passwordEncoder.matches(pwCheckDto.getInputPassword(), user.getPassword());
     }
 
+    //userStatus 에 따라 NORMAL 이 아닐 경우 해당하는 Exception throw
+    public boolean isUserStatusNormal(UserStatus userStatus){
+        if(userStatus == UserStatus.NORMAL){
+            return true;
+        } else if(userStatus == UserStatus.DORMANT){
+            throw new DormantUserException();
+        } else if(userStatus == UserStatus.SIGNOUT){
+            throw new SignOutUserException();
+        }
+        return false;
+    }
+
     public String searchInputIdByEmail(String email) {
         //실제 인증을 진행 했는지 확인
         userAuthSearchService.IsSuccessIsTrue(email);
@@ -98,11 +138,15 @@ public class UserInfoService {
         //email로 User의 uuid를 찾는다.
         User user = userRepository.searchByEmail(email);
 
+
         //찾아온 id가 없거나 비어있는 경우 NOT_FOUND
         if (user == null) {
             throw new NoSuchUserException();
         }
         log.debug("find id : {}", user.getInputId());
+
+        //user 계정의 상태를 확인 한다
+        this.isUserStatusNormal(user.getUserStatus());
 
         return user.getInputId();
     }
@@ -120,6 +164,9 @@ public class UserInfoService {
 
         //email로 user의 uuid를 가져오기 위해 user를 조회
         User user = userRepository.searchByEmail(email);
+
+        //user 계정의 상태를 확인 한다
+        this.isUserStatusNormal(user.getUserStatus());
 
         log.debug("find user : {}", user.getInputId());
         //비밀번호를 암호화
