@@ -26,17 +26,16 @@ class StoreRetrofit {
         lateinit var requestService: StoreRequest
     }
 
+    val client = OkHttpClient.Builder().addInterceptor { chain ->
+        val newRequest = chain.request().newBuilder()
+            .addHeader("Authorization", "Bearer $apiKey")
+            .build()
+        chain.proceed(newRequest)
+    }.build()
 
     //가게 등록을 위한 api호출
     fun registerResponse(){
         try {
-            val client = OkHttpClient.Builder().addInterceptor { chain ->
-                val newRequest = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer $apiKey")
-                    .build()
-                chain.proceed(newRequest)
-            }.build()
-
             val urls = URL(url)
             //가게 등록하기 위한 데이터 값을 log로 표시
             val retrofit = Retrofit.Builder()
@@ -54,13 +53,6 @@ class StoreRetrofit {
     //가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel){
         try {
-            val client = OkHttpClient.Builder().addInterceptor { chain ->
-                val newRequest = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer $apiKey")
-                    .build()
-                chain.proceed(newRequest)
-            }.build()
-
             val urls = URL(url)
             //가게 등록하기 위한 데이터 값을 log로 표시
             val retrofit = Retrofit.Builder()

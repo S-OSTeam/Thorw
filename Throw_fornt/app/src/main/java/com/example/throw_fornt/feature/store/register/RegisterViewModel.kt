@@ -1,15 +1,19 @@
 package com.example.throw_fornt.feature.store.register
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.throw_fornt.data.model.request.Register
 import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
 import com.example.throw_fornt.data.model.response.testBody
 import com.example.throw_fornt.data.remote.retrofit.StoreRetrofit
 import com.example.throw_fornt.util.common.SingleLiveEvent
+import com.example.throw_fornt.util.common.Toaster
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,6 +24,8 @@ import java.net.URL
 
 class RegisterViewModel : ViewModel() {
     private val errorMsg: String = "칸이 비어있습니다."
+    var lat: String = ""
+    var lon: String = ""
 
     //StoreRetrofit 변수
     private val storeHelper: StoreRetrofit = StoreRetrofit()
@@ -98,13 +104,32 @@ class RegisterViewModel : ViewModel() {
         else {
             if (subAddress.value.isNullOrEmpty()) subAddress.value = ""
 
-            //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
-            val data = StoreModel("",
-                storePhone.value.toString(), "", 0.0,0.0, crn.value.toString(),
-                zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
-                trashCode, "", "",
+            storeHelper.registerResponse()
+            val body: Register
+            body = Register(
+                storePhone.value.toString(), crn.value.toString(), lat.toDouble(), lon.toDouble(),
+                zoneNo.value.toString(), fullAddress.value.toString() + "(${subAddress.value.toString()})", trashCode
             )
-            _event.value = Event.Register(data)
+
+            StoreRetrofit.requestService.registerRequest(body).enqueue(object : Callback<String> {
+                override fun onResponse(
+                    call: Call<String>,
+                    response: Response<String>
+                ) {
+                    if (response.isSuccessful && response.body().isNullOrEmpty()) {
+                        _event.value = Event.Register("등록이 완료되었습니다.")
+                    } else {
+                        val jsonObject = JSONObject(response.errorBody()?.string())
+                        crn.value = ""
+                        changeSuccess(true, "인증")
+                        _event.value = Event.Fail(jsonObject.getString("message"))
+                    }
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    _event.value = Event.Fail("접속실패")
+                }
+            })
         }
     }
 
@@ -122,7 +147,7 @@ class RegisterViewModel : ViewModel() {
     sealed class Event() {
         object Search : Event()
         data class Fail(val msg: String) : Event()
-        data class Register(val register: StoreModel) : Event()
+        data class Register(val msg: String) : Event()
     }
 
     //사업자 등록번호 조회 test모드

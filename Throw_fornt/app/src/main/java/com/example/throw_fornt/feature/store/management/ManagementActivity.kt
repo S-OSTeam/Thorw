@@ -11,6 +11,7 @@ import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.databinding.ActivityManagementBinding
 import com.example.throw_fornt.util.common.BindingActivity
 import com.example.throw_fornt.util.common.Toaster
+import com.example.throw_fornt.util.common.showDialog
 
 class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.activity_management) {
     private val viewModel: ManagementViewModel by viewModels()
@@ -20,18 +21,14 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         binding.lifecycleOwner = this
 
         //ManagementActivity를 실행되면 AlertDialog창을 띄워서 수정할지 삭제할지 물어본다.
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("수정 및 삭제")
-            .setMessage("수정할지 삭제할지 선택해주세요.")
-            .setNegativeButton("수정",
-                DialogInterface.OnClickListener{
-                    dialog, id -> modify()
-            })
-            .setPositiveButton("삭제",
-                DialogInterface.OnClickListener {
-                    dialog, id -> remove()
-            })
-        builder.show()
+        showDialog(
+            titleId = R.string.store_management_title_text,
+            messageId = R.string.store_management_message_text,
+            negativeStringId = R.string.store_management_delete_text,
+            positiveStringId = R.string.store_management_modify_text,
+            actionNegative = {delete()},
+            actionPositive = {modify()}
+        )
     }
 
     //수정하기 위한 프로그램
@@ -43,7 +40,7 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
         viewModel.event.observe(this) { handleEvent(it) }
     }
 
-    fun remove(){
+    fun delete(){
         finish()
     }
 

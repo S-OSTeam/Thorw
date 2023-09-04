@@ -19,26 +19,18 @@ import retrofit2.http.Query
 interface StoreRequest {
 
     //상점 등록 request
-    @Headers(
-        "Content-Type: application/json"
-    )
     @POST("store")
     fun registerRequest(
         @Body register: Register,
     ) : Call<String>
 
     //내 가게 조회 request
-    @FormUrlEncoded
     @POST("/api/...")
     fun storeRequest(
         @Header("Content-Type") key: String,
     ) : Call<StoreModel>
 
     //사업자등록번호 조회 request
-    @Headers(
-        "Authorization: OAuth",
-        "Content-Type: application/json"
-    )
     @POST("store/crn")
     fun bnoRequest(
         @Body crn: HashMap<String, String>
@@ -46,7 +38,6 @@ interface StoreRequest {
 
 
     //가게 수정 request
-    @FormUrlEncoded
     @PUT("store")
     fun mondifyRequest(
         @Field("extStoreId") uuid: String,
@@ -60,7 +51,6 @@ interface StoreRequest {
     ): Call<StoreModel>
 
     //가게 삭제 request
-    @FormUrlEncoded
     @DELETE("store")
     fun deleteRequest(
         @Field("extStoreId") uuid: String,

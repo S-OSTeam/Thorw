@@ -23,9 +23,6 @@ import retrofit2.Response
 class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activity_register) {
     private val viewModel: RegisterViewModel by viewModels()
 
-    private var lat: String = ""
-    private var lon: String = ""
-
     //StoreRetrofit 변수
     private val storeHelper: StoreRetrofit = StoreRetrofit()
     val REQUEST_CODE: Int = 1
@@ -40,55 +37,14 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
     private fun handleEvent(event: RegisterViewModel.Event) {
         when (event) {
             is RegisterViewModel.Event.Search -> searchAddress()
-            is RegisterViewModel.Event.Register -> register(event.register)
+            is RegisterViewModel.Event.Register -> register(event.msg)
             is RegisterViewModel.Event.Fail -> Toaster.showLong(this@RegisterActivity, event.msg)
         }
     }
 
     //RegisterViewModel에서 전달받은 값을 가지고 등록함수를 호출
-    private fun register(data: StoreModel) {
-        //서버에 넘겨줘야되는 데이터를 위도경도를 추가하여 StoreRetrofit에 데이터 전달
-        val res = StoreModel(
-            "",
-            data.storePhone,
-            data.storeName,
-            lat.toDouble(),
-            lon.toDouble(),
-            data.bno,
-            data.zipCode,
-            data.fullAddress,
-            data.subAddress,
-            data.trashType,
-            "",
-            ""
-        )
-        storeHelper.registerResponse()
-        val body: Register
-        body = Register(
-            res.storePhone, res.bno, res.latitudes, res.longitude,
-            res.zipCode, res.fullAddress + "(${res.subAddress})", res.trashType
-        )
-
-        StoreRetrofit.requestService.registerRequest(body).enqueue(object : Callback<String> {
-            override fun onResponse(
-                call: Call<String>,
-                response: Response<String>
-            ) {
-                if (response.isSuccessful && response.body().isNullOrEmpty()) {
-                    Toast.makeText(this@RegisterActivity, "등록이 완료되었습니다.",Toast.LENGTH_SHORT).show()
-                } else {
-                    val jsonObject = JSONObject(response.errorBody()?.string())
-                    viewModel.crn.value = ""
-                    viewModel.changeSuccess(true, "인증")
-                    Toaster.showShort(this@RegisterActivity, jsonObject.getString("message"))
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Toaster.showShort(this@RegisterActivity, "접속 실패")
-                //TODO 실패 토스트 넣기
-            }
-        })
+    private fun register(msg: String) {
+        Toaster.showLong(this@RegisterActivity, msg)
     }
 
     //주소검색 함수
@@ -106,8 +62,8 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
             if (receiveData != null) {
                 binding.addressEdit.setText(receiveData.address.toString())
                 binding.addressEdit2.setText(receiveData.zoneNo.toString())
-                lat = receiveData.lat.toString()
-                lon = receiveData.long.toString()
+                viewModel.lat = receiveData.lat.toString()
+                viewModel.lon = receiveData.long.toString()
             }
         }
     }
