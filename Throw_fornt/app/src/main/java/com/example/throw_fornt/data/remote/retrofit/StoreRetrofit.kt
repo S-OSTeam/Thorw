@@ -23,8 +23,8 @@ class StoreRetrofit {
 
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
-        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
-        lateinit var requestService: StoreRequest
+        const val apiKey =
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
     }
 
     //client 객체
@@ -37,6 +37,7 @@ class StoreRetrofit {
 
     //url 객체
     private val urls = URL(url)
+
     //retrofit 객체
     private val retrofit = Retrofit.Builder()
         .client(client)
@@ -47,19 +48,25 @@ class StoreRetrofit {
     val storeService = retrofit.create(StoreRequest::class.java)
 
     //가게 수정을 위한 api호출
-    fun modifyResponse(store: StoreModel){
+    fun modifyResponse(store: StoreModel) {
         try {
-            storeService.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
-                store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
-            ).enqueue(object: Callback<StoreModel>{
+            storeService.mondifyRequest(
+                store.uuid,
+                store.storePhone,
+                store.latitudes,
+                store.longitude,
+                store.bno,
+                store.zipCode,
+                store.fullAddress + "(${store.subAddress})",
+                store.trashType,
+            ).enqueue(object : Callback<StoreModel> {
                 override fun onResponse(
                     call: Call<StoreModel>,
                     response: Response<StoreModel>
                 ) {
-                    if(response.isSuccessful && response.body()?.code=="200"){
+                    if (response.isSuccessful && response.body()?.code == "200") {
 
-                    }
-                    else{
+                    } else {
 
                     }
                 }
@@ -77,15 +84,5 @@ class StoreRetrofit {
     //내 가게 조회를 위한 api호출\
     fun storeResponse(): Boolean {
         return false
-    }
-
-
-    //사업자등록번호 조회 api 호출
-    fun bnoResponse(){
-        try {
-            requestService = storeService
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }

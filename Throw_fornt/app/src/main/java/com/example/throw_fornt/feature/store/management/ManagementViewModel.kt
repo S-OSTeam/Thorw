@@ -86,9 +86,9 @@ class ManagementViewModel(): ViewModel() {
 
     //사업자등록번호 조회
     fun bnoInquire() {
-        storeHelper.bnoResponse()
-        real()
-        //test()
+        //storeHelper.bnoResponse()
+        //real()
+        test()
     }
 
     //사업자 등록번호 조회 성공시 인증완료로 변경
@@ -171,7 +171,7 @@ class ManagementViewModel(): ViewModel() {
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
-        val res = StoreRetrofit.requestService
+        val res = storeHelper.storeService
         val body = HashMap<String, String>()
         body.put("crn", crn.value.toString())
 
