@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
 import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
 import sosteam.throwapi.domain.user.controller.response.ReissueTokensResponse;
+import sosteam.throwapi.domain.user.entity.dto.login.LogoutDto;
 import sosteam.throwapi.domain.user.entity.dto.login.ReissueTokensDto;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
@@ -35,7 +36,7 @@ public class LoginController {
     @PostMapping("/reissue")
     public ResponseEntity<ReissueTokensResponse> reissueTokens(
             @RequestHeader(name = "grant_type", required = true)
-            @Pattern(regexp = "^(refresh_token)", message = "reissue API 요청시 grant_type 은 refreshToken 만 가능")
+            @Pattern(regexp = "^(refresh_token)", message = "reissue API 요청시 grant_type 은 refresh_token 만 가능")
             String grantType,
 
             @RequestHeader(name = "refresh_token", required = true)
@@ -51,7 +52,6 @@ public class LoginController {
                 result.getRefreshToken()
         ));
     }
-
     @PostMapping
     public ResponseEntity<Tokens> throwLogin(@RequestBody @Valid ThrowLoginRequest params){
         //dto에 옮겨 담기
@@ -65,4 +65,28 @@ public class LoginController {
         return ResponseEntity.ok(tokens);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token
+    ){
+        String accessToken = token.substring(7);
+        log.debug("token = {}, accessToken = {}", token, accessToken);
+        LogoutDto logoutDto = new LogoutDto(accessToken);
+        loginService.logout(logoutDto);
+        return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
+    }
+
+    //test 계정에 대한 testToken 발급
+    @PostMapping("/testtoken")
+    public ResponseEntity<Tokens> testToken(){
+        ThrowLoginDto throwLoginDto = new ThrowLoginDto(
+                "testinputid",
+                "testpassword1!"
+        );
+
+        Tokens tokens = loginService.throwLogin(throwLoginDto);
+        return ResponseEntity.ok(tokens);
+    }
 }

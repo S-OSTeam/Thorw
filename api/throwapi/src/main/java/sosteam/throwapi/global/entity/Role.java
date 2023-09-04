@@ -10,4 +10,7 @@ public enum Role {
     ROLE_ADMIN("admin");
 
     private final String key;
+    public String getKey() {
+        return key;
+    }
 }

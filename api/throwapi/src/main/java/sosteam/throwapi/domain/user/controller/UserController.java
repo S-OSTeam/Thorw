@@ -8,16 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.user.controller.request.user.IdDuplicateRequest;
+import sosteam.throwapi.domain.user.controller.request.user.PWCheckRequest;
 import sosteam.throwapi.domain.user.controller.request.user.UserCngRequest;
 import sosteam.throwapi.domain.user.controller.request.user.UserSaveRequest;
 import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
+import sosteam.throwapi.domain.user.controller.response.PWCheckResponse;
 import sosteam.throwapi.domain.user.controller.response.UserInfoResponse;
 import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.user.IdDuplicationDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
+import sosteam.throwapi.domain.user.entity.dto.user.*;
 import sosteam.throwapi.domain.user.service.UserInfoService;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
@@ -32,13 +31,35 @@ public class UserController {
     private final UserInfoService userInfoService;
     private final JwtTokenService jwtTokenService;
 
-    @PostMapping("/idduptest")
-    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params) {
+    @PostMapping("/iddup")
+    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
         IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
                 params.getInputId()
         );
 
         IdDuplicateResponse result = new IdDuplicateResponse(userInfoService.checkIdDup(idDuplicationDto));
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/pwcheck")
+    public ResponseEntity<PWCheckResponse> checkPWAgain(
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token,
+
+            @RequestBody @Valid PWCheckRequest params
+    ){
+        // accessToken 을 뽑아 내어 inputId 를 구함(구할 때 token 에 대한 유효성 검사를 진행 함)
+        String accessToken = token.substring(7);
+        String inputId = jwtTokenService.extractSubject(accessToken);
+
+        PWCheckDto pwCheckDto = new PWCheckDto(
+                inputId,
+                params.getInputPassword()
+        );
+
+        //pw 가 일치 하는지 확인
+        PWCheckResponse result = new PWCheckResponse(userInfoService.checkPWAgain(pwCheckDto));
         return ResponseEntity.ok(result);
     }
 
@@ -64,13 +85,11 @@ public class UserController {
     //inputId 를 이용해 User 의 info 를 반환 하는 API
     @GetMapping
     public ResponseEntity<UserInfoResponse> searchByInputId(
-            @RequestHeader(name = "grant_type", required = true)
-            @Pattern(regexp = "^(access_token)", message = "reissue API 요청시 grant_type 은 access_token 만 가능")
-            String grantType,
-
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken
-    ) {
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token
+    ){
+        String accessToken = token.substring(7);
         //accessToken 을 이용해 inputId 를 구함
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
@@ -89,15 +108,13 @@ public class UserController {
 
     @PostMapping("/cnginfo")
     public ResponseEntity<String> cngUserInfo(
-            @RequestHeader(name = "grant_type", required = true)
-            @Pattern(regexp = "^(access_token)", message = "reissue API 요청시 grant_type 은 access_token 만 가능")
-            String grantType,
-
-            @RequestHeader(name = "access_token", required = true)
-            String accessToken,
-
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token,
             @RequestBody @Valid UserCngRequest params
-    ) {
+    ){
+        String accessToken = token.substring(7);
+
         String inputId = jwtTokenService.extractSubject(accessToken);
 
         UserInfoDto userInfoDto = new UserInfoDto(
@@ -108,6 +125,7 @@ public class UserController {
 
         UserCngDto userCngDto = new UserCngDto(
                 inputId,
+                params.getUserName(),
                 params.getUserPhoneNumber(),
                 params.getEmail()
         );

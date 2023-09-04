@@ -1,8 +1,8 @@
 package sosteam.throwapi.global.security.redis.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import sosteam.throwapi.global.security.redis.entity.RedisRefreshToken;
+import sosteam.throwapi.global.security.redis.entity.RedisTokens;
 
-public interface RefreshTokenRedisRepository extends CrudRepository<RedisRefreshToken, Long> {
-    RedisRefreshToken findByRefreshToken(String refreshToken);
+public interface RefreshTokenRedisRepository extends CrudRepository<RedisTokens, String> {
+    RedisTokens findByRefreshToken(String inputId);
 }
