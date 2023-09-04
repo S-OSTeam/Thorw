@@ -1,11 +1,13 @@
 package sosteam.throwapi.domain.user.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import sosteam.throwapi.domain.mail.service.SendCodeSearchService;
 import sosteam.throwapi.domain.user.controller.request.AuthCodeCheckRequest;
@@ -28,7 +30,7 @@ public class UserAuthController {
     private final UserAuthSaveService userAuthSaveService;
 
     @PostMapping("/code")
-    public ResponseEntity<String> checkMailAuthCode(AuthCodeCheckRequest authCodeCheckRequest) {
+    public ResponseEntity<String> checkMailAuthCode(@RequestBody @Valid AuthCodeCheckRequest authCodeCheckRequest) {
         String email = authCodeCheckRequest.getEmail();
         String checkCode = authCodeCheckRequest.getCheckCode();
 

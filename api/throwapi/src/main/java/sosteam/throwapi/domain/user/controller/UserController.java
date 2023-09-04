@@ -33,7 +33,7 @@ public class UserController {
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/idduptest")
-    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
+    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params) {
         IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
                 params.getInputId()
         );
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params){
+    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params) {
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassword(),
@@ -70,7 +70,7 @@ public class UserController {
 
             @RequestHeader(name = "access_token", required = true)
             String accessToken
-    ){
+    ) {
         //accessToken 을 이용해 inputId 를 구함
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
@@ -97,7 +97,7 @@ public class UserController {
             String accessToken,
 
             @RequestBody @Valid UserCngRequest params
-    ){
+    ) {
         String inputId = jwtTokenService.extractSubject(accessToken);
 
         UserInfoDto userInfoDto = new UserInfoDto(
@@ -116,5 +116,4 @@ public class UserController {
 
         return ResponseEntity.ok("회원 정보 변경 완료");
     }
-
 }
