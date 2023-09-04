@@ -92,7 +92,7 @@ public class UserInfoService {
         // 존재 하는 user 인지 확인
         if (user == null) throw new NoSuchUserException();
 
-//        userAuthSearchService.IsSuccessIsTrue(user.getUserInfo().getEmail());
+        userAuthSearchService.IsSuccessIsTrue(user.getUserInfo().getEmail());
 
 
         //user 의 status 를 normal 로 변경
