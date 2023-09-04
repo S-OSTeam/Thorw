@@ -15,16 +15,15 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
-@RunWith(SpringRunner.class)
-@Transactional
+@ExtendWith(MockitoExtension.class)
 public class ReceiptCreateServiceTest {
-    @Autowired
+    @InjectMocks
     private ReceiptCreateService receiptCreateService;
 
-    @Autowired
+    @InjectMocks
     private ItemCreateService itemCreateService;
 
-    @Autowired
+    @InjectMocks
     private ItemSearchService itemSearchService ;
 
     @Test
