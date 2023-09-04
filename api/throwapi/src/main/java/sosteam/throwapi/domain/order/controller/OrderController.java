@@ -11,6 +11,7 @@ import sosteam.throwapi.domain.order.controller.request.GifticonDeleteRequest;
 import sosteam.throwapi.domain.order.controller.request.ReceiptSearchRequest;
 import sosteam.throwapi.domain.order.controller.response.GifticonResponse;
 import sosteam.throwapi.domain.order.controller.response.ReceiptResponse;
+import sosteam.throwapi.domain.order.entity.Dto.GifticonCreateDto;
 import sosteam.throwapi.domain.order.entity.Dto.GifticonDto;
 import sosteam.throwapi.domain.order.entity.Dto.ReceiptDto;
 import sosteam.throwapi.domain.order.entity.Gifticon;
@@ -54,7 +55,8 @@ public class OrderController {
 
         Item item = itemOptional.get();
 
-        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(templateToken, item, userInfoDto);
+        GifticonCreateDto gifticonCreateDto=new GifticonCreateDto(templateToken, item, userInfoDto);
+        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(gifticonCreateDto);
 
         // 생성된 Gifticon이 없을 경우, 서버 에러 응답을 반환
         if (!gifticonOptional.isPresent()) {

@@ -3,6 +3,7 @@ package sosteam.throwapi.domain.order.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.order.entity.Dto.GifticonCreateDto;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.order.entity.Receipt;
@@ -32,15 +33,15 @@ public class ReceiptCreateService {
      * templateToken을 통해 Gifticon과 Receipt 생성
      * @param templateToken
      */
-    public Optional<Gifticon> createGifticonAndReceipt(String templateToken, Item item, UserInfoDto userInfoDto) {
+    public Optional<Gifticon> createGifticonAndReceipt(GifticonCreateDto gifticonCreateDto) {
         log.debug("SEARCH BY PRODUCT NAME");
-        User saveUser = userInfoService.searchByInputId(userInfoDto);
+        User saveUser = userInfoService.searchByInputId(gifticonCreateDto.getUserInfoDto());
         // TODO: 2023-09-04 카카오 템플릿 필요
         GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789",saveUser);
 
         // 해당 응답에서 reserveTraceId를 사용하여 Gifticon 엔터티를 생성하고 저장
         Gifticon saveGifticon = new Gifticon(kakaoResponse.getReserveTraceId().toString());
-        saveGifticon.modifyItem(item);
+        saveGifticon.modifyItem(gifticonCreateDto.getItem());
         Receipt saveReceipt=new Receipt();
         saveReceipt.modifyUser(saveUser);
         saveReceipt.modifyGifticon(saveGifticon);

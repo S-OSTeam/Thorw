@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import sosteam.throwapi.domain.order.entity.Dto.GifticonCreateDto;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
@@ -45,7 +46,9 @@ public class ReceiptCreateServiceTest {
         String searchTemplateTokenByProductName = itemSearchService.searchTemplateTokenByProductName(testProductName);
         log.debug("GIFTICON AND RECEIPT CREATE");
         UserInfoDto userInfoDto=new UserInfoDto("1234");
-        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(searchTemplateTokenByProductName,item,userInfoDto);
+
+        GifticonCreateDto gifticonCreateDto=new GifticonCreateDto(searchTemplateTokenByProductName,item,userInfoDto);
+        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(gifticonCreateDto);
 
         // then
         assertEquals("SEARCH TEMPLATETOKEN",searchTemplateTokenByProductName,testTemplateToken);
