@@ -12,7 +12,4 @@ public class GifticonCreateRequest {
 
     @NotNull
     private String productName;
-
-    @NotNull
-    private Long orderNumber;
 }

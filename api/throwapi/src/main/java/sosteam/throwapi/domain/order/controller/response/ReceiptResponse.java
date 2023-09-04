@@ -28,9 +28,6 @@ public class ReceiptResponse {
     private Long price; // 상품 가격
 
     @NotNull
-    private Set<GifticonResponse.GifticonInfo> gifticons; // 여러 gifticon 정보를 담는 Set
-
-    @NotNull
     UUID gifticonId; // gifticon 엔티티 ID
 
     @NotNull

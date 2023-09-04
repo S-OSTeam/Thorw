@@ -27,14 +27,8 @@ public class GifticonResponse {
     private Long price; // 상품 가격
 
     @NotNull
-    private Set<GifticonInfo> gifticons; // 여러 gifticon 정보를 담는 Set
+    UUID gifticonId; // gifticon 엔티티 ID
 
-    @Data
-    public static class GifticonInfo{
-        @NotNull
-        UUID gifticonId; // gifticon 엔티티 ID
-
-        @NotNull
-        private String giftTraceId; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
-    }
+    @NotNull
+    private String giftTraceId; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
 }

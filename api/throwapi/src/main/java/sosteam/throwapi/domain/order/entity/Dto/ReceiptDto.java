@@ -1,12 +1,13 @@
 package sosteam.throwapi.domain.order.entity.Dto;
 
 import sosteam.throwapi.domain.order.controller.response.GifticonResponse;
+import sosteam.throwapi.domain.order.controller.response.ReceiptResponse;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Item;
 
-public class GifticonDto {
-    public static GifticonResponse from(Item item, Gifticon gifticon) {
-        GifticonResponse response = new GifticonResponse();
+public class ReceiptDto {
+    public static ReceiptResponse from(Item item, Gifticon gifticon) {
+        ReceiptResponse response = new ReceiptResponse();
         response.setProductName(item.getProductName());
         response.setBrandName(item.getBrandName());
         response.setBrandImageUrl(item.getBrandImageUrl());
