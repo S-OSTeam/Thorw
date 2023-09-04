@@ -12,7 +12,7 @@ data class StoreModel(
     @SerializedName("extStoreId")val uuid: String,              //가게 고유 id
     @SerializedName("storePhone")val storePhone: String,        //가게 전화번호
     @SerializedName("storeName")val storeName: String,          //가게 이름
-    @SerializedName("latitude")val latitudes: Double,          //위도 (-90~90)
+    @SerializedName("latitude")val latitudes: Double,           //위도 (-90~90)
     @SerializedName("longitude")val longitude: Double,          //경도 (-180~180)
     @SerializedName("crn")val bno: String,                      //사업자등록번호
     @SerializedName("zipCode")val zipCode: String,              //우편번호
