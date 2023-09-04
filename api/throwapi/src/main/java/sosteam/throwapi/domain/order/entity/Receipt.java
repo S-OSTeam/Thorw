@@ -22,7 +22,7 @@ public class Receipt extends PrimaryKeyEntity {
     private Gifticon gifticon;
 
     @NotNull
-    private ReceiptStatus receiptStatus; // 기프티콘 상태 [SALE,CONFIRMED, SOLD]
+    private ReceiptStatus receiptStatus; // 기프티콘 상태 [SALE,CONFIRMED, REFUND]
 
     public Receipt(User user) {
         this.user = user;
@@ -36,5 +36,9 @@ public class Receipt extends PrimaryKeyEntity {
 
     public void modifyUser(User user) {
         this.user = user;
+    }
+
+    public void modifyStatus(ReceiptStatus receiptStatus) {
+        this.receiptStatus=receiptStatus;
     }
 }

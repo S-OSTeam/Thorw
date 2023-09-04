@@ -30,15 +30,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
-    private final GifticonSearchService gifticonSearchService;
     private final ItemSearchService itemSearchService;
     private final ReceiptCreateService receiptCreateService;
-    private final ReceiptDeleteService receiptDeleteService;
+    private final ReceiptModifyService receiptModifyService;
     private final ReceiptSearchService receiptSearchService;
 
     /**
      * 기프티콘 구매
-     *
      * @param request
      * @return 아이템 정보 + LIST( 기프티콘 UUID와 giftTraceId )
      */
@@ -96,13 +94,12 @@ public class OrderController {
     }
 
     /**
-     * 사용하거나 취소한 기프티콘 내역 삭제
-     *
+     * 사용하거나 취소한 기프티콘 환불
      * @param request
      */
     @DeleteMapping
-    public ResponseEntity<Map<String, Object>> deleteReceiptAndGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
-        receiptDeleteService.deleteReceiptByGifticonId(request.getGiftTraceId());
+    public ResponseEntity<Map<String, Object>> refundGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
+        receiptModifyService.refundReceiptByGifticonId(request.getGiftTraceId());
         Map<String, Object> response = new HashMap<>();
         response.put("giftTraceId", request.getGiftTraceId());
         response.put("deletedAt", LocalDateTime.now());

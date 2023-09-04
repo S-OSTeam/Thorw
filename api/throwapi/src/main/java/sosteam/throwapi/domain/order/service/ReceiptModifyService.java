@@ -17,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ReceiptDeleteService {
+public class ReceiptModifyService {
     private final GifticonRepository gifticonRepository;
     private final ReceiptRepository receiptRepository;
 
@@ -25,7 +25,7 @@ public class ReceiptDeleteService {
      * giftTraceId로 gifticon,receipt 삭제
      * @param giftTraceId
      */
-    public void deleteReceiptByGifticonId(String giftTraceId) {
+    public void refundReceiptByGifticonId(String giftTraceId) {
         log.debug("RECEIPT DELETE BY GIFTICON ID");
 
         UUID gifticonId = gifticonRepository.searchByGiftTraceId(giftTraceId).get().getId();
@@ -40,14 +40,12 @@ public class ReceiptDeleteService {
         }
 
         //기프티콘 상태 확인
-        if (receipt.getReceiptStatus() == ReceiptStatus.SALE) {
+        if (receipt.getReceiptStatus() != ReceiptStatus.SALE) {
             throw new GifticonDeletionException();
         }
 
-        // user와의 관계 끊기
-        receipt.modifyUser(null);
+        receipt.modifyStatus(ReceiptStatus.REFUND);
 
-        receiptRepository.delete(receipt);
         gifticonRepository.deleteById(gifticonId);
     }
 }

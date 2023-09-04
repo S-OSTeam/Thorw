@@ -34,5 +34,5 @@ public class ReceiptResponse {
     private String giftTraceId; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
 
     @NotNull
-    private ReceiptStatus receiptStatus; // 기프티콘 상태 [SALE,CONFIRMED, SOLD]
+    private ReceiptStatus receiptStatus; // 기프티콘 상태 [SALE,CONFIRMED, REFUND]
 }
