@@ -34,11 +34,11 @@ public class ReceiptCreateService {
      */
     public Optional<Gifticon> createGifticonAndReceipt(String templateToken, Item item, UserInfoDto userInfoDto) {
         log.debug("SEARCH BY PRODUCT NAME");
+        User saveUser = userInfoService.searchByInputId(userInfoDto);
         // TODO: 2023-09-04 카카오 템플릿 필요
-        GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789");
+        GifticonSendResponseDto kakaoResponse = sendKakaoGifticon("123456789",saveUser);
 
         // 해당 응답에서 reserveTraceId를 사용하여 Gifticon 엔터티를 생성하고 저장
-        User saveUser = userInfoService.searchByInputId(userInfoDto);
         Gifticon saveGifticon = new Gifticon(kakaoResponse.getReserveTraceId().toString());
         saveGifticon.modifyItem(item);
         Receipt saveReceipt=new Receipt();
