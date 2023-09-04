@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.order.entity.Gifticon;
 import sosteam.throwapi.domain.order.entity.Item;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 
 import java.util.Optional;
 
@@ -43,7 +44,8 @@ public class ReceiptCreateServiceTest {
         log.debug("SEARCH TEMPLATETOKEN");
         String searchTemplateTokenByProductName = itemSearchService.searchTemplateTokenByProductName(testProductName);
         log.debug("GIFTICON AND RECEIPT CREATE");
-        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(searchTemplateTokenByProductName,item);
+        UserInfoDto userInfoDto=new UserInfoDto("1234");
+        Optional<Gifticon> gifticon = receiptCreateService.createGifticonAndReceipt(searchTemplateTokenByProductName,item,userInfoDto);
 
         // then
         assertEquals("SEARCH TEMPLATETOKEN",searchTemplateTokenByProductName,testTemplateToken);

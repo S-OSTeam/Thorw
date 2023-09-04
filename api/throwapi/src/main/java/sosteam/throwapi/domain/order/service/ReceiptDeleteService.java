@@ -44,7 +44,8 @@ public class ReceiptDeleteService {
             throw new GifticonDeletionException();
         }
 
-        // TODO: 2023-08-29 user 관계 끊는 코드 추가(수형이 코드 필요)
+        // user와의 관계 끊기
+        receipt.modifyUser(null);
 
         receiptRepository.delete(receipt);
         gifticonRepository.deleteById(gifticonId);

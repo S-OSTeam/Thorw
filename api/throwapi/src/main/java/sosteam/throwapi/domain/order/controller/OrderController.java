@@ -19,6 +19,7 @@ import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.order.exception.NoSuchGifticonException;
 import sosteam.throwapi.domain.order.exception.NoSuchItemException;
 import sosteam.throwapi.domain.order.service.*;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -45,6 +46,7 @@ public class OrderController {
     public ResponseEntity<GifticonResponse> purchaseGifticon(@RequestBody @Valid GifticonCreateRequest request) {
         String templateToken = itemSearchService.searchTemplateTokenByProductName(request.getProductName());
         Optional<Item> itemOptional = itemSearchService.searchItemByProductName(request.getProductName());
+        UserInfoDto userInfoDto=new UserInfoDto(request.getUserInputId());
 
         if (!itemOptional.isPresent()) {
             throw new NoSuchItemException();
@@ -52,7 +54,7 @@ public class OrderController {
 
         Item item = itemOptional.get();
 
-        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(templateToken, item);
+        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(templateToken, item, userInfoDto);
 
         // 생성된 Gifticon이 없을 경우, 서버 에러 응답을 반환
         if (!gifticonOptional.isPresent()) {
