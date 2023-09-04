@@ -26,6 +26,7 @@ class StoreRetrofit {
         lateinit var requestService: StoreRequest
     }
 
+    //client 객체
     val client = OkHttpClient.Builder().addInterceptor { chain ->
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $apiKey")
@@ -33,18 +34,19 @@ class StoreRetrofit {
         chain.proceed(newRequest)
     }.build()
 
+    //url 객체
+    val urls = URL(url)
+    //retrofit 객체
+    val retrofit = Retrofit.Builder()
+        .client(client)
+        .baseUrl(urls)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
     //가게 등록을 위한 api호출
     fun registerResponse(){
         try {
-            val urls = URL(url)
-            //가게 등록하기 위한 데이터 값을 log로 표시
-            val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(urls)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
             requestService = retrofit.create(StoreRequest::class.java)
-
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -53,13 +55,6 @@ class StoreRetrofit {
     //가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel){
         try {
-            val urls = URL(url)
-            //가게 등록하기 위한 데이터 값을 log로 표시
-            val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(urls)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
             val request: StoreRequest = retrofit.create(StoreRequest::class.java)
             request.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
                 store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
@@ -95,11 +90,6 @@ class StoreRetrofit {
     //사업자등록번호 조회 api 호출
     fun bnoResponse(){
         try {
-            val urls = URL(url)
-            val retrofit = Retrofit.Builder()
-                .baseUrl(urls)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
             requestService = retrofit.create(StoreRequest::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
