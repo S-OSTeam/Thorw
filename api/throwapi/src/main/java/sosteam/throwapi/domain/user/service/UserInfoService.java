@@ -71,7 +71,7 @@ public class UserInfoService {
         //user 계정의 상태를 확인 한다
         this.isUserStatusNormal(user.getUserStatus());
 
-        log.info("inputId = {}, UserStatus = {}", signOutDto.getInputId(), UserStatus.SIGNOUT);
+        log.debug("inputId = {}, UserStatus = {}", signOutDto.getInputId(), UserStatus.SIGNOUT);
 
         Long result = userRepository.updateUserStatusByInputId(signOutDto.getInputId(), UserStatus.SIGNOUT);
     }
