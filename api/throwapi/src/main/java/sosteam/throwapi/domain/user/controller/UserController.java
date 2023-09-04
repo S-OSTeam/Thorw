@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params){
+    public ResponseEntity<String> SignUp(@RequestBody @Valid UserSaveRequest params) {
         UserSaveDto userSaveDto = new UserSaveDto(
                 params.getInputId(),
                 params.getInputPassword(),
@@ -114,6 +114,7 @@ public class UserController {
             @RequestBody @Valid UserCngRequest params
     ){
         String accessToken = token.substring(7);
+
         String inputId = jwtTokenService.extractSubject(accessToken);
 
         UserInfoDto userInfoDto = new UserInfoDto(
@@ -133,5 +134,4 @@ public class UserController {
 
         return ResponseEntity.ok("회원 정보 변경 완료");
     }
-
 }
