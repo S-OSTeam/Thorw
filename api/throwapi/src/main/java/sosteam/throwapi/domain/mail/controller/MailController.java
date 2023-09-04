@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.mail.controller.request.AuthCodeSendRequest;
 import sosteam.throwapi.domain.mail.exception.AlreadySendCodeException;
 import sosteam.throwapi.domain.mail.exception.SendCodeNotFoundException;
@@ -63,4 +61,8 @@ public class MailController {
         return ResponseEntity.ok("10m start count");
     }
 
+    @GetMapping
+    public ResponseEntity<String> testtest(){
+        return ResponseEntity.ok("why not?");
+    }
 }
