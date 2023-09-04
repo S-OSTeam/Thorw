@@ -44,25 +44,12 @@ class StoreRetrofit {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val registerService = retrofit.create(StoreRequest::class.java)
-
-    private val modifyService = retrofit.create(StoreRequest::class.java)
-
-    private val bnoService = retrofit.create(StoreRequest::class.java)
-
-    //가게 등록을 위한 api호출
-    fun registerResponse(){
-        try {
-            requestService = registerService
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+    val storeService = retrofit.create(StoreRequest::class.java)
 
     //가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel){
         try {
-            modifyService.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
+            storeService.mondifyRequest(store.uuid, store.storePhone, store.latitudes, store.longitude,
                 store.bno, store.zipCode, store.fullAddress+"(${store.subAddress})", store.trashType,
             ).enqueue(object: Callback<StoreModel>{
                 override fun onResponse(
@@ -96,7 +83,7 @@ class StoreRetrofit {
     //사업자등록번호 조회 api 호출
     fun bnoResponse(){
         try {
-            requestService = bnoService
+            requestService = storeService
         } catch (e: Exception) {
             e.printStackTrace()
         }

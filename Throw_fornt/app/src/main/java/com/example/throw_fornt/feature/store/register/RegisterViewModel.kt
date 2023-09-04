@@ -104,14 +104,14 @@ class RegisterViewModel : ViewModel() {
         else {
             if (subAddress.value.isNullOrEmpty()) subAddress.value = ""
 
-            storeHelper.registerResponse()
+            //storeHelper.registerResponse()
             val body: Register
             body = Register(
                 storePhone.value.toString(), crn.value.toString(), lat.toDouble(), lon.toDouble(),
                 zoneNo.value.toString(), fullAddress.value.toString() + "(${subAddress.value.toString()})", trashCode
             )
 
-            StoreRetrofit.requestService.registerRequest(body).enqueue(object : Callback<String> {
+            storeHelper.storeService.registerRequest(body).enqueue(object : Callback<String> {
                 override fun onResponse(
                     call: Call<String>,
                     response: Response<String>
