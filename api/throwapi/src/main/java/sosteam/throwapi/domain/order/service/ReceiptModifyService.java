@@ -45,7 +45,5 @@ public class ReceiptModifyService {
         }
 
         receipt.modifyStatus(ReceiptStatus.REFUND);
-
-        gifticonRepository.deleteById(gifticonId);
     }
 }
