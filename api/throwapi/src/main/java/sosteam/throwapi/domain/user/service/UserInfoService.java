@@ -12,7 +12,7 @@ import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
 import sosteam.throwapi.domain.user.exception.NoSuchUserException;
-import sosteam.throwapi.domain.user.exception.SignUpPasswordException;
+import sosteam.throwapi.domain.user.exception.PasswordDifFromConfirmException;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
 import sosteam.throwapi.domain.user.exception.UserAuthNotFoundException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
@@ -28,14 +28,10 @@ public class UserInfoService {
 
     public User SignUp(UserSaveDto dto) {
         log.debug("Start SignUp User = {}", dto);
-        if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new SignUpPasswordException();
+        if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new PasswordDifFromConfirmException();
 
         //인증을 실제로 진행했는지 확인
-        boolean isSuccess = userAuthSearchService.searchIsSuccess(dto.getEmail());
-
-        if (!isSuccess) {
-            throw new UserAuthNotFoundException();
-        }
+        userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
 
         // 1. create User Entity
         User user = new User(
@@ -88,6 +84,46 @@ public class UserInfoService {
         if (user == null) throw new NoSuchUserException();
 
         return user;
+    }
+
+    public String searchInputIdByEmail(String email) {
+        //실제 인증을 진행 했는지 확인
+        userAuthSearchService.IsSuccessIsTrue(email);
+
+        //email로 User의 uuid를 찾는다.
+        User user = userRepository.searchByEmail(email);
+
+        //찾아온 id가 없거나 비어있는 경우 NOT_FOUND
+        if (user == null) {
+            throw new NoSuchUserException();
+        }
+        log.debug("find id : {}", user.getInputId());
+
+        return user.getInputId();
+    }
+
+    public Long modifyUserPwdByEamil(String email, String pwd, String confirmPwd) {
+        //실제 인증을 진행 했는지 확인
+//        userAuthSearchService.IsSuccessIsTrue(email);
+
+        log.debug("change pwd : {}", pwd);
+
+        //확인 비밀번호가 같은지 확인
+        if (!pwd.equals(confirmPwd)) {
+            throw new PasswordDifFromConfirmException();
+        }
+
+        //email로 user의 uuid를 가져오기 위해 user를 조회
+        User user = userRepository.searchByEmail(email);
+
+        log.debug("find user : {}", user.getInputId());
+        //비밀번호를 암호화
+        String encodedPwd = passwordEncoder.encode(pwd);
+
+        //같다면 변경
+        Long result = userRepository.updatePwdByUserId(user.getId(), encodedPwd);
+
+        return result;
     }
 
 }

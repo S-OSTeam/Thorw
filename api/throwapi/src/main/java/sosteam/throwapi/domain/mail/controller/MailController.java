@@ -1,11 +1,13 @@
 package sosteam.throwapi.domain.mail.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import sosteam.throwapi.domain.mail.controller.request.AuthCodeSendRequest;
 import sosteam.throwapi.domain.mail.exception.AlreadySendCodeException;
@@ -39,7 +41,7 @@ public class MailController {
      * 인증 유효 기간은 10분으로 설정한다.
      */
     @PostMapping("/auth")
-    public ResponseEntity<String> authMailSend(AuthCodeSendRequest authCodeSendRequest) {
+    public ResponseEntity<String> authMailSend(@RequestBody @Valid AuthCodeSendRequest authCodeSendRequest) {
         String email = authCodeSendRequest.getEmail();
 
         //이미 10분 이내에 전송 내역이 있는지 확인
