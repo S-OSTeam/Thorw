@@ -14,6 +14,7 @@ import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
 import sosteam.throwapi.domain.user.exception.NoSuchUserException;
 import sosteam.throwapi.domain.user.exception.PasswordDifFromConfirmException;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
+import sosteam.throwapi.domain.user.exception.UserAuthNotFoundException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 
 @Slf4j
