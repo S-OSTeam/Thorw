@@ -108,7 +108,7 @@ class ManagementViewModel(): ViewModel() {
 
             //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
             val data = StoreModel("",
-                storePhone.value.toString(), "", "","", crn.value.toString(),
+                storePhone.value.toString(), "", 0.0,0.0, crn.value.toString(),
                 zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
                 trashCode, "", "",
             )
@@ -155,7 +155,10 @@ class ManagementViewModel(): ViewModel() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
         val res = StoreRetrofit.requestService
-        res.bnoRequest(crn.value.toString())
+        val body = HashMap<String, String>()
+        body.put("crn", crn.value.toString())
+
+        res.bnoRequest(body)
             .enqueue(object : Callback<StoreModel> {
                 override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
                     if (response.isSuccessful && response.body()?.code=="200") {

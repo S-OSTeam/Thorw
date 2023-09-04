@@ -4,14 +4,16 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.example.throw_fornt.feature.store.register.address.AddressResult
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 //가게 조회 모델
+@Parcelize
 data class StoreModel(
     @SerializedName("extStoreId")val uuid: String,              //가게 고유 id
     @SerializedName("storePhone")val storePhone: String,        //가게 전화번호
     @SerializedName("storeName")val storeName: String,          //가게 이름
-    @SerializedName("latitudes")val latitudes: String,          //위도 (-90~90)
-    @SerializedName("longitude")val longitude: String,          //경도 (-180~180)
+    @SerializedName("latitude")val latitudes: Double,          //위도 (-90~90)
+    @SerializedName("longitude")val longitude: Double,          //경도 (-180~180)
     @SerializedName("crn")val bno: String,                      //사업자등록번호
     @SerializedName("zipCode")val zipCode: String,              //우편번호
     @SerializedName("fullAddress")val fullAddress: String,      //지번주소
@@ -19,52 +21,7 @@ data class StoreModel(
     @SerializedName("trashType")val trashType: String,          //일쓰->병->플라스틱->종이->캔
     @SerializedName("code")val code:String,                     //에러시 결과 코드
     @SerializedName("message")val msg:String,                   //에러시 결과 메세지
-):Parcelable{
-    constructor(parcel: Parcel) : this(
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-    ) {
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(uuid)
-        parcel.writeString(storePhone)
-        parcel.writeString(storeName)
-        parcel.writeString(latitudes)
-        parcel.writeString(longitude)
-        parcel.writeString(bno)
-        parcel.writeString(zipCode)
-        parcel.writeString(fullAddress)
-        parcel.writeString(subAddress)
-        parcel.writeString(trashType)
-        parcel.writeString(code)
-        parcel.writeString(msg)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<StoreModel> {
-        override fun createFromParcel(parcel: Parcel): StoreModel {
-            return StoreModel(parcel)
-        }
-
-        override fun newArray(size: Int): Array<StoreModel?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+):Parcelable
 
 //api호출시 데이터 response값을 받는 모델
 data class StoreResponse(

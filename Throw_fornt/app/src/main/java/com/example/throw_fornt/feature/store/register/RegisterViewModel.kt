@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.StoreResponse
 import com.example.throw_fornt.data.model.response.testBody
@@ -12,6 +13,10 @@ import com.example.throw_fornt.util.common.SingleLiveEvent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
+import java.net.URL
 
 class RegisterViewModel : ViewModel() {
     private val errorMsg: String = "칸이 비어있습니다."
@@ -65,9 +70,9 @@ class RegisterViewModel : ViewModel() {
 
     //사업자등록번호 조회
     fun bnoInquire() {
-        storeHelper.bnoResponse()
-        real()
-        //test()
+        //storeHelper.bnoResponse()
+        //real()
+        test()
     }
 
     fun changeSuccess(btn: Boolean, text: String) {
@@ -95,7 +100,7 @@ class RegisterViewModel : ViewModel() {
 
             //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
             val data = StoreModel("",
-                storePhone.value.toString(), "", "","", crn.value.toString(),
+                storePhone.value.toString(), "", 0.0,0.0, crn.value.toString(),
                 zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
                 trashCode, "", "",
             )
@@ -122,8 +127,18 @@ class RegisterViewModel : ViewModel() {
 
     //사업자 등록번호 조회 test모드
     private fun test() {
-        val res = StoreRetrofit.requestService
-        res.getRequest(StoreRetrofit.apiKey, "1", crn.value.toString(), "json")
+        lateinit var requestService: StoreRequest
+        try {
+            val urls = URL("https://bizno.net/api/")
+            val retrofit = Retrofit.Builder()
+                .baseUrl(urls)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            requestService = retrofit.create(StoreRequest::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        requestService.getRequest("ZG1sdG4zNDI2QGdtYWlsLmNvbSAg", "1", crn.value.toString(), "json")
             .enqueue(object : Callback<testBody> {
                 override fun onResponse(call: Call<testBody>, response: Response<testBody>) {
                     if (response.isSuccessful && response.body()?.items!!.size>0) {
@@ -146,7 +161,10 @@ class RegisterViewModel : ViewModel() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
 
         val res = StoreRetrofit.requestService
-        res.bnoRequest(crn.value.toString())
+        val body = HashMap<String, String>()
+        body["crn"] = crn.value.toString()
+
+        res.bnoRequest(body)
             .enqueue(object : Callback<StoreModel> {
                 override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
                     if (response.isSuccessful && response.body()?.code=="200") {
