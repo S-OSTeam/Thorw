@@ -103,7 +103,7 @@ public class UserInfoService {
 
     public Long modifyUserPwdByEamil(String email, String pwd, String confirmPwd) {
         //실제 인증을 진행 했는지 확인
-//        userAuthSearchService.IsSuccessIsTrue(email);
+        userAuthSearchService.IsSuccessIsTrue(email);
 
         log.debug("change pwd : {}", pwd);
 
@@ -114,6 +114,10 @@ public class UserInfoService {
 
         //email로 user의 uuid를 가져오기 위해 user를 조회
         User user = userRepository.searchByEmail(email);
+
+        if (user == null) {
+            throw new NoSuchUserException();
+        }
 
         log.debug("find user : {}", user.getInputId());
         //비밀번호를 암호화
