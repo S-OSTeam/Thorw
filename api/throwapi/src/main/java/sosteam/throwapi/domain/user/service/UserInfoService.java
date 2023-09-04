@@ -7,10 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
-import sosteam.throwapi.domain.user.entity.dto.user.IdDuplicationDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
+import sosteam.throwapi.domain.user.entity.dto.user.*;
 import sosteam.throwapi.domain.user.exception.NoSuchUserException;
 import sosteam.throwapi.domain.user.exception.SignUpPasswordException;
 import sosteam.throwapi.domain.user.exception.UserAlreadyExistException;
@@ -83,4 +80,11 @@ public class UserInfoService {
         return user;
     }
 
+    public boolean checkPWAgain(PWCheckDto pwCheckDto){
+        // inputId 를 기반으로 user 정보를 가져 옴
+        User user = userRepository.searchByInputId(pwCheckDto.getInputId());
+        if (user == null) throw new NoSuchUserException();
+
+        return passwordEncoder.matches(pwCheckDto.getInputPassword(), user.getPassword());
+    }
 }

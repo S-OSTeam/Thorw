@@ -54,6 +54,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         UUID userId = this.searchUUIDByInputId(userCngDto.getInputId());
         return queryFactory
                 .update(userInfo)
+                .set(userInfo.userName, userCngDto.getUserName())
                 .set(userInfo.email, userCngDto.getEmail())
                 .set(userInfo.userPhoneNumber, userCngDto.getUserPhoneNumber())
                 .set(userInfo.updatedAt, LocalDateTime.now())

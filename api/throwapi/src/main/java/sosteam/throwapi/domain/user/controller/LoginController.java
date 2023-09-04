@@ -52,7 +52,6 @@ public class LoginController {
                 result.getRefreshToken()
         ));
     }
-
     @PostMapping
     public ResponseEntity<Tokens> throwLogin(@RequestBody @Valid ThrowLoginRequest params){
         //dto에 옮겨 담기
@@ -77,5 +76,17 @@ public class LoginController {
         LogoutDto logoutDto = new LogoutDto(accessToken);
         loginService.logout(logoutDto);
         return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
+    }
+
+    //test 계정에 대한 testToken 발급
+    @PostMapping("/testtoken")
+    public ResponseEntity<Tokens> testToken(){
+        ThrowLoginDto throwLoginDto = new ThrowLoginDto(
+                "testinputid",
+                "testpassword1!"
+        );
+
+        Tokens tokens = loginService.throwLogin(throwLoginDto);
+        return ResponseEntity.ok(tokens);
     }
 }
