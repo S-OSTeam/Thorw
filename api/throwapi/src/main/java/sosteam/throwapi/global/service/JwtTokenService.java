@@ -77,7 +77,7 @@ public class JwtTokenService {
     public Long getExpiration(String token){
         Long expiration = this.parseClaims(token).getExpiration().getTime();
         Long now = new Date().getTime();
-        return (now - expiration);
+        return (expiration - now)/1000;
     }
 
     public Authentication getAuthentication(sosteam.throwapi.domain.user.entity.User user1){
