@@ -19,8 +19,6 @@ public class ReceiptCustomRepositoryImpl implements ReceiptCustomRepository {
     @Override
     public Optional<Set<Receipt>> searchByUserId(UUID userId) {
         return Optional.ofNullable(new HashSet<>(jpaQueryFactory.selectFrom(receipt)
-                .join(receipt.gifticon).fetchJoin()   // Fetch join for Gifticon
-                .join(receipt.user).fetchJoin()       // Fetch join for User
                 .where(receipt.user.id.eq(userId))
                 .fetch()));
     }
