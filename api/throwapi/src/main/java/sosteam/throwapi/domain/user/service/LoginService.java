@@ -71,11 +71,9 @@ public class LoginService {
     @Transactional
     public void logout(LogoutDto logoutDto){
         String accessToken = logoutDto.getAccessToken();
-        // 유효하지 않은 토큰이면 예외처리
-        if(!jwtTokenService.validateToken(accessToken)) throw new NotValidateTokenException();
-
         log.debug("accessToken = {}", accessToken);
         // 토큰으로 inputId 를 뽑아냄 -> 그 후 User 를 구함
+        //extractSubject 에서 유효 처리 함
         String inputId = jwtTokenService.extractSubject(accessToken);
         User user = userRepository.searchByInputId(inputId);
         String memberId = user.getId().toString();
@@ -91,6 +89,7 @@ public class LoginService {
 
         // 남은 유효 시간을 구해 옴
         Long expiration = jwtTokenService.getExpiration(accessToken);
+        log.debug(expiration.toString());
 
         log.debug("expiration = {}", expiration);
         redisUtilService.setDataExpire(accessToken, "logout", expiration);
