@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,7 +52,7 @@ public class MailController {
                 throw new AlreadySendCodeException();
             }
         } catch (SendCodeNotFoundException e) {
-            log.debug("인증 쿨타임");
+            log.debug("인증 쿨타임 아님");
         }
 
         //이메일을 보낸 후 저장하기 위해 인증 코드를 받아온다.
@@ -63,4 +64,8 @@ public class MailController {
         return ResponseEntity.ok("10m start count");
     }
 
+    @GetMapping
+    public ResponseEntity<String> testtest() {
+        return ResponseEntity.ok("why not?");
+    }
 }

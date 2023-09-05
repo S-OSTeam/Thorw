@@ -38,11 +38,6 @@ class StoreControllerTest {
                 lat = baseLat - r.nextDouble() * 0.1;
                 lon = baseLon - r.nextDouble() * 0.1;
             }
-
-            String s1 =String.valueOf(r.nextInt()%1000);
-            String s2 = String.valueOf(r.nextInt()%100);
-            String s3 = String.valueOf(r.nextInt()%100000);
-            String rn = s1 + "-" + s2 + "-" + s3;
         }
     }
 }

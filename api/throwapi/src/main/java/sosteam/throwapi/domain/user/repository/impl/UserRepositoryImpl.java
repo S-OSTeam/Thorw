@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.domain.user.repository.custom.UserRepositoryCustom;
+import sosteam.throwapi.global.entity.UserStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -68,6 +69,23 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         return result;
     }
+
+    @Override
+    @Transactional
+    public Long updateUserStatusByInputId(String inputId, UserStatus userStatus) {
+        UUID userId = this.searchUUIDByInputId(inputId);
+        long result = queryFactory
+                .update(user)
+                .set(user.userStatus, userStatus)
+                .where(user.id.eq(userId))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        return result;
+    }
+
 
     @Override
     public UUID searchUUIDByInputId(String inputId) {

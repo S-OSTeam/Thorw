@@ -10,7 +10,7 @@ import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
 import sosteam.throwapi.domain.oauth.exception.NotSignUpUserException;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
-import sosteam.throwapi.global.security.redis.entity.RedisTokens;
+import sosteam.throwapi.domain.user.service.UserReadService;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 import sosteam.throwapi.global.security.redis.service.RedisUtilService;
 import sosteam.throwapi.global.service.TokensGenerateService;
@@ -26,6 +26,7 @@ public class OAuthLoginService {
     private final RedisUtilService redisUtilService;
     private final TokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
+    private final UserReadService userReadService;
 
 
     public Tokens login(OAuthLoginDto oAuthLoginDto){
@@ -49,18 +50,14 @@ public class OAuthLoginService {
         Tokens authTokens;
         if(userRepository.existBySNSId(snsId)){
             User user = userRepository.searchBySNSId(snsId);
+
+            //user 계정의 현재 상태를 확인
+            userReadService.isUserStatusNormal(user.getUserStatus());
+
             UUID memberId = user.getId();
             String inputId = user.getInputId();
             authTokens = authTokensGenerateService.generate(memberId, inputId);
             log.debug("authTokens = {}", authTokens);
-
-//            refreshTokenRedisRepository.save(
-//                    RedisTokens.builder()
-//                            .id(user.getInputId())
-//                            .refreshToken(authTokens.getRefreshToken())
-//                            .accessToken(authTokens.getAccessToken())
-//                            .build()
-//            );
 
             redisUtilService.setData(memberId.toString(), authTokens.getRefreshToken());
             log.debug("oauth login Success");

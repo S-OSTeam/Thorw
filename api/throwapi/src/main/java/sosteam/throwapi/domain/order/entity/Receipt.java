@@ -2,8 +2,6 @@ package sosteam.throwapi.domain.order.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sosteam.throwapi.domain.user.entity.User;
@@ -14,6 +12,7 @@ import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 @NoArgsConstructor
 public class Receipt extends PrimaryKeyEntity {
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

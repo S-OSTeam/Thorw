@@ -34,32 +34,11 @@ public class Store extends PrimaryKeyEntity {
     // 일반쓰레기 | 병 | 플라스틱 | 종이 | 캔
     @NotNull
     private String trashType;
-
-
-    public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber, String trashType) {
-        this.extStoreId = extStoreId;
-        this.storeName = storeName;
-        this.storePhone = storePhone;
-        this.companyRegistrationNumber = companyRegistrationNumber;
-        this.trashType = trashType;
-    }
-
-    public void modify(String storeName, String storePhone, String companyRegistrationNumber,String trashType) {
-        this.storeName = storeName;
-        this.storePhone = storePhone;
-        this.companyRegistrationNumber = companyRegistrationNumber;
-        this.trashType = trashType;
-    }
-
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    public User modifyUser(User user) {
-        this.user = user;
-        return this.user;
-    }
-
+    @NotNull
     @OneToOne(
             mappedBy = "store",
             fetch = FetchType.LAZY,
@@ -69,7 +48,27 @@ public class Store extends PrimaryKeyEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public Address modifyAddress(Address address){
+    public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber, String trashType) {
+        this.extStoreId = extStoreId;
+        this.storeName = storeName;
+        this.storePhone = storePhone;
+        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.trashType = trashType;
+    }
+
+    public void modify(String storeName, String storePhone, String companyRegistrationNumber, String trashType) {
+        this.storeName = storeName;
+        this.storePhone = storePhone;
+        this.companyRegistrationNumber = companyRegistrationNumber;
+        this.trashType = trashType;
+    }
+
+    public User modifyUser(User user) {
+        this.user = user;
+        return this.user;
+    }
+
+    public Address modifyAddress(Address address) {
         this.address = address;
         return this.address;
     }

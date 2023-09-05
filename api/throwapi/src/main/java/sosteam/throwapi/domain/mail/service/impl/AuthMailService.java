@@ -1,13 +1,17 @@
 package sosteam.throwapi.domain.mail.service.impl;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.mail.exception.MailServiceUnavailableException;
 import sosteam.throwapi.domain.mail.service.MailService;
 import sosteam.throwapi.global.service.RandomStringService;
+
+import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @Service
@@ -21,9 +25,9 @@ public class AuthMailService implements MailService {
     public MimeMessage createMail(String to) {
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
-            message.setFrom("Throw");
+            message.setFrom(new InternetAddress("public_chan@naver.com", "SosTeam Throw"));
             message.setRecipients(MimeMessage.RecipientType.TO, to);
-            message.setSubject("이메일 인증");
+            message.setSubject("Throw 이메일 인증");
             String msgg = "";
             msgg += "<div style='margin:100px;'>";
             msgg += "<h1> 안녕하세요 Throw 인증 메일 입니다.</h1>";
@@ -41,6 +45,10 @@ public class AuthMailService implements MailService {
             message.setText(msgg, "utf-8", "html");
         } catch (MessagingException e) {
             log.debug("{}", e.getStackTrace());
+            throw new MailServiceUnavailableException();
+        } catch (UnsupportedEncodingException e) {
+            log.debug("{}", e.getStackTrace());
+            throw new MailServiceUnavailableException();
         }
 
         return message;
