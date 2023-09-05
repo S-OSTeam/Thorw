@@ -60,7 +60,7 @@ public class OAuthLoginService {
             authTokens = authTokensGenerateService.generate(memberId, inputId);
             log.debug("authTokens = {}", authTokens);
 
-            redisUtilService.setDataExpire(memberId.toString(), authTokens.getRefreshToken(), Long.valueOf(3600));
+            redisUtilService.setData(memberId.toString(), authTokens.getRefreshToken());
             log.debug("oauth login Success");
         } else {
             throw new NotSignUpUserException();
