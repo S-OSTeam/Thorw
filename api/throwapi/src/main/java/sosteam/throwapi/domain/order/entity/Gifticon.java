@@ -3,7 +3,6 @@ package sosteam.throwapi.domain.order.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
@@ -16,8 +15,9 @@ public class Gifticon extends PrimaryKeyEntity {
     @NotNull
     private String giftTraceId; // 주문 완료 후 생성되는 수신자 단위의 선물 번호
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id",nullable = false,foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "item_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Item item;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -33,10 +33,10 @@ public class Gifticon extends PrimaryKeyEntity {
     }
 
     public void modifyReceipt(Receipt receipt) {
-        this.receipt=receipt;
+        this.receipt = receipt;
     }
 
     public void modifyItem(Item item) {
-        this.item=item;
+        this.item = item;
     }
 }
