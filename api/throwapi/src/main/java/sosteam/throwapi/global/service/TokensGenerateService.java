@@ -21,7 +21,6 @@ public class TokensGenerateService {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 50400;
     private static final String ACCESS_TOKEN_KIND = "accessToken";
     private static final String REFRESH_TOKEN_KIND = "refreshToken";
-
     private final JwtTokenService jwtTokenService;
 
     public Tokens generate(UUID memberId, String inputId) {

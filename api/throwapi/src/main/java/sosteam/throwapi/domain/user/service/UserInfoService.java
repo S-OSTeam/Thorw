@@ -19,7 +19,6 @@ import sosteam.throwapi.global.entity.UserStatus;
 public class UserInfoService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
     private final UserAuthSearchService userAuthSearchService;
 
     public User SignUp(UserSaveDto dto) {
@@ -82,11 +81,6 @@ public class UserInfoService {
         return user != null;
     }
 
-    public void cngUser(UserCngDto userCngDto) {
-        Long result = userRepository.updateByInputId(userCngDto);
-        log.debug("result cng User Service = {}", result.toString());
-    }
-
     public void restoreUserStatus(ThrowLoginDto throwLoginDto){
         User user = userRepository.searchByInputId(throwLoginDto.getInputId());
         // 존재 하는 user 인지 확인
@@ -99,6 +93,10 @@ public class UserInfoService {
         Long result = userRepository.updateUserStatusByInputId(throwLoginDto.getInputId(), UserStatus.NORMAL);
     }
 
+    public void cngUser(UserCngDto userCngDto) {
+        Long result = userRepository.updateByInputId(userCngDto);
+        log.debug("result cng User Service = {}", result.toString());
+    }
 
     public User searchByInputId(UserInfoDto userInfoDto) {
         //inputId 를 기반으로 User 정보를 불러 옴
