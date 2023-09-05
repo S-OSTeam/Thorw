@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.order.entity.Item;
 import sosteam.throwapi.domain.order.exception.CreateTokenException;
+import sosteam.throwapi.domain.order.exception.NoSuchItemException;
 import sosteam.throwapi.domain.order.repository.repo.ItemRepository;
 
 import java.util.HashSet;
@@ -21,13 +22,19 @@ public class ItemSearchService {
      * productName으로 TemplateToken 찾기
      * @param productName
      */
-    public String searchTemplateTokenByProductName(String productName){
+    public String searchTTByProductName(String productName){
         log.debug("PURCHASE KAKAO GIFTICON BY PRODUCTNAME");
-        String templateToken = null;
-        templateToken = itemRepository.searchByProductName(productName).get().getTemplateToken();
-        if(templateToken==null){
+        Optional<Item> optionalItem = itemRepository.searchByProductName(productName);
+
+        if (!optionalItem.isPresent()) {
+            throw new NoSuchItemException();
+        }
+
+        String templateToken = optionalItem.get().getTemplateToken();
+        if (templateToken == null) {
             throw new CreateTokenException();
         }
+
         return templateToken;
     }
 
