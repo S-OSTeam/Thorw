@@ -3,7 +3,6 @@ package sosteam.throwapi.domain.order.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sosteam.throwapi.domain.order.controller.request.GifticonCreateRequest;
@@ -11,6 +10,7 @@ import sosteam.throwapi.domain.order.controller.request.GifticonDeleteRequest;
 import sosteam.throwapi.domain.order.controller.request.ReceiptSearchRequest;
 import sosteam.throwapi.domain.order.controller.response.GifticonResponse;
 import sosteam.throwapi.domain.order.controller.response.ReceiptResponse;
+import sosteam.throwapi.domain.order.entity.Dto.GifticonCreateDto;
 import sosteam.throwapi.domain.order.entity.Dto.GifticonDto;
 import sosteam.throwapi.domain.order.entity.Dto.ReceiptDto;
 import sosteam.throwapi.domain.order.entity.Gifticon;
@@ -19,6 +19,7 @@ import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.order.exception.NoSuchGifticonException;
 import sosteam.throwapi.domain.order.exception.NoSuchItemException;
 import sosteam.throwapi.domain.order.service.*;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,22 +30,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
-    private final GifticonSearchService gifticonSearchService;
     private final ItemSearchService itemSearchService;
     private final ReceiptCreateService receiptCreateService;
-    private final ReceiptDeleteService receiptDeleteService;
+    private final ReceiptModifyService receiptModifyService;
     private final ReceiptSearchService receiptSearchService;
 
     /**
      * 기프티콘 구매
-     *
      * @param request
      * @return 아이템 정보 + LIST( 기프티콘 UUID와 giftTraceId )
      */
     @PostMapping("/purchase")
     public ResponseEntity<GifticonResponse> purchaseGifticon(@RequestBody @Valid GifticonCreateRequest request) {
-        String templateToken = itemSearchService.searchTemplateTokenByProductName(request.getProductName());
+        String templateToken = itemSearchService.searchTTByProductName(request.getProductName());
         Optional<Item> itemOptional = itemSearchService.searchItemByProductName(request.getProductName());
+        UserInfoDto userInfoDto=new UserInfoDto(request.getUserInputId());
 
         if (!itemOptional.isPresent()) {
             throw new NoSuchItemException();
@@ -52,7 +52,8 @@ public class OrderController {
 
         Item item = itemOptional.get();
 
-        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(templateToken, item);
+        GifticonCreateDto gifticonCreateDto=new GifticonCreateDto(templateToken, item, userInfoDto);
+        Optional<Gifticon> gifticonOptional = receiptCreateService.createGifticonAndReceipt(gifticonCreateDto);
 
         // 생성된 Gifticon이 없을 경우, 서버 에러 응답을 반환
         if (!gifticonOptional.isPresent()) {
@@ -93,13 +94,12 @@ public class OrderController {
     }
 
     /**
-     * 사용하거나 취소한 기프티콘 내역 삭제
-     *
+     * 사용하거나 취소한 기프티콘 환불
      * @param request
      */
     @DeleteMapping
-    public ResponseEntity<Map<String, Object>> deleteReceiptAndGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
-        receiptDeleteService.deleteReceiptByGifticonId(request.getGiftTraceId());
+    public ResponseEntity<Map<String, Object>> refundGifticon(@RequestBody @Valid GifticonDeleteRequest request) {
+        receiptModifyService.refundReceiptByGifticonId(request.getGiftTraceId());
         Map<String, Object> response = new HashMap<>();
         response.put("giftTraceId", request.getGiftTraceId());
         response.put("deletedAt", LocalDateTime.now());

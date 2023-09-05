@@ -12,7 +12,7 @@ import java.util.Collections;
 @Service
 public class KakaoGifticonOrderService {
     private static final String GIFT_SEND_API_URL = "https://gateway-giftbiz.kakao.com/openapi/giftbiz/v1/template/order";
-    // TODO: 2023-08-29 인증키를 받아야함
+    // TODO: 2023-08-29 카카오 인증키를 받아야함
     private static final String AUTHORIZATION_HEADER_VALUE = "KakaoAK abcdefghijk1234567890";
 
     private RestTemplate restTemplate;

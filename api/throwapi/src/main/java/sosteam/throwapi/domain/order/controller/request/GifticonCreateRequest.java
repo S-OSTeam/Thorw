@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class GifticonCreateRequest {
     @NotNull
-    private UUID userId;
+    private String userInputId;
 
     @NotNull
     private String productName;
