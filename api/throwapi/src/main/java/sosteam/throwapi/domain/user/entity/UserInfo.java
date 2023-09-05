@@ -40,17 +40,18 @@ public class UserInfo extends PrimaryKeyEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public UserInfo(String name, String phoneNumber, String email){
+    public UserInfo(String name, String phoneNumber, String email) {
         this.userName = name;
         this.userPhoneNumber = phoneNumber;
         this.email = email;
     }
 
-    public User modifyUser(User user){
+    public User modifyUser(User user) {
         this.user = user;
         return this.user;
     }

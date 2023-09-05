@@ -19,7 +19,7 @@ import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.*;
-import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.domain.user.service.*;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
 import sosteam.throwapi.global.service.JwtTokenService;
@@ -29,8 +29,10 @@ import sosteam.throwapi.global.service.JwtTokenService;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-
-    private final UserInfoService userInfoService;
+    private final UserCreateService userCreateService;
+    private final UserReadService userReadService;
+    private final UserUpdateService userUpdateService;
+    private final UserDeleteService userDeleteService;
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/iddup")
@@ -39,7 +41,7 @@ public class UserController {
                 params.getInputId()
         );
 
-        IdDuplicateResponse result = new IdDuplicateResponse(userInfoService.checkIdDup(idDuplicationDto));
+        IdDuplicateResponse result = new IdDuplicateResponse(userReadService.checkIdDup(idDuplicationDto));
         return ResponseEntity.ok(result);
     }
 
@@ -61,7 +63,7 @@ public class UserController {
         );
 
         //pw 가 일치 하는지 확인
-        PWCheckResponse result = new PWCheckResponse(userInfoService.checkPWAgain(pwCheckDto));
+        PWCheckResponse result = new PWCheckResponse(userReadService.checkPWAgain(pwCheckDto));
         return ResponseEntity.ok(result);
     }
 
@@ -80,7 +82,7 @@ public class UserController {
                 params.getEmail()
         );
 
-        userInfoService.SignUp(userSaveDto);
+        userCreateService.SignUp(userSaveDto);
         return ResponseEntity.ok("정상 회원가입 완료");
     }
 
@@ -95,7 +97,7 @@ public class UserController {
                 jwtTokenService.extractSubject(accessToken)
         );
 
-        userInfoService.signOut(signOutDto);
+        userDeleteService.signOut(signOutDto);
 
         return ResponseEntity.ok("정상 회원 탈퇴 완료! 회원 정보는 한달관 보관됩니다.");
     }
@@ -107,7 +109,7 @@ public class UserController {
                 params.getInputPassword()
         );
 
-        userInfoService.restoreUserStatus(throwLoginDto);
+        userUpdateService.restoreUserStatus(throwLoginDto);
         return ResponseEntity.ok("계정이 활성화 되었습니다.");
     }
 
@@ -124,7 +126,7 @@ public class UserController {
                 jwtTokenService.extractSubject(accessToken)
         );
 
-        User result = userInfoService.searchByInputId(userInfoDto);
+        User result = userReadService.searchByInputId(userInfoDto);
 
         return ResponseEntity.ok(new UserInfoResponse(
                 result.getInputId(),
@@ -150,7 +152,7 @@ public class UserController {
                 inputId
         );
         // 존재 하는 회원인지 확인
-        userInfoService.searchByInputId(userInfoDto);
+        userReadService.searchByInputId(userInfoDto);
 
         UserCngDto userCngDto = new UserCngDto(
                 inputId,
@@ -159,7 +161,7 @@ public class UserController {
                 params.getEmail()
         );
         // 정보 변경
-        userInfoService.cngUser(userCngDto);
+        userUpdateService.cngUser(userCngDto);
 
         return ResponseEntity.ok("회원 정보 변경 완료");
     }

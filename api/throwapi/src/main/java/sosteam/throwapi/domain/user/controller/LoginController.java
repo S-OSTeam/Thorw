@@ -13,11 +13,8 @@ import sosteam.throwapi.domain.user.controller.response.ReissueTokensResponse;
 import sosteam.throwapi.domain.user.entity.dto.login.LogoutDto;
 import sosteam.throwapi.domain.user.entity.dto.login.ReissueTokensDto;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 import sosteam.throwapi.domain.user.service.LoginService;
 import sosteam.throwapi.domain.user.service.TokenService;
-import sosteam.throwapi.domain.user.service.UserInfoService;
-import sosteam.throwapi.global.service.TokensGenerateService;
 
 /**
  * 일반 로그인 및 sns 로그인 구현

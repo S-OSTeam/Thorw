@@ -24,8 +24,7 @@ public class RedisUtilService {
 
     public void setData(String key, String value){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-//        valueOperations.set(key, value);
-        if(!valueOperations.setIfAbsent(key, value)){
+        if(!valueOperations.setIfAbsent(key, value, Duration.ofSeconds(3600))){
             throw new DuplicationLoginException();
         }
     }
