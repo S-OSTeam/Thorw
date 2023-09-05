@@ -3,6 +3,7 @@ package sosteam.throwapi.domain.mail.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class AuthMail extends PrimaryKeyEntity {
 
+    @NotNull
     @Column(length = 6)
     public String authCode;
 
@@ -25,8 +27,10 @@ public class AuthMail extends PrimaryKeyEntity {
     @Column(updatable = false)
     public LocalDateTime createdAt;
 
+    @NotNull
     public LocalDateTime endAt;
 
+    @NotNull
     public String email;
 
     public AuthMail(String authCode, LocalDateTime endAt, String email) {

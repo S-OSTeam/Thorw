@@ -13,6 +13,7 @@ public class Mileage extends PrimaryKeyEntity {
     @NotNull
     private Long amount;
 
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
