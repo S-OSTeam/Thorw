@@ -28,7 +28,7 @@ public class LoginService {
     private final TokensGenerateService tokensGenerateService;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final RedisUtilService redisUtilService;
-    private final UserInfoService userInfoService;
+    private final UserReadService userReadService;
     private final JwtTokenService jwtTokenService;
 
     public Tokens throwLogin(ThrowLoginDto throwLoginDto){ //아이디 비번 일치 하는지 확인 후 일치 하면 Tokens 을
@@ -41,7 +41,7 @@ public class LoginService {
         }
 
         //user 계정의 상태를 확인 한다
-        userInfoService.isUserStatusNormal(user.getUserStatus());
+        userReadService.isUserStatusNormal(user.getUserStatus());
 
 
         //TODO : 나중에 log.error 로 변경 후 에러 파일에 추가 하도록 수정 하자

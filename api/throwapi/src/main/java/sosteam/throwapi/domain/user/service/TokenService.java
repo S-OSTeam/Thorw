@@ -21,7 +21,7 @@ public class TokenService {
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
     private final TokensGenerateService tokensGenerateService;
-    private final UserInfoService userInfoService;
+    private final UserReadService userReadService;
     private final RedisUtilService redisUtilService;
 
     public Tokens reissueTokens(ReissueTokensDto tokensDto){
@@ -37,7 +37,7 @@ public class TokenService {
         }
 
         //user 계정의 현재 상태를 확인
-        userInfoService.isUserStatusNormal(user.getUserStatus());
+        userReadService.isUserStatusNormal(user.getUserStatus());
 
         Tokens tokens = tokensGenerateService.generate(memberId, user.getInputId());
 

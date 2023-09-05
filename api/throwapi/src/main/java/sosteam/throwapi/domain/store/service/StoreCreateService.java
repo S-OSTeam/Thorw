@@ -14,7 +14,7 @@ import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.domain.user.service.UserReadService;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class StoreCreateService {
     private final StoreRepository storeRepository;
     private final StoreGetService storeGetService;
 
-    private final UserInfoService userInfoService;
+    private final UserReadService userReadService;
     private final JwtTokenService jwtTokenService;
     @Transactional
     public Store saveStore(StoreSaveDto storeDto) {
@@ -43,7 +43,7 @@ public class StoreCreateService {
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(storeDto.getAccessToken())
         );
-        User user = userInfoService.searchByInputId(userInfoDto);
+        User user = userReadService.searchByInputId(userInfoDto);
 
         // Make external Store id using UUID
         UUID extStoreId = UUID.randomUUID();
