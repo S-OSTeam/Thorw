@@ -15,6 +15,7 @@ import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
 import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.global.lock.DistributeLock;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class StoreCreateService {
 
     private final UserInfoService userInfoService;
     private final JwtTokenService jwtTokenService;
-    @Transactional
+    @DistributeLock(key="#storeDto.getAccessToken()")
     public Store saveStore(StoreSaveDto storeDto) {
         log.debug("Start Creating Store = {}", storeDto);
         // if Store is already Exist
