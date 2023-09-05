@@ -63,7 +63,8 @@ public class LoginService {
 //                        .build()
 //        );
 
-        redisUtilService.setData(user.getId().toString(), tokens.getRefreshToken());
+//        redisUtilService.setData(user.getId().toString(), tokens.getRefreshToken());
+        redisUtilService.setDataExpire(user.getId().toString(), tokens.getRefreshToken(), Long.valueOf(3600));
         return tokens;
     }
 
