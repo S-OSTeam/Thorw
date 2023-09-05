@@ -16,7 +16,7 @@ import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.domain.user.service.UserReadService;
 import sosteam.throwapi.global.exception.exception.NoContentException;
 import sosteam.throwapi.global.exception.exception.NotFoundException;
 import sosteam.throwapi.global.service.JwtTokenService;
@@ -29,7 +29,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class StoreGetService {
     private final StoreRepository storeRepository;
-    private final UserInfoService userInfoService;
+    private final UserReadService userReadService;
+
     private final JwtTokenService jwtTokenService;
 
     /**
@@ -115,7 +116,7 @@ public class StoreGetService {
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
         );
-        User user = userInfoService.searchByInputId(userInfoDto);
+        User user = userReadService.searchByInputId(userInfoDto);
         Optional<Set<StoreDto>> storeDtos = storeRepository.searchMyStores(user.getId());
         if(storeDtos.isEmpty()) throw new NoStoreOfUserException();
         if(storeDtos.get().isEmpty()) throw new NoContentException();
