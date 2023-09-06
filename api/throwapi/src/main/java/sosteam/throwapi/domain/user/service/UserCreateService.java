@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.entity.Mileage;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
 import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
@@ -25,8 +26,9 @@ public class UserCreateService {
         log.debug("Start SignUp User = {}", dto);
         if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new PasswordDifFromConfirmException();
 
-        //인증을 실제로 진행했는지 확인
-//        userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
+        //카카오 로그인이 아닌 경우 인증을 실제로 진행했는지 확인
+        if (dto.getSnsId().equals(SNSCategory.NORMAL))
+            userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
 
         // 1. create User Entity
         User user = new User(
