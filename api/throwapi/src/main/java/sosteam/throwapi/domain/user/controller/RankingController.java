@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import sosteam.throwapi.domain.user.controller.request.RankingRequest;
 import sosteam.throwapi.domain.user.controller.response.RankingResponse;
 import sosteam.throwapi.domain.user.entity.dto.user.RankingDto;
-import sosteam.throwapi.domain.user.service.MileageService;
+import sosteam.throwapi.domain.user.service.MileageSearchService;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -23,12 +22,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/ranking")
 @RequiredArgsConstructor
 public class RankingController {
-    private final MileageService mileageService;
+    private final MileageSearchService mileageSearchService;
 
     @GetMapping("/leaderboard")
     public ResponseEntity<List<RankingResponse>> createLeaderBoard(){
         log.debug("CREATELEADERBOARDCONTROLLER");
-        List<RankingDto> leaderBoard = mileageService.createLeaderBoard();
+        List<RankingDto> leaderBoard = mileageSearchService.createLeaderBoard();
 
         List<RankingResponse> rankingResponses = leaderBoard.stream()
                 .map(rankingDto -> new RankingResponse(
@@ -42,7 +41,7 @@ public class RankingController {
 
     @PostMapping("/userranking")
     public ResponseEntity<RankingResponse> searchRankingByuserId(@RequestBody @Valid RankingRequest request){
-        RankingDto rankingDto = mileageService.searchUserRankingByInputId(request.getInputId());
+        RankingDto rankingDto = mileageSearchService.searchUserRankingByInputId(request.getInputId());
 
         RankingResponse rankingResponse = new RankingResponse(
                 rankingDto.getUserName(),

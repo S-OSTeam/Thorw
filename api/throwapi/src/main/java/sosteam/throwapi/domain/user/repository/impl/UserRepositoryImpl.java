@@ -160,4 +160,20 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .limit(10)
                 .fetch());
     }
+
+    @Override
+    @Transactional
+    public Long modifyMileageByInputId(String inputId, Long acMileage) {
+        UUID userId = this.searchUUIDByInputId(inputId);
+        long result = queryFactory
+                .update(mileage)
+                .set(mileage.amount, acMileage)
+                .where(mileage.user.id.eq(userId))
+                .execute();
+
+        em.flush();
+        em.clear();
+
+        return result;
+    }
 }

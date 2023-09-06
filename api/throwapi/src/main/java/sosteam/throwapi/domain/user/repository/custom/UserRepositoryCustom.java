@@ -29,4 +29,6 @@ public interface UserRepositoryCustom {
     Long findRankByMileage(Long mileage);
 
     Set<User> searchTop10UsersByMileage();
+
+    Long modifyMileageByInputId(String inputId, Long acMileage);
 }

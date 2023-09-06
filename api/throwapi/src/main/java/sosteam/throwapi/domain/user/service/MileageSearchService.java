@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MileageService {
+public class MileageSearchService {
     private final UserRepository userRepository;
 
     /**
