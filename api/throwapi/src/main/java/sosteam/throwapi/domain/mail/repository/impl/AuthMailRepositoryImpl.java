@@ -15,7 +15,6 @@ public class AuthMailRepositoryImpl implements AuthMailRepositoryCustom {
     private final QAuthMail authMail;
 
     @Autowired
-
     public AuthMailRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
 
