@@ -13,7 +13,7 @@ import sosteam.throwapi.domain.order.kakaoAPI.dto.GifticonSendResponseDto;
 import sosteam.throwapi.domain.order.repository.repo.ReceiptRepository;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserInfoService;
+import sosteam.throwapi.domain.user.service.UserReadService;
 
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class ReceiptCreateService {
     private final KakaoGifticonOrderService kakaoGifticonOrder;
     private final ReceiptRepository receiptRepository;
-    private final UserInfoService userInfoService;
+    private final UserReadService userInfoService;
 
     /**
      * templateToken을 통해 Gifticon과 Receipt 생성
