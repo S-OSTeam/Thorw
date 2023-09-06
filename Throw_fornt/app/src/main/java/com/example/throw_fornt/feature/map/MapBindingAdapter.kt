@@ -4,9 +4,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.databinding.BindingAdapter
 
 @BindingAdapter("setOnQueryTextListener")
-fun SearchView.setOnQueryTextListener(searchStores: (String?) -> Unit) {
+fun SearchView.setOnQueryTextListener(searchStores: (String) -> Unit) {
     setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-        override fun onQueryTextSubmit(query: String?): Boolean {
+        override fun onQueryTextSubmit(query: String): Boolean {
             searchStores(query)
             return false
         }

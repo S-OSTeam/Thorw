@@ -16,6 +16,56 @@
         android:layout_height="match_parent"
         tools:context=".feature.map.MapFragment">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tb_map"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|start"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:text="Throw"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_throw_help_15_22" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_throw_qr_22" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_throw_bell_22_25" />
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_begin"
             android:layout_width="wrap_content"
@@ -33,7 +83,9 @@
         <net.daum.mf.map.api.MapView
             android:id="@+id/map_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tb_map" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/sb_store_search_bar"
@@ -45,7 +97,7 @@
             app:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="@id/gl_end"
             app:layout_constraintStart_toStartOf="@id/gl_begin"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tb_map"
             app:queryBackground="@null"
             app:queryHint="가게이름을 입력하세요" />
 
@@ -69,8 +121,8 @@
             android:adjustViewBounds="true"
             android:background="@drawable/bg_white_and_black_radius"
             android:onClick="@{() -> viewModel.moveCameraToCurPosition()}"
-            android:scaleType="centerCrop"
             android:padding="4dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_my_location_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/gl_begin" />
@@ -83,8 +135,8 @@
             android:adjustViewBounds="true"
             android:background="@drawable/bg_white_and_black_radius"
             android:onClick="@{() -> viewModel.refreshNearbyStores()}"
-            android:scaleType="centerCrop"
             android:padding="4dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_refresh_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/gl_end" />

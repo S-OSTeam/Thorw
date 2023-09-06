@@ -25,6 +25,7 @@ import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.BindingFragment
+import com.example.throw_fornt.util.common.ProgressDialog
 import com.example.throw_fornt.util.common.Toaster
 import com.example.throw_fornt.util.common.showSnackbar
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -58,6 +59,10 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         }
 
     private val viewModel: MapViewModel by viewModels()
+
+    private val progressDialog: ProgressDialog by lazy {
+        ProgressDialog(requireContext())
+    }
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -161,6 +166,17 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
                 val chip = view as Chip
                 chip.isChecked = (chip.text.toString() in typeNames)
             }
+            viewModel.refreshNearbyStores()
+        }
+
+        viewModel.refreshStoreLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                progressDialog.startWithAnimation(R.raw.loading)
+            } else {
+                if (progressDialog.isShowing) {
+                    progressDialog.dismiss()
+                }
+            }
         }
     }
 
@@ -170,10 +186,10 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
                 MapStoreInfoFragment().show(childFragmentManager, MAP_STORE_INFO_TAG)
             }
 
-            is MapViewModel.Event.SearchResultNotExist -> {
+            is MapViewModel.Event.ToastMessage -> {
                 Toaster.showShort(
                     requireContext(),
-                    getString(R.string.map_store_search_result_is_not_exist),
+                    event.message,
                 )
             }
         }

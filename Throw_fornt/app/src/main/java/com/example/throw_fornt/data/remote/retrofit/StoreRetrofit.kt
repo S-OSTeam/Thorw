@@ -20,7 +20,7 @@ class StoreRetrofit {
 
         // 가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
-        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5NDAwODY2NSwia2luZCI6ImFjY2Vzc1Rva2VuIn0.71olw61Doff8h0VCx8Ie8eyKPQShvfEHIfAvQG3VKq8iQcNvhWfE8LludLKtV7JAvuKeE9Bvjkd1A4_EiDUAEA"
+        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5NDAxMzExMywia2luZCI6ImFjY2Vzc1Rva2VuIn0.rbRxbVJN92GpF8gxoAvIO0PF-9Uk2hcVW65cPIp8uFst1j6DY3FHFlU07NIQvXGrdCKh-_sdwTiC1EhdOzhJQw"
     }
 
     // client 객체

@@ -13,6 +13,7 @@ import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.SingleLiveEvent
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,7 +50,20 @@ class MapViewModel : ViewModel() {
         }
 
     private var updateCurPositionLoading: Boolean = false
-    private var refreshStoreLoading: Boolean = false
+    private val _refreshStoreLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val refreshStoreLoading: LiveData<Boolean>
+        get() = _refreshStoreLoading
+
+    private val refreshStoreLoadingValue: Boolean
+        get() = _refreshStoreLoading.value!!
+
+    private fun startLoading() {
+        _refreshStoreLoading.value = true
+    }
+
+    private fun stopLoading() {
+        _refreshStoreLoading.value = false
+    }
 
     // 카카오맵 줌 이벤트 리스너가 제대로 안먹힘. 먹혔다가 안먹혔다가 해서 일단 이건 고정으로 놓을 예정
     fun setVisibleMapDistance(bottomLeft: GeoPoint, topRight: GeoPoint) {
@@ -104,9 +118,9 @@ class MapViewModel : ViewModel() {
     }
 
     fun refreshNearbyStores() {
-        if (refreshStoreLoading) return
+        if (refreshStoreLoadingValue) return
         _lastUserPoint.value?.let {
-            refreshStoreLoading = true
+            startLoading()
             StoreRetrofit().storeService.getStoresInfoByLocation(
                 StoresInfoByLocationRequest(
                     it.latitude,
@@ -123,15 +137,21 @@ class MapViewModel : ViewModel() {
                         _nearByStores.value =
                             response.body()?.map { it.toUI() }?.groupStoresByGeoPoint()
                                 ?.mapKeys { it.key.hashCode() } ?: mapOf()
+                        _event.value = Event.ToastMessage("가게목록을 갱신에 성공했습니다.")
+                    } else if (response.isSuccessful) {
+                        _event.value = Event.ToastMessage("주변에 가게가 존재하지 않습니다.")
+                    } else {
+                        _event.value = Event.ToastMessage("가게 목록을 불러오는 과정에서 문제가 발생했습니다.")
                     }
-                    refreshStoreLoading = false
+                    stopLoading()
                 }
 
                 override fun onFailure(
                     call: Call<List<StoresInfoByLocationResponse>>,
                     t: Throwable,
                 ) {
-                    refreshStoreLoading = false
+                    _event.value = Event.ToastMessage("가게목록을 갱신과정에서 실패했습니다.")
+                    stopLoading()
                 }
             })
         }
@@ -196,29 +216,42 @@ class MapViewModel : ViewModel() {
         }
     }
 
-    val searchStores = { content: String? ->
-        if (content.isNullOrEmpty().not()) {
-            lastUserPoint.value?.let {
-                StoreRetrofit().storeService.getStoresInfoBySearchName(
-                    StoreSearchNameForMapRequest(content ?: ""),
-                ).enqueue(object : Callback<List<StoreInfoBySearchNameResponse>> {
-                    override fun onResponse(
-                        call: Call<List<StoreInfoBySearchNameResponse>>,
-                        response: Response<List<StoreInfoBySearchNameResponse>>,
-                    ) {
-                        if (response.isSuccessful && response.body() != null) {
-                            searchedStores = response.body()?.map { it.toUI() } ?: return
+    val searchStores = { content: String ->
+        lastUserPoint.value?.let {
+            if (refreshStoreLoadingValue) return@let
+            startLoading()
+            StoreRetrofit().storeService.getStoresInfoBySearchName(
+                StoreSearchNameForMapRequest(content.trim()),
+            ).enqueue(object : Callback<List<StoreInfoBySearchNameResponse>> {
+                override fun onResponse(
+                    call: Call<List<StoreInfoBySearchNameResponse>>,
+                    response: Response<List<StoreInfoBySearchNameResponse>>,
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        searchedStores = response.body()?.map { it.toUI() } ?: return stopLoading()
+                    } else if (response.isSuccessful) {
+                        Event.ToastMessage("검색된 이름의 가게가 존재하지 않습니다.")
+                    } else {
+                        runCatching {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            jsonObject.getString("message")
+                        }.onSuccess { message ->
+                            _event.value = Event.ToastMessage(message)
+                        }.onFailure {
+                            _event.value = Event.ToastMessage("가게 검색에 실패했습니다")
                         }
                     }
+                    stopLoading()
+                }
 
-                    override fun onFailure(
-                        call: Call<List<StoreInfoBySearchNameResponse>>,
-                        t: Throwable,
-                    ) {
-                        Log.d("mendel", "검색 실패$t")
-                    }
-                })
-            }
+                override fun onFailure(
+                    call: Call<List<StoreInfoBySearchNameResponse>>,
+                    t: Throwable,
+                ) {
+                    _event.value = Event.ToastMessage("가게 검색에 실패했습니다")
+                    stopLoading()
+                }
+            })
         }
     }
 
@@ -248,7 +281,7 @@ class MapViewModel : ViewModel() {
 
     sealed class Event {
         object ShowMapStoreInfo : Event()
-        object SearchResultNotExist : Event()
+        data class ToastMessage(val message: String) : Event()
     }
 
     companion object {
