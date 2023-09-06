@@ -1,16 +1,13 @@
 package sosteam.throwapi.domain.user.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
 @Entity
-@Getter
-@NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class Mileage extends PrimaryKeyEntity {
 
     @NotNull
@@ -21,19 +18,8 @@ public class Mileage extends PrimaryKeyEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Mileage(Long amount) {
-        this.amount = amount;
-    }
-
-
-    public Long modifyAmount(Long amount) {
+    public Long setAmount(Long amount) {
         this.amount = amount;
         return this.amount;
     }
-
-    public User modifyUser(User user) {
-        this.user = user;
-        return this.user;
-    }
-
 }

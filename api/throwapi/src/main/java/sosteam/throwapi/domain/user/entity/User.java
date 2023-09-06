@@ -61,12 +61,11 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Mileage mileage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Store> stores;
-
 
     public User(String inputId, String inputPassword, String snsId, SNSCategory sns) {
         this.inputId = inputId;
@@ -94,7 +93,6 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         this.userInfo = userInfo;
         return this.userInfo;
     }
-
 
     public List<Store> modifyStore(List<Store> stores) {
         this.stores = stores;
