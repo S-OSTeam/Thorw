@@ -17,7 +17,7 @@ public class SendCodeSaveService {
     public AuthMail saveAuthMail(String sendCode, String email) {
         log.debug("saveAuthMail : {} {}", email, sendCode);
         //인증 유효기간은 현재로 부터 10분뒤 이므로 endAt에 10분이 추가되어 저장 된다.
-        AuthMail authMail = new AuthMail(sendCode, LocalDateTime.now().plusMinutes(10), email);
+        AuthMail authMail = new AuthMail(sendCode, LocalDateTime.now().plusMinutes(10), email, false);
         authMailRepository.save(authMail);
 
         log.debug("end");
