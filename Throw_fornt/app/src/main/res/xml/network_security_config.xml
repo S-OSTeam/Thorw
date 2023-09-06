@@ -14,5 +14,6 @@
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">maps.daum-img.net</domain>
+        <domain includeSubdomains="true">bizhankook.com</domain>
     </domain-config>
 </network-security-config>

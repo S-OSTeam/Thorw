@@ -197,9 +197,7 @@ class MapViewModel : ViewModel() {
     }
 
     val searchStores = { content: String? ->
-        Log.d("mendel", "검색 시작1$content")
         if (content.isNullOrEmpty().not()) {
-            Log.d("mendel", "검색 시작2$content")
             lastUserPoint.value?.let {
                 StoreRetrofit().storeService.getStoresInfoBySearchName(
                     StoreSearchNameForMapRequest(content ?: ""),
@@ -208,9 +206,7 @@ class MapViewModel : ViewModel() {
                         call: Call<List<StoreInfoBySearchNameResponse>>,
                         response: Response<List<StoreInfoBySearchNameResponse>>,
                     ) {
-                        Log.d("mendel", "검색1")
                         if (response.isSuccessful && response.body() != null) {
-                            Log.d("mendel", "검색2 ${response.body()}")
                             searchedStores = response.body()?.map { it.toUI() } ?: return
                         }
                     }

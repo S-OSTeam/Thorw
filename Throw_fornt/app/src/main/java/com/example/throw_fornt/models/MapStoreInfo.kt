@@ -6,5 +6,5 @@ data class MapStoreInfo(
     val storePhone: String,
     val storeFullAddress: String,
     val geoPoint: GeoPoint,
-    val storeImageUrl: String = "http://www.bizhankook.com/upload/bk/article/202002/thumb/19402-44437-sampleM.jpg",
+    val storeImageUrl: String = "https://www.bizhankook.com/upload/bk/article/202002/thumb/19402-44437-sampleM.jpg",
 )
