@@ -17,8 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokensGenerateService {
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 7200;
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 50400;
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 43200;
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1209600;
     private static final String ACCESS_TOKEN_KIND = "accessToken";
     private static final String REFRESH_TOKEN_KIND = "refreshToken";
     private final JwtTokenService jwtTokenService;
