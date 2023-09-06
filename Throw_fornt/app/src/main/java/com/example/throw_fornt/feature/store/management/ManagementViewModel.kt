@@ -3,12 +3,16 @@ package com.example.throw_fornt.feature.store.management
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.throw_fornt.data.model.request.Delete
+import com.example.throw_fornt.data.model.request.Modify
+import com.example.throw_fornt.data.model.request.Register
 import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.testBody
 import com.example.throw_fornt.data.remote.retrofit.StoreRetrofit
 import com.example.throw_fornt.feature.store.register.RegisterViewModel
 import com.example.throw_fornt.util.common.SingleLiveEvent
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,6 +22,9 @@ import java.lang.Exception
 import java.net.URL
 
 class ManagementViewModel(): ViewModel() {
+    var lat: Double = 0.0
+    var lon: Double = 0.0
+    var uuid: String = ""
     private val errorMsg: String = "칸이 비어있습니다."
     private val _event: SingleLiveEvent<Event> = SingleLiveEvent()
     //StoreRetrofit 변수
@@ -70,8 +77,10 @@ class ManagementViewModel(): ViewModel() {
         ceoEdit.value = "김국밥"
         storePhone.value = item.storePhone
         fullAddress.value = item.fullAddress
-        subAddress.value = item.subAddress
         zoneNo.value = item.zipCode
+        lat = item.latitudes
+        lon = item.longitude
+        uuid = item.uuid
         trashType(item.trashType)
     }
 
@@ -112,13 +121,52 @@ class ManagementViewModel(): ViewModel() {
             if (subAddress.value.isNullOrEmpty()) subAddress.value = ""
 
             //edit에 값이 비어있지 않으면 data값을 담아서 RegisterActivity에 전달
-            val data = StoreModel("",
-                storePhone.value.toString(), "", 0.0,0.0, crn.value.toString(),
-                zoneNo.value.toString(), fullAddress.value.toString(), subAddress.value.toString(),
-                trashCode, "", "",
+            //storeHelper.registerResponse()
+            val body: Modify
+            body = Modify(
+                uuid,storePhone.value.toString(), crn.value.toString(), lat, lon,
+                zoneNo.value.toString(), fullAddress.value.toString() + "${if(subAddress.value.toString()=="") "" else "(${subAddress.value.toString()})"}", trashCode
             )
-            _event.value = Event.Modify(data)
+            storeHelper.storeService.mondifyRequest(body).enqueue(object : Callback<StoreModel> {
+                override fun onResponse(
+                    call: Call<StoreModel>,
+                    response: Response<StoreModel>
+                ) {
+                    if (response.isSuccessful && response.body()!=null) {
+                        _event.value = Event.Modify
+                    } else {
+                        val jsonObject = JSONObject(response.errorBody()?.string())
+                        crn.value = ""
+                        changeSuccess(true, "인증")
+                        _event.value = Event.Fail(jsonObject.getString("message"))
+                    }
+                }
+
+                override fun onFailure(call: Call<StoreModel>, t: Throwable) {
+                    _event.value = Event.Fail("접속실패")
+                }
+            })
+            //_event.value = Event.Modify(data)
         }
+    }
+
+    fun delete(item: StoreModel){
+        val body = Delete(item.uuid)
+        storeHelper.storeService.deleteRequest(body).enqueue(object: Callback<Unit>{
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                if (response.isSuccessful && response.body()!=null) {
+                    _event.value = Event.DeleteSuccess
+                }
+                else{
+                    _event.value = Event.DeleteFail
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                _event.value = Event.DeleteFail
+            }
+
+        })
     }
 
     //trashType 예)10100으로 변환 (일쓰->병->플라스틱->종이->캔 순서)
@@ -132,8 +180,10 @@ class ManagementViewModel(): ViewModel() {
         return trashCode
     }
     sealed class Event(){
-        data class Modify(val modify: StoreModel): Event()
+        object Modify: Event()
         data class Fail(val msg: String): Event()
+        object DeleteSuccess: Event()
+        object DeleteFail: Event()
     }
 
     //사업자 등록번호 조회 test모드
@@ -173,7 +223,7 @@ class ManagementViewModel(): ViewModel() {
 
         val res = storeHelper.storeService
         val body = HashMap<String, String>()
-        body.put("crn", crn.value.toString())
+        body["crn"] = crn.value.toString()
 
         res.bnoRequest(body)
             .enqueue(object : Callback<StoreModel> {
@@ -182,11 +232,13 @@ class ManagementViewModel(): ViewModel() {
                         changeSuccess(false, "인증 완료")
                     } else {
                         crn.value = ""
+                        _event.value = Event.Fail("조회 실패")
                     }
                 }
 
                 override fun onFailure(call: Call<StoreModel>, t: Throwable) {
                     crn.value = ""
+                    _event.value = Event.Fail("조회실패")
                 }
             })
     }

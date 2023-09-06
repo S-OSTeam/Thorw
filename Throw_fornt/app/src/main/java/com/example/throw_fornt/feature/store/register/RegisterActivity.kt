@@ -44,7 +44,10 @@ class RegisterActivity : BindingActivity<ActivityRegisterBinding>(R.layout.activ
 
     //RegisterViewModel에서 전달받은 값을 가지고 등록함수를 호출
     private fun register(msg: String) {
-        Toaster.showLong(this@RegisterActivity, msg)
+        val intent = Intent()
+        intent.putExtra("data","등록 성공")
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     //주소검색 함수

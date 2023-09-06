@@ -23,4 +23,8 @@
     <string name="store_management_message_text">수정할지 삭제할지 선택해주세요.</string>
     <string name="store_management_modify_text">수정</string>
     <string name="store_management_delete_text">삭제</string>
+
+    <!--mypage-->
+    <string name="mypage_store_text"><u>가게 관리</u></string>
+    <string name="mypage_mileage_buy_text"><u>마일리지/상품 구매</u></string>
 </resources>
