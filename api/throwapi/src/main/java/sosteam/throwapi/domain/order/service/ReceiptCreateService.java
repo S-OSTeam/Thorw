@@ -18,6 +18,7 @@ import sosteam.throwapi.domain.user.service.UserReadService;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -42,12 +43,20 @@ public class ReceiptCreateService {
         // 해당 응답에서 reserveTraceId를 사용하여 Gifticon 엔터티를 생성하고 저장
         Gifticon saveGifticon = new Gifticon(kakaoResponse.getReserveTraceId().toString());
         saveGifticon.modifyItem(gifticonCreateDto.getItem());
+
         Receipt saveReceipt=new Receipt();
+
         saveReceipt.modifyUser(saveUser);
         saveReceipt.modifyGifticon(saveGifticon);
+
+        List<Receipt> receipts = saveUser.getReceipts();
+        receipts.add(saveReceipt);
+        saveUser.modifyReceipts(receipts);
+
         receiptRepository.save(saveReceipt);
 
         return Optional.of(saveGifticon);
+
     }
 
     /**

@@ -31,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User extends PrimaryKeyEntity implements UserDetails {
+    // TODO: 2023-09-06 address 추가
 
     @NotNull
     @Column(unique = true)
@@ -102,6 +103,10 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     public List<Store> modifyStore(List<Store> stores) {
         this.stores = stores;
         return this.stores;
+    }
+
+    public void modifyReceipts(List<Receipt> receipts) {
+        this.receipts = receipts;
     }
 
     @Override
