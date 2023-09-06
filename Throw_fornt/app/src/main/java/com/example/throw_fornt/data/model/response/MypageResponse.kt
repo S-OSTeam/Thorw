@@ -11,4 +11,5 @@ data class MypageResponse(
     @SerializedName("userName")val userName: String,
     @SerializedName("userPhoneNumber")val userPhoneNumber: String,
     @SerializedName("email")val email: String,
+    @SerializedName("mileage")val mileage: String,
 ):Parcelable

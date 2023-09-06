@@ -27,6 +27,10 @@ class MyPageViewModel : ViewModel() {
     val email: LiveData<String>
         get() = _email
 
+    private val _mileage: SingleLiveEvent<String> = SingleLiveEvent()
+    val mileage: LiveData<String>
+        get() = _mileage
+
     //가게관리 버튼이벤트
     fun store(){
         _event.value = Event.Store
@@ -44,6 +48,7 @@ class MyPageViewModel : ViewModel() {
                 if(response.isSuccessful&&response.body()!=null){
                     _name.value = response.body()?.userName
                     _email.value = response.body()?.email
+                    _mileage.value = response.body()?.mileage
                 }
                 else{
 

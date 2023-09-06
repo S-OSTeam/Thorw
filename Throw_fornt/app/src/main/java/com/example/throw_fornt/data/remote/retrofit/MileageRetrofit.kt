@@ -1,25 +1,17 @@
 package com.example.throw_fornt.data.remote.retrofit
 
 import android.util.Log
+import com.example.throw_fornt.data.model.request.MileageRequest
 import com.example.throw_fornt.data.model.request.MypageRequest
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
-import java.security.cert.X509Certificate
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
-class MypageRetrofit {
+class MileageRetrofit {
     companion object {
         private const val HTTP_LOG_TAG = "HTTP_LOG"
-
-        //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
-        const val url = "https://moviethree.synology.me/api/"
-        const val apiKey ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YWtlZmxhbWUiLCJleHAiOjE2OTQwMTgxMTQsImtpbmQiOiJhY2Nlc3NUb2tlbiJ9.gfsB5beG-W4sYnElAqm7MDcX1QZPsC-1vUIPnE8oX7qCr7a5V8lgtU3wblC8SNS5sK1iaQtn2JcX2Od6DD8hyA"
     }
 
     //client 객체
@@ -32,7 +24,7 @@ class MypageRetrofit {
 
     private fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val interceptor = HttpLoggingInterceptor { message ->
-            android.util.Log.e(HTTP_LOG_TAG, message)
+            Log.e(HTTP_LOG_TAG, message)
         }
         return interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
     }
@@ -47,5 +39,5 @@ class MypageRetrofit {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val mypageService = retrofit.create(MypageRequest::class.java)
+    val mileageService = retrofit.create(MileageRequest::class.java)
 }

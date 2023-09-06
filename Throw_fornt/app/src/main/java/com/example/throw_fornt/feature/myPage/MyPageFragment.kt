@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
 import com.example.throw_fornt.databinding.FragmentMyPageBinding
+import com.example.throw_fornt.feature.mileage.MileageActivity
 import com.example.throw_fornt.feature.store.StoreActivity
 import com.example.throw_fornt.util.common.BindingFragment
 
@@ -35,6 +36,7 @@ class MyPageFragment : BindingFragment<FragmentMyPageBinding>(R.layout.fragment_
     }
 
     fun mileageActivity(){
-
+        val intent: Intent = Intent(activity, MileageActivity::class.java)
+        startActivity(intent)
     }
 }

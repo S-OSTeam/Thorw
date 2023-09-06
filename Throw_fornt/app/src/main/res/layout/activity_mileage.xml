@@ -27,9 +27,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="20dp"
                 android:layout_marginBottom="7dp"
-                android:text="마일리지/상품 구매"
+                android:text="마일리지/랭킹 조회"
                 android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <View
                 android:layout_width="match_parent"
@@ -42,30 +42,66 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2">
-
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:background="@drawable/edit_text_border"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="총 마일리지"
+                        android:textSize="15dp"
+                        android:textColor="#636363"
+                        android:layout_marginTop="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@{viewModel.mileageMy}"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:background="@drawable/edit_text_border"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="나의 랭킹"
+                        android:textSize="15dp"
+                        android:textColor="#636363"
+                        android:layout_marginTop="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@{viewModel.rankMy}"
+                        android:textSize="25dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="교환가능 Throw마일리지"
-                    android:textColor="#636363" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1000P"
-                    android:layout_gravity="center"
-                    android:textColor="#000000"
-                    android:textSize="30dp"
-                    android:textStyle="bold"
-                    android:layout_marginVertical="10dp"/>
+                </LinearLayout>
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -83,6 +119,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="6">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_mileage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/rank_list_item"
+                android:layout_marginHorizontal="20dp"/>
         </FrameLayout>
     </LinearLayout>
 

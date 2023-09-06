@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rank"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/rank_view_style"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5">
+
+        <FrameLayout
+            android:id="@+id/rank_number"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/circle_rank">
+
+            <TextView
+                android:id="@+id/rank_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+
+        <TextView
+            android:id="@+id/user_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="유저이름"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4">
+
+        <TextView
+            android:id="@+id/mileage_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="마일리지P"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+</LinearLayout>

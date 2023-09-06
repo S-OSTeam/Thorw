@@ -21,7 +21,8 @@ class StoreRetrofit {
     companion object {
         private const val HTTP_LOG_TAG = "HTTP_LOG"
 
-        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YWtlZmxhbWUiLCJleHAiOjE2OTQwMTIwNDgsImtpbmQiOiJhY2Nlc3NUb2tlbiJ9.Fu3iqYJ89T1i1Vzf2oHGtdRFdHgOYkQm1p1HwvlcfnWqfFqc3YYdGLJwIBqkb60Zg_tu2a6nGPYXcRQeSmlwOA"
+        //const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5NDAyNDUwOSwia2luZCI6ImFjY2Vzc1Rva2VuIn0.48-aB6f5-wbPeAmExjzKOpFxTYbooZ1inVfP2Vt3kqHaXuJUTvW51Fu1WiRSVsqd3yiZTa_VVMi1eyf8OCHYYg"
+        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YWtlZmxhbWUiLCJleHAiOjE2OTQwMzAxMTEsImtpbmQiOiJhY2Nlc3NUb2tlbiJ9.E5CP6cKmnlBZrejjCXIP7K7kna9d2nCDim-3r0V75IYnYqnw8QDqEbMpLHUNE7EfV76BknMFOS1RRfqsU0PH_g"
         //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
     }
