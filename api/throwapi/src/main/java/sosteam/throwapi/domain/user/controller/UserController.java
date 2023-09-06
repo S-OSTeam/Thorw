@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.user.controller.request.RankingRequest;
 import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
 import sosteam.throwapi.domain.user.controller.request.user.IdDuplicateRequest;
 import sosteam.throwapi.domain.user.controller.request.user.PWCheckRequest;
@@ -14,6 +15,7 @@ import sosteam.throwapi.domain.user.controller.request.user.UserCngRequest;
 import sosteam.throwapi.domain.user.controller.request.user.UserSaveRequest;
 import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
 import sosteam.throwapi.domain.user.controller.response.PWCheckResponse;
+import sosteam.throwapi.domain.user.controller.response.RankingResponse;
 import sosteam.throwapi.domain.user.controller.response.UserInfoResponse;
 import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
@@ -23,6 +25,9 @@ import sosteam.throwapi.domain.user.service.*;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
 import sosteam.throwapi.global.service.JwtTokenService;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j

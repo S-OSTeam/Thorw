@@ -4,6 +4,7 @@ import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.global.entity.UserStatus;
 
+import java.util.Set;
 import java.util.UUID;
 
 public interface UserRepositoryCustom {
@@ -24,4 +25,8 @@ public interface UserRepositoryCustom {
     User searchByEmail(String email);
 
     Long updatePwdByUserId(UUID userId, String pwd);
+
+    Long findRankByMileage(Long mileage);
+
+    Set<User> searchTop10UsersByMileage();
 }

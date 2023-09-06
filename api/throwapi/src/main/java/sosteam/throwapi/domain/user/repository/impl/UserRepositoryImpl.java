@@ -11,8 +11,11 @@ import sosteam.throwapi.domain.user.repository.custom.UserRepositoryCustom;
 import sosteam.throwapi.global.entity.UserStatus;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import static sosteam.throwapi.domain.user.entity.QMileage.mileage;
 import static sosteam.throwapi.domain.user.entity.QUser.user;
 import static sosteam.throwapi.domain.user.entity.QUserInfo.userInfo;
 
@@ -133,5 +136,28 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         log.debug("update pwd : {}", result);
 
         return result;
+    }
+
+    @Override
+    public Long findRankByMileage(Long userMileage) {
+        // mileage보다 더 높은 mileage를 가진 사용자의 수를 조회
+        long countHigherMileage = queryFactory
+                .selectFrom(mileage)
+                .where(mileage.amount.gt(userMileage))
+                .fetch().size();
+
+        // 순위는 "더 높은 마일리지를 가진 사용자의 수 + 1"로 계산
+        return countHigherMileage + 1;
+    }
+
+
+    @Override
+    public Set<User> searchTop10UsersByMileage() {
+        return new HashSet<>(queryFactory
+                .selectFrom(user)
+                .join(user.mileage, mileage)
+                .orderBy(mileage.amount.desc())
+                .limit(10)
+                .fetch());
     }
 }
