@@ -17,10 +17,10 @@ data class StoreModel(
     @SerializedName("crn")val bno: String,                      //사업자등록번호
     @SerializedName("zipCode")val zipCode: String,              //우편번호
     @SerializedName("fullAddress")val fullAddress: String,      //지번주소
-    @SerializedName("subAddress")val subAddress: String,        //세부주소
+    @SerializedName("subAddress")val subAddress: String?,        //세부주소
     @SerializedName("trashType")val trashType: String,          //일쓰->병->플라스틱->종이->캔
-    @SerializedName("code")val code:String,                     //에러시 결과 코드
-    @SerializedName("message")val msg:String,                   //에러시 결과 메세지
+    @SerializedName("code")val code:String?,                     //에러시 결과 코드
+    @SerializedName("message")val msg:String?,                   //에러시 결과 메세지
 ):Parcelable
 
 //api호출시 데이터 response값을 받는 모델

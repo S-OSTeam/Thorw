@@ -76,7 +76,6 @@ class RegisterViewModel : ViewModel() {
 
     //사업자등록번호 조회
     fun bnoInquire() {
-        //storeHelper.bnoResponse()
         //real()
         test()
     }
@@ -116,7 +115,7 @@ class RegisterViewModel : ViewModel() {
                     call: Call<String>,
                     response: Response<String>
                 ) {
-                    if (response.isSuccessful && response.body().isNullOrEmpty()) {
+                    if (response.isSuccessful && response.body()!=null) {
                         _event.value = Event.Register("등록이 완료되었습니다.")
                     } else {
                         val jsonObject = JSONObject(response.errorBody()?.string())
@@ -184,7 +183,6 @@ class RegisterViewModel : ViewModel() {
     //사업자 등록번호 조회 real모드
     private fun real() {
         //retorfit에 있는 requestService를 가져와서 비동기로 실행
-
         val res = storeHelper.storeService
         val body = HashMap<String, String>()
         body["crn"] = crn.value.toString()
@@ -192,7 +190,7 @@ class RegisterViewModel : ViewModel() {
         res.bnoRequest(body)
             .enqueue(object : Callback<StoreModel> {
                 override fun onResponse(call: Call<StoreModel>, response: Response<StoreModel>) {
-                    if (response.isSuccessful && response.body()?.code=="200") {
+                    if (response.isSuccessful && response.body()!=null) {
                         changeSuccess(false, "인증 완료")
                     } else {
                         crn.value = ""

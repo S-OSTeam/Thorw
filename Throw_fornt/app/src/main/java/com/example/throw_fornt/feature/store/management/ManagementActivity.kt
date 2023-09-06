@@ -33,28 +33,61 @@ class ManagementActivity : BindingActivity<ActivityManagementBinding>(R.layout.a
 
     //수정하기 위한 프로그램
     fun modify(){
-        //StoreActivity에서 내가 선택한 가게 값을 전달받아 ManagementViewModel.selectItem함수를 호출하여 edit에 값을 입력해준다.
-        val intent: Intent = getIntent()
-        val receive = intent?.getParcelableExtra<StoreModel>("data")
-        if(receive!=null) viewModel.selectItem(receive)
+        try {
+            //StoreActivity에서 내가 선택한 가게 값을 전달받아 ManagementViewModel.selectItem함수를 호출하여 edit에 값을 입력해준다.
+            val intent: Intent = getIntent()
+            val receive = intent?.getParcelableExtra<StoreModel>("data")
+            if (receive != null) viewModel.selectItem(receive)
+        }
+        catch (e:Exception){
+            true
+        }
         viewModel.event.observe(this) { handleEvent(it) }
     }
 
     fun delete(){
-        finish()
+        try {
+            //StoreActivity에서 내가 선택한 가게 값을 전달받아 ManagementViewModel.selectItem함수를 호출하여 edit에 값을 입력해준다.
+            val intent: Intent = getIntent()
+            val receive = intent?.getParcelableExtra<StoreModel>("data")
+            if (receive != null) viewModel.delete(receive)
+        }
+        catch (e:Exception){
+            true
+        }
+        viewModel.event.observe(this) { handleEvent(it) }
     }
 
     fun handleEvent(event: ManagementViewModel.Event){
         when(event){
-            is ManagementViewModel.Event.Modify -> successModify(event.modify)
+            is ManagementViewModel.Event.Modify -> successModify()
             is ManagementViewModel.Event.Fail -> failMsg(event.msg)
+            is ManagementViewModel.Event.DeleteSuccess -> successDelete()
+            is ManagementViewModel.Event.DeleteFail -> failDelete()
         }
     }
 
-    fun successModify(modify: StoreModel){
-
+    fun successModify(){
+        val intent = Intent()
+        intent.putExtra("data","수정")
+        setResult(RESULT_OK, intent)
+        finish()
     }
     fun failMsg(msg: String){
         Toaster.showLong(this@ManagementActivity, msg)
+    }
+
+    fun successDelete(){
+        val intent = Intent()
+        intent.putExtra("data","삭제 성공")
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    fun failDelete(){
+        val intent = Intent()
+        intent.putExtra("data","삭제 실패")
+        setResult(RESULT_OK, intent)
+        finish()
     }
 }

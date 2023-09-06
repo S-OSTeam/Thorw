@@ -63,7 +63,8 @@
                         android:layout_marginRight="12dp"
                         android:enabled="@{viewModel.bnoBtn}"
                         android:text="@{viewModel.btnText.toString()}"
-                        android:textSize="10dp" />
+                        android:textSize="10dp"
+                        android:onClick="@{()->viewModel.bnoInquire()}"/>
                 </FrameLayout>
 
                 <LinearLayout
@@ -250,34 +251,37 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginRight="20dp">
+                        android:layout_marginRight="20dp"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="5dp">
+                            android:layout_marginTop="5dp"
+                            android:orientation="horizontal">
+
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:checked="@={viewModel.general}"
                                 android:text="일반 쓰레기"
-                                android:textSize="18dp"
-                                android:checked="@={viewModel.general}"/>
+                                android:textSize="18dp" />
+
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:checked="@={viewModel.bottle}"
                                 android:text="병           "
-                                android:textSize="18dp"
-                                android:layout_marginLeft="10dp"
-                                android:checked="@={viewModel.bottle}"/>
+                                android:textSize="18dp" />
+
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="플라스틱"
-                                android:textSize="18dp"
                                 android:layout_marginLeft="10dp"
-                                android:checked="@={viewModel.plastic}"/>
+                                android:checked="@={viewModel.plastic}"
+                                android:text="플라스틱"
+                                android:textSize="18dp" />
 
                         </LinearLayout>
 
@@ -285,19 +289,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
+
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:checked="@={viewModel.paper}"
                                 android:text="종이           "
-                                android:textSize="18dp"
-                                android:checked="@={viewModel.paper}"/>
+                                android:textSize="18dp" />
+
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="캔           "
-                                android:textSize="18dp"
                                 android:layout_marginLeft="11dp"
-                                android:checked="@={viewModel.can}"/>
+                                android:checked="@={viewModel.can}"
+                                android:text="캔           "
+                                android:textSize="18dp" />
 
                         </LinearLayout>
                     </LinearLayout>

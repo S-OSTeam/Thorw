@@ -10,6 +10,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -23,11 +24,10 @@ interface StoreRequest {
         @Body register: Register,
     ): Call<String>
 
-    // 내 가게 조회 request
-    @POST("/api/...")
+    //내 가게 조회 request
+    @GET("store/user")
     fun storeRequest(
-        @Header("Content-Type") key: String,
-    ): Call<StoreModel>
+    ) : Call<ArrayList<StoreModel>?>
 
     // 사업자등록번호 조회 request
     @POST("store/crn")
@@ -38,29 +38,14 @@ interface StoreRequest {
     // 가게 수정 request
     @PUT("store")
     fun mondifyRequest(
-        @Field("extStoreId") uuid: String,
-        @Field("storePhone") storePhone: String,
-        @Field("latitudes") latitudes: Double,
-        @Field("longitude") longitude: Double,
-        @Field("crn") bno: String,
-        @Field("zipCode") zipCode: String,
-        @Field("fullAddress") fullAddress: String,
-        @Field("trashType") type: String,
+        @Body modify: Modify
     ): Call<StoreModel>
 
-    // 가게 삭제 request
-    @DELETE("store")
+    //가게 삭제 request
+    @HTTP(method = "DELETE", path = "store", hasBody = true)
     fun deleteRequest(
-        @Field("extStoreId") uuid: String,
-        @Field("storeName") storeName: String,
-        @Field("storePhone") storePhone: String,
-        @Field("latitudes") latitudes: Double,
-        @Field("longitude") longitude: Double,
-        @Field("crn") bno: String,
-        @Field("zipCode") zipCode: String,
-        @Field("fullAddress") fullAddress: String,
-        @Field("trashType") type: String,
-    ): Call<StoreModel>
+        @Body uuid: Delete
+    ): Call<Unit>
 
     @GET("fapi")
     fun getRequest(
@@ -89,4 +74,20 @@ data class Register(
     @SerializedName("zipCode") val zipCode: String, // 우편번호
     @SerializedName("fullAddress") val fullAddress: String, // 지번주소
     @SerializedName("trashType") val trashType: String, // 일쓰->병->플라스틱->종이->캔
+)
+
+data class Modify(
+    @SerializedName("extStoreId")val uuid: String,              //가게 코드
+    @SerializedName("storePhone")val storePhone: String,        //가게 전화번호
+    @SerializedName("crn")val crn: String,                      //사업자등록번호
+    @SerializedName("latitude")val latitude: Double,            //위도 (-90~90)
+    @SerializedName("longitude")val longitude: Double,          //경도 (-180~180)
+    @SerializedName("zipCode")val zipCode: String,              //우편번호
+    @SerializedName("fullAddress")val fullAddress: String,      //지번주소
+    @SerializedName("trashType")val trashType: String,          //일쓰->병->플라스틱->종이->캔
+)
+
+
+data class Delete(
+    @SerializedName("extStoreId")val uuid: String           //가게 코드
 )
