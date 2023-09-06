@@ -26,9 +26,13 @@ public class UserCreateService {
         log.debug("Start SignUp User = {}", dto);
         if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new PasswordDifFromConfirmException();
 
-        //카카오 로그인이 아닌 경우 인증을 실제로 진행했는지 확인
-        if (dto.getSnsId().equals(SNSCategory.NORMAL))
+
+        //인증을 실제로 진행했는지 확인
+        //회원 가입 종류가 sns 를 통하지 않고 Normal 일 때만 이메일 인증 검사를 진행 한다.
+        //나머지는 sns 에서 검사를 해 주기 때문이다.
+        if(dto.getSnsCategory() == SNSCategory.NORMAL){
             userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
+        }
 
         // 1. create User Entity
         User user = new User(
