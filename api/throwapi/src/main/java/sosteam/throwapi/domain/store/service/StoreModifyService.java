@@ -28,18 +28,20 @@ public class StoreModifyService {
     private final StoreRepository storeRepository;
     private final UserReadService userReadService;
     private final JwtTokenService jwtTokenService;
+
     /**
      * 가게 정보를 수정하는 메소드
+     *
      * @param dto 기존 가게 코드와 가게 데이터
      * @return 변경된 가게 코드와 가게 데이터
      * 만약 기존 가게 코드가 올바르지 않으면 예외를 발생시킨다.
-     *
+     * <p>
      * 각 가게는 외부 노출 용 UUID를 가진다.
      * 사용자는 해당 가게 코드를 통해 어느 가게를 고칠것인지 알려준다.
      * 만약 가게 코드가 올바르지 않으면 데이터의 무결성이 안지켜진것이므로 수정 시도를 막는다.
      */
     @Transactional
-    public StoreDto modify(String accessToken,StoreDto dto) {
+    public StoreDto modify(String accessToken, StoreDto dto) {
         // 요청 사용자 정보 가져오기
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
@@ -48,12 +50,12 @@ public class StoreModifyService {
 
         // Find Store By given storeId
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
-        if(optionalStore.isEmpty()) throw new WrongStoreIdException();
+        if (optionalStore.isEmpty()) throw new WrongStoreIdException();
         Store store = optionalStore.get();
 
         // check if the store's owner is same with request-user
-        Optional<UUID> userId = storeRepository.searchUserByStore(store);
-        if(!user.getId().equals(userId)) throw new InvalidRequestException("MODIFY");
+        UUID userId = storeRepository.searchUserByStore(store).orElseThrow(NoSuchStoreException::new);
+        if (userId.compareTo(user.getId()) != 0) throw new InvalidRequestException("MODIFY");
 
         store.modify(
                 dto.getStoreName(),
@@ -62,7 +64,7 @@ public class StoreModifyService {
                 dto.getTrashType()
         );
         Optional<Address> optionalAddress = storeRepository.searchAddressByStore(store.getId());
-        if(optionalAddress.isEmpty()) throw new NoSuchStoreException();
+        if (optionalAddress.isEmpty()) throw new NoSuchStoreException();
         Address address = optionalAddress.get();
         Point location = GeometryUtil.parseLocation(
                 dto.getLatitude(),
