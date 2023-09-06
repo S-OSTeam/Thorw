@@ -41,7 +41,7 @@ public class UserController {
     private final MileageModifyService mileageModifyService;
 
     @PostMapping("/iddup")
-    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
+    public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params) {
         IdDuplicationDto idDuplicationDto = new IdDuplicationDto(
                 params.getInputId()
         );
@@ -57,7 +57,7 @@ public class UserController {
             String token,
 
             @RequestBody @Valid PWCheckRequest params
-    ){
+    ) {
         // accessToken 을 뽑아 내어 inputId 를 구함(구할 때 token 에 대한 유효성 검사를 진행 함)
         String accessToken = token.substring(7);
         String inputId = jwtTokenService.extractSubject(accessToken);
@@ -96,7 +96,7 @@ public class UserController {
             @RequestHeader(name = "Authorization", required = true)
             @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token
-    ){
+    ) {
         String accessToken = token.substring(7);
         SignOutDto signOutDto = new SignOutDto(
                 jwtTokenService.extractSubject(accessToken)
@@ -108,7 +108,7 @@ public class UserController {
     }
 
     @PostMapping("/restorestatus")
-    public ResponseEntity<String> restoreUserStatus(@RequestBody @Valid ThrowLoginRequest params){
+    public ResponseEntity<String> restoreUserStatus(@RequestBody @Valid ThrowLoginRequest params) {
         ThrowLoginDto throwLoginDto = new ThrowLoginDto(
                 params.getInputId(),
                 params.getInputPassword()
@@ -124,7 +124,7 @@ public class UserController {
             @RequestHeader(name = "Authorization", required = true)
             @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token
-    ){
+    ) {
         String accessToken = token.substring(7);
         //accessToken 을 이용해 inputId 를 구함
         UserInfoDto userInfoDto = new UserInfoDto(
@@ -149,7 +149,7 @@ public class UserController {
             @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String token,
             @RequestBody @Valid UserCngRequest params
-    ){
+    ) {
         String accessToken = token.substring(7);
 
         String inputId = jwtTokenService.extractSubject(accessToken);
@@ -173,8 +173,16 @@ public class UserController {
     }
 
     @PutMapping("/mileage")
-    private ResponseEntity<String> modifyMileage(@RequestBody @Valid MileageRequest mileageRequest){
-        mileageModifyService.modifyMileage(mileageRequest.getInputId(), mileageRequest.getMileage());
+    private ResponseEntity<String> modifyMileage(
+            @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
+            String token,
+            @RequestBody @Valid MileageRequest mileageRequest
+    ) {
+        String accessToken = token.substring(7);
+        String inputId = jwtTokenService.extractSubject(accessToken);
+
+        mileageModifyService.modifyMileage(inputId, mileageRequest.getMileage());
         return ResponseEntity.ok("마일리지 변경 완료");
     }
 }
