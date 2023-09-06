@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import sosteam.throwapi.domain.mail.service.SendCodeModifyService;
 import sosteam.throwapi.domain.mail.service.SendCodeSearchService;
 import sosteam.throwapi.domain.user.controller.request.AuthCodeCheckRequest;
 import sosteam.throwapi.domain.user.exception.AuthCodeDifException;
@@ -28,6 +29,8 @@ public class UserAuthController {
 
     private final SendCodeSearchService sendCodeSearchService;
     private final UserAuthSaveService userAuthSaveService;
+
+    private final SendCodeModifyService sendCodeModifyService;
 
     @PostMapping("/code")
     public ResponseEntity<String> checkMailAuthCode(@RequestBody @Valid AuthCodeCheckRequest authCodeCheckRequest) {
@@ -49,6 +52,9 @@ public class UserAuthController {
         if (!isSuccess) {
             throw new AuthCodeDifException();
         }
+
+        //인증을 성공했으면 인증 코드를 삭제한다.
+        sendCodeModifyService.modifySendCode(email);
 
         log.debug("controller end");
         return ResponseEntity.ok("ok");

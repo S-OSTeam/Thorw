@@ -33,9 +33,13 @@ public class AuthMail extends PrimaryKeyEntity {
     @NotNull
     public String email;
 
+    @NotNull
+    public boolean isSuccess;
+
     public AuthMail(String authCode, LocalDateTime endAt, String email) {
         this.authCode = authCode;
         this.endAt = endAt;
         this.email = email;
+        this.isSuccess = false;
     }
 }
