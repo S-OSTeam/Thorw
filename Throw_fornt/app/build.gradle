@@ -63,4 +63,6 @@ dependencies {
 
     implementation files('libs/libDaumMapAndroid.jar')
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation "com.kakao.sdk:v2-user:2.15.0" // 카카오 로그인
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 }

@@ -17,4 +17,13 @@
     <!--map_store-->
     <string name="map_store_navigator_text">길찾기</string>
     <string name="map_store_call_text">전화</string>
+
+    <!-- logIn -->
+    <string name="register"><u>회원가입</u></string>
+    <string name="forget_id_pw"><u>ID 혹은 비밀번호를 잊으셨나요?</u></string>
+
+    <!--signIn-->
+    <string name="password_text"><u>숫자,문자,특수문자 포함 8-16자리 비밀번호 입력</u></string>
+    <string name="id_text"><u>숫자,문자 포함 5-19자리 아이디 입력</u></string>
+    <string name="phone_text"><u>- 은 빼고 숫자만 입력해주세요</u></string>
 </resources>
