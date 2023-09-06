@@ -1,9 +1,11 @@
 package sosteam.throwapi.domain.user.repository.custom;
 
 import sosteam.throwapi.domain.user.entity.User;
+import sosteam.throwapi.domain.user.entity.dto.user.LeaderBoardDto;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.global.entity.UserStatus;
 
+import java.util.Set;
 import java.util.UUID;
 
 public interface UserRepositoryCustom {
@@ -24,4 +26,8 @@ public interface UserRepositoryCustom {
     User searchByEmail(String email);
 
     Long updatePwdByUserId(UUID userId, String pwd);
+
+    Long searchMileageByInputId(String inpuId);
+
+    Set<User> searchTop10UsersByMileage();
 }

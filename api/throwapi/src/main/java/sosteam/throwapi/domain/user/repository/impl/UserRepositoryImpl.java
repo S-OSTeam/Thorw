@@ -5,14 +5,21 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import sosteam.throwapi.domain.user.entity.QMileage;
+import sosteam.throwapi.domain.user.entity.QUser;
 import sosteam.throwapi.domain.user.entity.User;
+import sosteam.throwapi.domain.user.entity.dto.user.LeaderBoardDto;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.domain.user.repository.custom.UserRepositoryCustom;
 import sosteam.throwapi.global.entity.UserStatus;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import static sosteam.throwapi.domain.user.entity.QMileage.mileage;
 import static sosteam.throwapi.domain.user.entity.QUser.user;
 import static sosteam.throwapi.domain.user.entity.QUserInfo.userInfo;
 
@@ -133,5 +140,25 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         log.debug("update pwd : {}", result);
 
         return result;
+    }
+
+    @Override
+    public Long searchMileageByInputId(String inputId) {
+        return queryFactory
+                .select(mileage.amount)
+                .from(user)
+                .join(user.mileage, mileage)
+                .where(user.inputId.eq(inputId))
+                .fetchOne();
+    }
+
+    @Override
+    public Set<User> searchTop10UsersByMileage() {
+        return new HashSet<>(queryFactory
+                .selectFrom(user)
+                .join(user.mileage, mileage)
+                .orderBy(mileage.amount.desc())
+                .limit(10)
+                .fetch());
     }
 }
