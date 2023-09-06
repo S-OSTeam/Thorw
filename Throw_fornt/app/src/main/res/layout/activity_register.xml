@@ -99,6 +99,8 @@
                             android:enabled="@{viewModel.bnoBtn}"
                             android:text="@={viewModel.crn}"
                             android:padding="16dp"
+                            android:singleLine="true"
+                            android:maxLines="1"
                             android:textSize="18dp" />
                     </LinearLayout>
 
@@ -127,6 +129,8 @@
                             android:hint="02-1111-1111"
                             android:text="@={viewModel.storePhone}"
                             android:padding="16dp"
+                            android:singleLine="true"
+                            android:maxLines="1"
                             android:textSize="18dp" />
                     </LinearLayout>
 
@@ -174,6 +178,8 @@
                             android:layout_marginTop="15dp"
                             android:onClick="@{()->viewModel.search()}"
                             android:enabled="true"
+                            android:singleLine="true"
+                            android:maxLines="1"
                             android:layout_marginRight="20dp"/>
                         <EditText
                             android:id="@+id/sub_address_edit"
@@ -186,6 +192,8 @@
                             android:textSize="18dp"
                             android:layout_marginTop="15dp"
                             android:enabled="true"
+                            android:singleLine="true"
+                            android:maxLines="1"
                             android:layout_marginRight="20dp"/>
                         <EditText
                             android:id="@+id/address_edit2"
