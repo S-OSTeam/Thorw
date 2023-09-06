@@ -62,7 +62,7 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Mileage mileage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -88,10 +88,16 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         return this.role;
     }
 
+    public Mileage modifyMileage(Mileage mileage){
+        this.mileage = mileage;
+        return this.mileage;
+    }
+
     public UserInfo modifyUserInfo(UserInfo userInfo){
         this.userInfo = userInfo;
         return this.userInfo;
     }
+
 
     public List<Store> modifyStore(List<Store> stores) {
         this.stores = stores;
