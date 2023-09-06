@@ -19,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReceiptDeleteService {
     private final GifticonRepository gifticonRepository;
+    private final ReceiptRepository receiptRepository;
 
     /**
      * giftTraceId로 gifticon,receipt 삭제
