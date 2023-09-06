@@ -149,6 +149,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             }
         }
         viewModel.nearByStores.observe(viewLifecycleOwner) {
+            Log.d("mendel", "가게 정보들: $it")
             binding.mapView.removePOIItems(nearByStoreMarkers)
             nearByStoreMarkers = it.convertStoreInfoToMarkers()
             binding.mapView.addPOIItems(nearByStoreMarkers)
@@ -167,6 +168,13 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
         when (event) {
             is MapViewModel.Event.ShowMapStoreInfo -> {
                 MapStoreInfoFragment().show(childFragmentManager, MAP_STORE_INFO_TAG)
+            }
+
+            is MapViewModel.Event.SearchResultNotExist -> {
+                Toaster.showShort(
+                    requireContext(),
+                    getString(R.string.map_store_search_result_is_not_exist),
+                )
             }
         }
     }

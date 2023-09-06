@@ -1,44 +1,48 @@
 package com.example.throw_fornt.data.remote.retrofit
 
-import android.util.Log
-import com.example.throw_fornt.data.model.request.Register
 import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
-import com.example.throw_fornt.data.model.response.StoreResponse
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import java.lang.Exception
 import java.net.URL
 
 class StoreRetrofit {
     companion object {
-        //사업자등록번호 조회 테스트 api
-        //const val url = "https://bizno.net/api/"
-        //const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
+        private const val HTTP_LOG_TAG = "HTTP_LOG"
+        // 사업자등록번호 조회 테스트 api
+        // const val url = "https://bizno.net/api/"
+        // const val apiKey = "ZG1sdG4zNDI2QGdtYWlsLmNvbSAg"
 
-        //가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
+        // 가게등록, 내 가게조회, 사업자등록번호 조회를 위한 공용url
         const val url = "https://moviethree.synology.me/api/"
-        const val apiKey =
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5MzgzMTQ3NX0.mTmIGZaUPwOww4-l8YTV2UHH0iEjH9RctsTh-HV8D24bJ68P8wE_VEKZxwcSlmcB-GQZ9sIEywkQH6X0eG1cpg"
+        const val apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5wdXRpZCIsImV4cCI6MTY5NDAwNDUwMiwia2luZCI6ImFjY2Vzc1Rva2VuIn0.x1GZXnzDi1GjnVgiZ17K-lByd9bNPBe7e12Fd9HoZHFpdTUvc5B31B2zlBjONFi06GeNiQ3otCjBngExOxAKxw"
     }
 
-    //client 객체
-    private val client = OkHttpClient.Builder().addInterceptor { chain ->
-        val newRequest = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $apiKey")
-            .build()
-        chain.proceed(newRequest)
-    }.build()
+    // client 객체
+    private val client =
+        OkHttpClient.Builder().addInterceptor(getHttpLoggingInterceptor()).addInterceptor { chain ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $apiKey")
+                .build()
+            chain.proceed(newRequest)
+        }.build()
 
-    //url 객체
+    private fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        val interceptor = HttpLoggingInterceptor { message ->
+            android.util.Log.e(HTTP_LOG_TAG, message)
+        }
+        return interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
+
+    // url 객체
     private val urls = URL(url)
 
-    //retrofit 객체
+    // retrofit 객체
     private val retrofit = Retrofit.Builder()
         .client(client)
         .baseUrl(urls)
@@ -47,7 +51,7 @@ class StoreRetrofit {
 
     val storeService = retrofit.create(StoreRequest::class.java)
 
-    //가게 수정을 위한 api호출
+    // 가게 수정을 위한 api호출
     fun modifyResponse(store: StoreModel) {
         try {
             storeService.mondifyRequest(
@@ -62,17 +66,15 @@ class StoreRetrofit {
             ).enqueue(object : Callback<StoreModel> {
                 override fun onResponse(
                     call: Call<StoreModel>,
-                    response: Response<StoreModel>
+                    response: Response<StoreModel>,
                 ) {
                     if (response.isSuccessful && response.body()?.code == "200") {
-
                     } else {
-
                     }
                 }
 
                 override fun onFailure(call: Call<StoreModel>, t: Throwable) {
-                    //TODO 실패 토스트 넣기
+                    // TODO 실패 토스트 넣기
                 }
             })
         } catch (e: Exception) {
@@ -80,8 +82,7 @@ class StoreRetrofit {
         }
     }
 
-
-    //내 가게 조회를 위한 api호출\
+    // 내 가게 조회를 위한 api호출\
     fun storeResponse(): Boolean {
         return false
     }
