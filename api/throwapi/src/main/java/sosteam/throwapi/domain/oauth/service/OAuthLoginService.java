@@ -22,7 +22,6 @@ import java.util.UUID;
 @Slf4j
 public class OAuthLoginService {
     private final UserRepository userRepository;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final RedisUtilService redisUtilService;
     private final TokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
@@ -59,7 +58,15 @@ public class OAuthLoginService {
             authTokens = authTokensGenerateService.generate(memberId, inputId);
             log.debug("authTokens = {}", authTokens);
 
-            redisUtilService.setData(memberId.toString(), authTokens.getRefreshToken());
+//            redisUtilService.setData(memberId.toString(), authTokens.getRefreshToken());
+
+            // key : UUID, value : refreshToken 으로 redis 에 50400 초 동안 저장
+            // reissue 시 보안을 위해 저장
+            redisUtilService.setRefreshToken(memberId.toString(), authTokens.getRefreshToken());
+            // key : inputId, value : "login" 으로 redis 에 7200 초 동안 저장
+            // 중복 로그인을 방지 하기 위함
+            redisUtilService.setAccessToken(user.getInputId(), "login");
+
             log.debug("oauth login Success");
         } else {
             throw new NotSignUpUserException();

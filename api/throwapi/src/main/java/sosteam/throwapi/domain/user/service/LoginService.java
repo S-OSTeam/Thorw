@@ -44,27 +44,23 @@ public class LoginService {
         userReadService.isUserStatusNormal(user.getUserStatus());
 
 
-        //TODO : 나중에 log.error 로 변경 후 에러 파일에 추가 하도록 수정 하자
-        // 저장된 비밀번호와 match 여부 확인
         String userPW = user.getPassword();
         log.debug("userPw = {}", userPW);
         if(!passwordEncoder.matches(throwLoginDto.getInputPassword(), userPW)){
             log.debug("login fail long password");
             throw new LoginFailException();
         }
-        //TODO : 나중에 log.error 로 변경 후 에러 파일에 추가 하도록 수정 하자
-        // 발급된 토큰을 redis 에 저장
         Tokens tokens = tokensGenerateService.generate(user.getId(), user.getInputId());
-//        refreshTokenRedisRepository.save(
-//                RedisTokens.builder()
-//                        .id(user.getInputId())
-//                        .refreshToken(tokens.getRefreshToken())
-//                        .accessToken(tokens.getAccessToken())
-//                        .build()
-//        );
 
 //        redisUtilService.setData(user.getId().toString(), tokens.getRefreshToken());
-        redisUtilService.setData(user.getId().toString(), tokens.getRefreshToken());
+
+        // key : UUID, value : refreshToken 으로 redis 에 50400 초 동안 저장
+        // reissue 시 보안을 위해 저장
+        redisUtilService.setRefreshToken(user.getId().toString(), tokens.getRefreshToken());
+        // key : inputId, value : "login" 으로 redis 에 7200 초 동안 저장
+        // 중복 로그인을 방지 하기 위함
+        redisUtilService.setAccessToken(user.getInputId(), "login");
+
         return tokens;
     }
 
@@ -82,8 +78,12 @@ public class LoginService {
 
 
         // 구한 정보(UUID) 로 refreshToken 이 저장 되어 있는지 확인 후 있으면 삭제 처리
-        if(memberId != null && redisUtilService.getData(memberId) != null) {
+        if(memberId != null) {
+            // 로그인을 위해 저장 헀던 정보를 삭제 해 줌
+            // 우선 refreshToken 삭제
             redisUtilService.deleteData(memberId);
+            // 그 후 login 삭제
+            redisUtilService.deleteData(user.getInputId());
             log.debug("delete success");
         }
 

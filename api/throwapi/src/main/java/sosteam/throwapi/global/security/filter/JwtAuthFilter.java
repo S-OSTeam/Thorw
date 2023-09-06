@@ -67,10 +67,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         UUID memberId = user.getId();
 
         String isLogout = redisUtilService.getData(accessToken);
-        String refreshToken = redisUtilService.getData(memberId.toString());
-        log.debug("isLogout = {}, refreshToken = {}", isLogout, refreshToken);
+//        String refreshToken = redisUtilService.getData(memberId.toString());
+        String isLogin = redisUtilService.getData(user.getInputId());
+        log.debug("isLogout = {}, isLogin = {}", isLogout, isLogin);
 
-        if(!(accessToken==null && accessToken.isEmpty()) && isLogout == null && refreshToken != null){
+        if(!(accessToken==null && accessToken.isEmpty()) && isLogout == null && isLogin != null){
             try {
                 if(jwtTokenService.validateToken(accessToken)){
                     Authentication authentication = jwtTokenService.getAuthentication(user);
