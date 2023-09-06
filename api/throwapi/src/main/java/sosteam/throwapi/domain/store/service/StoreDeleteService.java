@@ -33,20 +33,21 @@ public class StoreDeleteService {
         User user = userReadService.searchByInputId(userInfoDto);
 
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(extStoreId);
-        if(optionalStore.isEmpty()) throw new NoSuchStoreException();
+        if (optionalStore.isEmpty()) throw new NoSuchStoreException();
         Store store = optionalStore.get();
 
         // check if the store's owner is same with request-user
-        Optional<UUID> userId = storeRepository.searchUserByStore(store);
-        if(!user.getId().equals(userId)) throw new InvalidRequestException("DELETE");
+        UUID userId = storeRepository.searchUserByStore(store).orElseThrow(NoSuchStoreException::new);
+        //log.debug("userId1:{}, userId2:{}", user.getId(), userId);
+        if (userId.compareTo(user.getId()) != 0) throw new InvalidRequestException("DELETE");
 
 
         Optional<Address> optionalAddress = storeRepository.searchAddressByStore(store.getId());
-        if(optionalAddress.isEmpty()) throw new NoSuchStoreException();
+        if (optionalAddress.isEmpty()) throw new NoSuchStoreException();
         Address address = optionalAddress.get();
 
-        if(
-           store.getExtStoreId().equals(extStoreId)
+        if (
+                store.getExtStoreId().equals(extStoreId)
         ) {
             store.modifyAddress(null);
             address.modifyStore(null);

@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import sosteam.throwapi.global.entity.Role;
@@ -68,17 +67,14 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Store> stores;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Receipt> receipts;
-
-    public User(String inputId, String inputPassword, String snsId, SNSCategory sns){
+    public User(String inputId, String inputPassword, String snsId, SNSCategory sns) {
         this.inputId = inputId;
         this.inputPassword = inputPassword;
         this.snsId = snsId;
         this.sns = sns;
     }
 
-    public UserStatus modifyUserStatus(UserStatus userStatus){
+    public UserStatus modifyUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
         return this.userStatus;
     }
@@ -88,7 +84,7 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         return this.role;
     }
 
-    public UserInfo modifyUserInfo(UserInfo userInfo){
+    public UserInfo modifyUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
         return this.userInfo;
     }
