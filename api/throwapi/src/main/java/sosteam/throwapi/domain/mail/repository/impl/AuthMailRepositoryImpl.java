@@ -26,7 +26,7 @@ public class AuthMailRepositoryImpl implements AuthMailRepositoryCustom {
     public String searchSendCodeByEmail(String email) {
         return jpaQueryFactory.select(authMail.authCode)
                 .from(authMail)
-                .where(authMail.endAt.goe(LocalDateTime.now()))
+                .where(authMail.endAt.goe(LocalDateTime.now()), authMail.email.eq(email))
                 .fetchOne();
     }
 }
