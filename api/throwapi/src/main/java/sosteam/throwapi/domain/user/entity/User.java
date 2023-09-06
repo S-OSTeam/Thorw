@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import sosteam.throwapi.domain.order.entity.Receipt;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 import sosteam.throwapi.global.entity.Role;
@@ -30,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User extends PrimaryKeyEntity implements UserDetails {
+    // TODO: 2023-09-06 address 추가
 
     @NotNull
     @Column(unique = true)
@@ -61,20 +63,23 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Mileage mileage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Store> stores;
 
-    public User(String inputId, String inputPassword, String snsId, SNSCategory sns) {
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Receipt> receipts;
+
+    public User(String inputId, String inputPassword, String snsId, SNSCategory sns){
         this.inputId = inputId;
         this.inputPassword = inputPassword;
         this.snsId = snsId;
         this.sns = sns;
     }
 
-    public UserStatus modifyUserStatus(UserStatus userStatus) {
+    public UserStatus modifyUserStatus(UserStatus userStatus){
         this.userStatus = userStatus;
         return this.userStatus;
     }
@@ -84,19 +89,24 @@ public class User extends PrimaryKeyEntity implements UserDetails {
         return this.role;
     }
 
-    public Mileage modifyMileage(Mileage mileage) {
+    public Mileage modifyMileage(Mileage mileage){
         this.mileage = mileage;
         return this.mileage;
     }
 
-    public UserInfo modifyUserInfo(UserInfo userInfo) {
+    public UserInfo modifyUserInfo(UserInfo userInfo){
         this.userInfo = userInfo;
         return this.userInfo;
     }
 
+
     public List<Store> modifyStore(List<Store> stores) {
         this.stores = stores;
         return this.stores;
+    }
+
+    public void modifyReceipts(List<Receipt> receipts) {
+        this.receipts = receipts;
     }
 
     @Override
