@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.user.entity.Mileage;
+import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
 import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
@@ -26,7 +27,12 @@ public class UserCreateService {
         if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new PasswordDifFromConfirmException();
 
         //인증을 실제로 진행했는지 확인
-//        userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
+        //회원 가입 종류가 sns 를 통하지 않고 Normal 일 때만 이메일 인증 검사를 진행 한다.
+        //나머지는 sns 에서 검사를 해 주기 때문이다.
+        if(dto.getSnsCategory() == SNSCategory.NORMAL){
+            userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
+        }
+
 
         // 1. create User Entity
         User user = new User(
