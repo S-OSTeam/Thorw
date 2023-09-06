@@ -143,6 +143,7 @@ class MapViewModel : ViewModel() {
                                 ?.mapKeys { it.key.hashCode() } ?: mapOf()
                         _event.value = Event.ToastMessage("가게목록을 갱신에 성공했습니다.")
                     } else if (response.isSuccessful) {
+                        _nearByStores.value = mapOf()
                         _event.value = Event.ToastMessage("주변에 가게가 존재하지 않습니다.")
                     } else {
                         _event.value = Event.ToastMessage("가게 목록을 불러오는 과정에서 문제가 발생했습니다.")

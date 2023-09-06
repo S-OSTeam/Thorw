@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -35,6 +36,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
+import net.daum.mf.map.api.MapCircle
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -69,6 +71,8 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     private var curPositionMarker: MapPOIItem? = null
 
     private var nearByStoreMarkers: Array<MapPOIItem> = arrayOf()
+
+    private var mapCircle: MapCircle? = null
 
     private lateinit var markerEventListener: MarkerEventListener
 
@@ -158,6 +162,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             binding.mapView.removePOIItems(nearByStoreMarkers)
             nearByStoreMarkers = it.convertStoreInfoToMarkers()
             binding.mapView.addPOIItems(nearByStoreMarkers)
+            changeMapCircle()
         }
 
         viewModel.selectedTrashTypes.observe(viewLifecycleOwner) { selectedTypes ->
@@ -178,6 +183,21 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
                 }
             }
         }
+    }
+
+    private fun changeMapCircle() {
+        if (mapCircle != null) binding.mapView.removeCircle(mapCircle)
+        mapCircle = MapCircle(
+            MapPoint.mapPointWithGeoCoord(
+                viewModel.lastUserPoint.value!!.latitude,
+                viewModel.lastUserPoint.value!!.longitude,
+            ), // center
+            viewModel.selectedSearchDistance.value!! * 1000, // radius
+
+            Color.argb(128, 255, 0, 0), // strokeColor
+            Color.argb(20, 0, 0, 0), // fillColor
+        )
+        binding.mapView.addCircle(mapCircle)
     }
 
     private fun handleEvent(event: MapViewModel.Event) {
@@ -243,6 +263,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onDestroyView() {
         super.onDestroyView()
         curPositionMarker = null
+        mapCircle = null
     }
 
     @SuppressLint("MissingPermission")
