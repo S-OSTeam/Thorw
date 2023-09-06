@@ -2,7 +2,6 @@ package sosteam.throwapi.domain.user.repository.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import sosteam.throwapi.domain.user.entity.QUserAuth;
 import sosteam.throwapi.domain.user.repository.custom.UserAuthRepositoryCustom;
 
@@ -11,15 +10,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserAuthRepositoryImpl implements UserAuthRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final QUserAuth userAuth;
-
-    @Autowired
-
-    public UserAuthRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
-        this.queryFactory = jpaQueryFactory;
-
-        this.userAuth = QUserAuth.userAuth;
-    }
+    private final QUserAuth userAuth = QUserAuth.userAuth;
 
     //현재로부터 10분 이내의 인증 성공 내역이 있는지 확인한다.
     @Override

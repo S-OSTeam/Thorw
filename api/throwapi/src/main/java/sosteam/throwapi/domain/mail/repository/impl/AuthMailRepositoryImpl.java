@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class AuthMailRepositoryImpl implements AuthMailRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final QAuthMail authMail;
+    private final QAuthMail authMail = QAuthMail.authMail;
     private final EntityManager em;
 
 
@@ -28,7 +28,8 @@ public class AuthMailRepositoryImpl implements AuthMailRepositoryCustom {
     @Override
     @Transactional
     public long modifyIsSuccessByEmail(String email) {
-        long isSuccess = jpaQueryFactory.update(authMail)
+        long isSuccess = jpaQueryFactory
+                .update(authMail)
                 .set(authMail.isSuccess, true)
                 .where(authMail.email.eq(email), authMail.isSuccess.eq(false), authMail.endAt.goe(LocalDateTime.now()))
                 .execute();
