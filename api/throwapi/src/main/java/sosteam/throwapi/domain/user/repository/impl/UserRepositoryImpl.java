@@ -143,14 +143,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public Long searchMileageByInputId(String inputId) {
-        return queryFactory
-                .select(mileage.amount)
-                .from(user)
-                .join(user.mileage, mileage)
-                .where(user.inputId.eq(inputId))
-                .fetchOne();
+    public Long findRankByMileage(Long userMileage) {
+        // mileage보다 더 높은 mileage를 가진 사용자의 수를 조회
+        long countHigherMileage = queryFactory
+                .selectFrom(mileage)
+                .where(mileage.amount.gt(userMileage))
+                .fetch().size();
+
+        // 순위는 "더 높은 마일리지를 가진 사용자의 수 + 1"로 계산
+        return countHigherMileage + 1;
     }
+
 
     @Override
     public Set<User> searchTop10UsersByMileage() {

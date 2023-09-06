@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.user.controller.request.LeaderBoardRequest;
 import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
 import sosteam.throwapi.domain.user.controller.request.user.IdDuplicateRequest;
 import sosteam.throwapi.domain.user.controller.request.user.PWCheckRequest;
@@ -24,6 +25,8 @@ import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
 import sosteam.throwapi.global.service.JwtTokenService;
 
+import java.util.Set;
+
 @Controller
 @Slf4j
 @RequestMapping("/user")
@@ -34,6 +37,7 @@ public class UserController {
     private final UserUpdateService userUpdateService;
     private final UserDeleteService userDeleteService;
     private final JwtTokenService jwtTokenService;
+    private final MileageService mileageService;
 
     @PostMapping("/iddup")
     public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
@@ -164,5 +168,12 @@ public class UserController {
         userUpdateService.cngUser(userCngDto);
 
         return ResponseEntity.ok("회원 정보 변경 완료");
+    }
+
+    @PostMapping("/leaderboard")
+    public ResponseEntity<LeaderBoardDto> leaderBoard(@RequestBody @Valid LeaderBoardRequest request){
+        LeaderBoardDto leaderBoardDto = mileageService.searchMyMileageByInputId(request.getInputId());
+        Set<LeaderBoardDto> leaderBoard = mileageService.createLeaderBoard();
+
     }
 }

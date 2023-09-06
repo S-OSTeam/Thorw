@@ -11,4 +11,5 @@ import sosteam.throwapi.domain.user.entity.UserInfo;
 public class LeaderBoardDto {
     private String userName;
     private Long mileage;
+    private Long ranking;
 }

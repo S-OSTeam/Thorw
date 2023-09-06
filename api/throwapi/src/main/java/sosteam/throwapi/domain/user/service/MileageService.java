@@ -8,6 +8,7 @@ import sosteam.throwapi.domain.user.entity.dto.user.LeaderBoardDto;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -17,26 +18,33 @@ public class MileageService {
     private final UserRepository userRepository;
 
     /**
-     * 10위까지 리더보드 정보 넣기. {userName,mileage}로 리턴
+     * 10위까지 리더보드 정보 넣기. {userName,mileage,ranking}로 리턴
      */
     public Set<LeaderBoardDto> createLeaderBoard(){
         Set<User> top10Users= userRepository.searchTop10UsersByMileage();
 
+        AtomicLong rank = new AtomicLong(1);
+
         Set<LeaderBoardDto> leaderBoardDtos = top10Users.stream()
-                .map(user -> new LeaderBoardDto(user.getUserInfo().getUserName(), user.getMileage().getAmount()))
+                .map(user -> new LeaderBoardDto(user.getUserInfo().getUserName(),
+                        user.getMileage().getAmount(),
+                        rank.getAndIncrement()))
                 .collect(Collectors.toSet());
 
         return leaderBoardDtos;
     }
 
     /**
-     * 해당 user의 {userName,mileage} 정보 얻기
+     * 해당 user의 {userName,mileage,ranking} 정보 얻기
      * @param inputId
      */
-    public LeaderBoardDto searchMyMileageByInputId(String inputId){
+    public LeaderBoardDto searchMyRankingByInputId(String inputId){
         User user = userRepository.searchByInputId(inputId);
-        Long mileage = userRepository.searchMileageByInputId(inputId);
+        Long mileage = user.getMileage().getAmount();
 
-        return new LeaderBoardDto(user.getUserInfo().getUserName(), mileage);
+        // 해당 사용자의 순위를 계산
+        Long userRank = userRepository.findRankByMileage(mileage);
+
+        return new LeaderBoardDto(user.getUserInfo().getUserName(), mileage,userRank);
     }
 }

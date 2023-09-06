@@ -27,7 +27,7 @@ public interface UserRepositoryCustom {
 
     Long updatePwdByUserId(UUID userId, String pwd);
 
-    Long searchMileageByInputId(String inpuId);
+    Long findRankByMileage(Long mileage);
 
     Set<User> searchTop10UsersByMileage();
 }
