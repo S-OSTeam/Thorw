@@ -4,10 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.throw_fornt.data.model.request.StoreSearchNameForMapRequest
+import com.example.throw_fornt.data.model.request.StoresInfoByLocationRequest
+import com.example.throw_fornt.data.model.response.StoreInfoBySearchNameResponse
+import com.example.throw_fornt.data.model.response.StoresInfoByLocationResponse
+import com.example.throw_fornt.data.remote.retrofit.StoreRetrofit
 import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.SingleLiveEvent
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.math.RoundingMode
 
 class MapViewModel : ViewModel() {
@@ -29,6 +38,10 @@ class MapViewModel : ViewModel() {
     val nearByStores: LiveData<Map<Int, List<MapStoreInfo>>>
         get() = _nearByStores
 
+    private val _selectedSearchDistance: MutableLiveData<Int> = MutableLiveData(3)
+    val selectedSearchDistance: LiveData<Int>
+        get() = _selectedSearchDistance
+
     private val _selectedTrashTypes: MutableLiveData<List<Trash>> =
         MutableLiveData(listOf(Trash.ALL))
     val selectedTrashTypes: LiveData<List<Trash>>
@@ -41,7 +54,20 @@ class MapViewModel : ViewModel() {
         }
 
     private var updateCurPositionLoading: Boolean = false
-    private var refreshStoreLoading: Boolean = false
+    private val _refreshStoreLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val refreshStoreLoading: LiveData<Boolean>
+        get() = _refreshStoreLoading
+
+    private val refreshStoreLoadingValue: Boolean
+        get() = _refreshStoreLoading.value!!
+
+    private fun startLoading() {
+        _refreshStoreLoading.value = true
+    }
+
+    private fun stopLoading() {
+        _refreshStoreLoading.value = false
+    }
 
     // 카카오맵 줌 이벤트 리스너가 제대로 안먹힘. 먹혔다가 안먹혔다가 해서 일단 이건 고정으로 놓을 예정
     fun setVisibleMapDistance(bottomLeft: GeoPoint, topRight: GeoPoint) {
@@ -96,13 +122,43 @@ class MapViewModel : ViewModel() {
     }
 
     fun refreshNearbyStores() {
-        if (refreshStoreLoading) return
+        if (refreshStoreLoadingValue) return
         _lastUserPoint.value?.let {
-            refreshStoreLoading = true
-            // 가게 목록 갱신
-            _nearByStores.value =
-                fakeDataAroundStores(it).groupStoresByGeoPoint().mapKeys { it.key.hashCode() }
-            refreshStoreLoading = false
+            startLoading()
+            StoreRetrofit().storeService.getStoresInfoByLocation(
+                StoresInfoByLocationRequest(
+                    it.latitude,
+                    it.longitude,
+                    selectedSearchDistance.value?.toDouble() ?: 3.toDouble(),
+                    (selectedTrashTypes.value ?: listOf(Trash.ALL)).toBinaryFormat(),
+                ),
+            ).enqueue(object : Callback<List<StoresInfoByLocationResponse>> {
+                override fun onResponse(
+                    call: Call<List<StoresInfoByLocationResponse>>,
+                    response: Response<List<StoresInfoByLocationResponse>>,
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        _nearByStores.value =
+                            response.body()?.map { it.toUI() }?.groupStoresByGeoPoint()
+                                ?.mapKeys { it.key.hashCode() } ?: mapOf()
+                        _event.value = Event.ToastMessage("가게목록을 갱신에 성공했습니다.")
+                    } else if (response.isSuccessful) {
+                        _nearByStores.value = mapOf()
+                        _event.value = Event.ToastMessage("주변에 가게가 존재하지 않습니다.")
+                    } else {
+                        _event.value = Event.ToastMessage("가게 목록을 불러오는 과정에서 문제가 발생했습니다.")
+                    }
+                    stopLoading()
+                }
+
+                override fun onFailure(
+                    call: Call<List<StoresInfoByLocationResponse>>,
+                    t: Throwable,
+                ) {
+                    _event.value = Event.ToastMessage("가게목록을 갱신과정에서 실패했습니다.")
+                    stopLoading()
+                }
+            })
         }
     }
 
@@ -141,6 +197,23 @@ class MapViewModel : ViewModel() {
         return GeoPoint(roundedLatitude, roundedLongitude)
     }
 
+    private fun List<Trash>.toBinaryFormat(): String {
+        return buildString {
+            if (contains(Trash.ALL)) {
+                repeat(Trash.values().size - 1) { append("0") }
+                return@buildString
+            }
+
+            Trash.values().filterNot { it == Trash.ALL }.forEach { trash ->
+                if (contains(trash)) {
+                    append("1")
+                } else {
+                    append("0")
+                }
+            }
+        }
+    }
+
     fun selectMapPoint(groupKey: Int) {
         nearByStores.value?.let { nearByStores ->
             val selectedStoreGroup = nearByStores[groupKey] ?: return@let
@@ -148,12 +221,42 @@ class MapViewModel : ViewModel() {
         }
     }
 
-    val searchStores = { content: String? ->
-        if (content.isNullOrEmpty().not()) {
-            lastUserPoint.value?.let {
-                // 검색 결과가 0이 아닐때만.
-                searchedStores = fakeDataSearchedResult(it)
-            }
+    val searchStores = { content: String ->
+        lastUserPoint.value?.let {
+            if (refreshStoreLoadingValue) return@let
+            startLoading()
+            StoreRetrofit().storeService.getStoresInfoBySearchName(
+                StoreSearchNameForMapRequest(content.trim()),
+            ).enqueue(object : Callback<List<StoreInfoBySearchNameResponse>> {
+                override fun onResponse(
+                    call: Call<List<StoreInfoBySearchNameResponse>>,
+                    response: Response<List<StoreInfoBySearchNameResponse>>,
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        searchedStores = response.body()?.map { it.toUI() } ?: return stopLoading()
+                    } else if (response.isSuccessful) {
+                        Event.ToastMessage("검색된 이름의 가게가 존재하지 않습니다.")
+                    } else {
+                        runCatching {
+                            val jsonObject = JSONObject(response.errorBody()!!.string())
+                            jsonObject.getString("message")
+                        }.onSuccess { message ->
+                            _event.value = Event.ToastMessage(message)
+                        }.onFailure {
+                            _event.value = Event.ToastMessage("가게 검색에 실패했습니다")
+                        }
+                    }
+                    stopLoading()
+                }
+
+                override fun onFailure(
+                    call: Call<List<StoreInfoBySearchNameResponse>>,
+                    t: Throwable,
+                ) {
+                    _event.value = Event.ToastMessage("가게 검색에 실패했습니다")
+                    stopLoading()
+                }
+            })
         }
     }
 
@@ -181,82 +284,19 @@ class MapViewModel : ViewModel() {
         }
     }
 
+    // 라디오 버튼 선택 시 호출되는 메서드
+    fun onChangeSearchDistance(radioButtonId: Int) {
+        _selectedSearchDistance.value = radioButtonId
+        refreshNearbyStores()
+    }
+
     sealed class Event {
         object ShowMapStoreInfo : Event()
+        data class ToastMessage(val message: String) : Event()
     }
 
     companion object {
         private const val DEFAULT_PRECISION = 5
         private const val ADJUST_ERROR_RANGE = 0.00001
-        private fun fakeDataAroundStores(userPoint: GeoPoint) = listOf(
-            MapStoreInfo(
-                1L,
-                "가게1",
-                GeoPoint(userPoint.latitude + 0.00020, userPoint.longitude + 0.00020),
-            ),
-            MapStoreInfo(
-                2L,
-                "가게2",
-                GeoPoint(userPoint.latitude + 0.000201, userPoint.longitude + 0.000201),
-            ),
-            MapStoreInfo(
-                3L,
-                "가게3",
-                GeoPoint(userPoint.latitude + 0.000204, userPoint.longitude + 0.000204),
-            ),
-            MapStoreInfo(
-                5L,
-                "가게5",
-                GeoPoint(userPoint.latitude + 0.000204, userPoint.longitude + 0.000204),
-            ),
-            MapStoreInfo(
-                4L,
-                "가게4",
-                GeoPoint(userPoint.latitude - 0.0001, userPoint.longitude - 0.0001),
-            ),
-        )
-
-        private fun fakeDataSearchedResult(userPoint: GeoPoint) = listOf(
-            MapStoreInfo(
-                1L,
-                "가게1",
-                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
-            ),
-            MapStoreInfo(
-                2L,
-                "가게2",
-                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
-            ),
-            MapStoreInfo(
-                3L,
-                "가게3",
-                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
-            ),
-            MapStoreInfo(
-                4L,
-                "가게4",
-                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
-            ),
-            MapStoreInfo(
-                5L,
-                "가게5",
-                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
-            ),
-            MapStoreInfo(
-                6L,
-                "가게6",
-                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
-            ),
-            MapStoreInfo(
-                7L,
-                "가게7",
-                GeoPoint(userPoint.latitude + 0.01, userPoint.longitude + 0.01),
-            ),
-            MapStoreInfo(
-                8L,
-                "가게8",
-                GeoPoint(userPoint.latitude - 0.01, userPoint.longitude - 0.01),
-            ),
-        )
     }
 }

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.example.throw_fornt.models.GeoPoint
 import com.example.throw_fornt.models.MapStoreInfo
 import com.example.throw_fornt.models.Trash
 import com.example.throw_fornt.util.common.BindingFragment
+import com.example.throw_fornt.util.common.ProgressDialog
 import com.example.throw_fornt.util.common.Toaster
 import com.example.throw_fornt.util.common.showSnackbar
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -34,6 +36,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
+import net.daum.mf.map.api.MapCircle
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -59,11 +62,17 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
 
     private val viewModel: MapViewModel by viewModels()
 
+    private val progressDialog: ProgressDialog by lazy {
+        ProgressDialog(requireContext())
+    }
+
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var curPositionMarker: MapPOIItem? = null
 
     private var nearByStoreMarkers: Array<MapPOIItem> = arrayOf()
+
+    private var mapCircle: MapCircle? = null
 
     private lateinit var markerEventListener: MarkerEventListener
 
@@ -149,9 +158,11 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
             }
         }
         viewModel.nearByStores.observe(viewLifecycleOwner) {
+            Log.d("mendel", "가게 정보들: $it")
             binding.mapView.removePOIItems(nearByStoreMarkers)
             nearByStoreMarkers = it.convertStoreInfoToMarkers()
             binding.mapView.addPOIItems(nearByStoreMarkers)
+            changeMapCircle()
         }
 
         viewModel.selectedTrashTypes.observe(viewLifecycleOwner) { selectedTypes ->
@@ -160,13 +171,46 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
                 val chip = view as Chip
                 chip.isChecked = (chip.text.toString() in typeNames)
             }
+            viewModel.refreshNearbyStores()
         }
+
+        viewModel.refreshStoreLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                progressDialog.startWithAnimation(R.raw.loading)
+            } else {
+                if (progressDialog.isShowing) {
+                    progressDialog.dismiss()
+                }
+            }
+        }
+    }
+
+    private fun changeMapCircle() {
+        if (mapCircle != null) binding.mapView.removeCircle(mapCircle)
+        mapCircle = MapCircle(
+            MapPoint.mapPointWithGeoCoord(
+                viewModel.lastUserPoint.value!!.latitude,
+                viewModel.lastUserPoint.value!!.longitude,
+            ), // center
+            viewModel.selectedSearchDistance.value!! * 1000, // radius
+
+            Color.argb(128, 255, 0, 0), // strokeColor
+            Color.argb(20, 0, 0, 0), // fillColor
+        )
+        binding.mapView.addCircle(mapCircle)
     }
 
     private fun handleEvent(event: MapViewModel.Event) {
         when (event) {
             is MapViewModel.Event.ShowMapStoreInfo -> {
                 MapStoreInfoFragment().show(childFragmentManager, MAP_STORE_INFO_TAG)
+            }
+
+            is MapViewModel.Event.ToastMessage -> {
+                Toaster.showShort(
+                    requireContext(),
+                    event.message,
+                )
             }
         }
     }
@@ -219,6 +263,7 @@ class MapFragment : BindingFragment<FragmentMapBinding>(R.layout.fragment_map) {
     override fun onDestroyView() {
         super.onDestroyView()
         curPositionMarker = null
+        mapCircle = null
     }
 
     @SuppressLint("MissingPermission")
