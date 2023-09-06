@@ -38,6 +38,10 @@ class MapViewModel : ViewModel() {
     val nearByStores: LiveData<Map<Int, List<MapStoreInfo>>>
         get() = _nearByStores
 
+    private val _selectedSearchDistance: MutableLiveData<Int> = MutableLiveData(3)
+    val selectedSearchDistance: LiveData<Int>
+        get() = _selectedSearchDistance
+
     private val _selectedTrashTypes: MutableLiveData<List<Trash>> =
         MutableLiveData(listOf(Trash.ALL))
     val selectedTrashTypes: LiveData<List<Trash>>
@@ -125,7 +129,7 @@ class MapViewModel : ViewModel() {
                 StoresInfoByLocationRequest(
                     it.latitude,
                     it.longitude,
-                    4.toDouble(),
+                    selectedSearchDistance.value?.toDouble() ?: 3.toDouble(),
                     (selectedTrashTypes.value ?: listOf(Trash.ALL)).toBinaryFormat(),
                 ),
             ).enqueue(object : Callback<List<StoresInfoByLocationResponse>> {
@@ -277,6 +281,12 @@ class MapViewModel : ViewModel() {
         } else {
             _selectedTrashTypes.value = checkedStates
         }
+    }
+
+    // 라디오 버튼 선택 시 호출되는 메서드
+    fun onChangeSearchDistance(radioButtonId: Int) {
+        _selectedSearchDistance.value = radioButtonId
+        refreshNearbyStores()
     }
 
     sealed class Event {

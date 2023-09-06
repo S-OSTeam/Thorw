@@ -36,8 +36,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/black"
                     android:text="Throw"
+                    android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -140,6 +140,54 @@
             android:src="@drawable/ic_refresh_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/gl_end" />
+
+        <RadioGroup
+            android:id="@+id/rg_store_search_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_alpha_26_black_and_no_radius"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/btn_refresh_nearby_stores"
+            app:layout_constraintEnd_toEndOf="@id/gl_end">
+
+            <RadioButton
+                android:id="@+id/radio_button_spring"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:checked="@{viewModel.selectedSearchDistance.equals(3)}"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:onClick="@{()->viewModel.onChangeSearchDistance(3)}"
+                android:paddingHorizontal="2dp"
+                android:text="3km" />
+
+            <RadioButton
+                android:id="@+id/radio_button_summer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:checked="@{viewModel.selectedSearchDistance.equals(4)}"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:onClick="@{()->viewModel.onChangeSearchDistance(4)}"
+                android:paddingHorizontal="2dp"
+                android:text="4km" />
+
+            <RadioButton
+                android:id="@+id/radio_button_fall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:checked="@{viewModel.selectedSearchDistance.equals(5)}"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:onClick="@{()->viewModel.onChangeSearchDistance(5)}"
+                android:paddingHorizontal="2dp"
+                android:text="5km" />
+
+        </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
