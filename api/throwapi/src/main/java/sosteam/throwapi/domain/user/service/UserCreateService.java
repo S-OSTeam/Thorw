@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import sosteam.throwapi.domain.user.entity.Mileage;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.UserInfo;
 import sosteam.throwapi.domain.user.entity.dto.user.UserSaveDto;
@@ -25,7 +26,7 @@ public class UserCreateService {
         if (!dto.getInputPassword().equals(dto.getInputPasswordCheck())) throw new PasswordDifFromConfirmException();
 
         //인증을 실제로 진행했는지 확인
-        userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
+//        userAuthSearchService.IsSuccessIsTrue(dto.getEmail());
 
         // 1. create User Entity
         User user = new User(
@@ -42,13 +43,19 @@ public class UserCreateService {
                 dto.getEmail()
         );
 
+        Mileage mileage = new Mileage(Long.valueOf(0));
+
         //modify User's data(userinfo, role, userStatus)
         user.modifyRole(dto.getRole());
         user.modifyUserStatus(dto.getUserStatus());
 
-        //mapping User, UserInfo
+        //mapping User to UserInfo, Mileage
         user.modifyUserInfo(userInfo);
         userInfo.modifyUser(user);
+
+        user.modifyMileage(mileage);
+        mileage.modifyUser(user);
+
 
         // 이미 존재하는 회원을 추가 하려고 할 때 409 error
         User userResult = null;

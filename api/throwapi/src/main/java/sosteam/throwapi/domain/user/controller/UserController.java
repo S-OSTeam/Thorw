@@ -4,25 +4,29 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sosteam.throwapi.domain.user.controller.request.RankingRequest;
 import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
-import sosteam.throwapi.domain.user.controller.request.user.IdDuplicateRequest;
-import sosteam.throwapi.domain.user.controller.request.user.PWCheckRequest;
-import sosteam.throwapi.domain.user.controller.request.user.UserCngRequest;
-import sosteam.throwapi.domain.user.controller.request.user.UserSaveRequest;
+import sosteam.throwapi.domain.user.controller.request.user.*;
 import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
 import sosteam.throwapi.domain.user.controller.response.PWCheckResponse;
+import sosteam.throwapi.domain.user.controller.response.RankingResponse;
 import sosteam.throwapi.domain.user.controller.response.UserInfoResponse;
 import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.*;
+import sosteam.throwapi.domain.user.exception.ModifyMileageException;
 import sosteam.throwapi.domain.user.service.*;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
 import sosteam.throwapi.global.service.JwtTokenService;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -34,6 +38,7 @@ public class UserController {
     private final UserUpdateService userUpdateService;
     private final UserDeleteService userDeleteService;
     private final JwtTokenService jwtTokenService;
+    private final MileageModifyService mileageModifyService;
 
     @PostMapping("/iddup")
     public ResponseEntity<IdDuplicateResponse> checkIdDup(@RequestBody @Valid IdDuplicateRequest params){
@@ -133,7 +138,8 @@ public class UserController {
                 result.getRole(),
                 result.getUserInfo().getUserName(),
                 result.getUserInfo().getUserPhoneNumber(),
-                result.getUserInfo().getEmail()
+                result.getUserInfo().getEmail(),
+                result.getMileage().getAmount()
         ));
     }
 
@@ -164,5 +170,11 @@ public class UserController {
         userUpdateService.cngUser(userCngDto);
 
         return ResponseEntity.ok("회원 정보 변경 완료");
+    }
+
+    @PutMapping("/mileage")
+    private ResponseEntity<String> modifyMileage(@RequestBody @Valid MileageRequest mileageRequest){
+        mileageModifyService.modifyMileage(mileageRequest.getInputId(), mileageRequest.getMileage());
+        return ResponseEntity.ok("마일리지 변경 완료");
     }
 }
