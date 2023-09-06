@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class RedissonConfig {
     @Value("${spring.data.redis.host}")
     private String redisHost;
@@ -18,16 +18,15 @@ public class RedissonConfig {
     @Value("${spring.data.redis.password}")
     private String redisPassword;
 
-    private static final String REDISSON_HOST_PREFIX = "rediss://";
+    private static final String REDISSON_HOST_PREFIX = "redis://";
 
-    @Bean
+    //@Bean
     public RedissonClient redissonClient() {
         RedissonClient redisson = null;
         Config config = new Config();
         config.useSingleServer()
                 .setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort)
-                .setPassword(redisPassword)
-                .setSslEnableEndpointIdentification(true);
+                .setPassword(redisPassword);
         redisson = Redisson.create(config);
         return redisson;
     }

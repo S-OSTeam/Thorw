@@ -52,8 +52,9 @@ public class StoreModifyService {
         Store store = optionalStore.get();
 
         // check if the store's owner is same with request-user
-        Optional<UUID> userId = storeRepository.searchUserByStore(store);
-        if(!user.getId().equals(userId)) throw new InvalidRequestException("MODIFY");
+        UUID userId = storeRepository.searchUserByStore(store).orElseThrow(NoSuchStoreException::new);
+        //log.debug("userId1:{}, userId2:{}", user.getId(), userId);
+        if(userId.compareTo(user.getId()) != 0) throw new InvalidRequestException("MODIFY");
 
         store.modify(
                 dto.getStoreName(),
