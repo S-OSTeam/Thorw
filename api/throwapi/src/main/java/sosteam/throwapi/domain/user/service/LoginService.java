@@ -7,13 +7,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sosteam.throwapi.domain.oauth.entity.Tokens;
-import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.login.LogoutDto;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.exception.LoginFailException;
 import sosteam.throwapi.domain.user.repository.UserRepository;
-import sosteam.throwapi.global.security.redis.entity.RedisTokens;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 import sosteam.throwapi.global.security.redis.service.RedisUtilService;
 import sosteam.throwapi.global.service.JwtTokenService;
@@ -28,7 +26,7 @@ public class LoginService {
     private final TokensGenerateService tokensGenerateService;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final RedisUtilService redisUtilService;
-    private final UserReadService userReadService;
+    private final UserSeaerchService userSearchService;
     private final JwtTokenService jwtTokenService;
 
     public Tokens throwLogin(ThrowLoginDto throwLoginDto){ //아이디 비번 일치 하는지 확인 후 일치 하면 Tokens 을
@@ -41,7 +39,7 @@ public class LoginService {
         }
 
         //user 계정의 상태를 확인 한다
-        userReadService.isUserStatusNormal(user.getUserStatus());
+        userSearchService.isUserStatusNormal(user.getUserStatus());
 
 
         String userPW = user.getPassword();

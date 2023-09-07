@@ -17,7 +17,7 @@ import sosteam.throwapi.global.entity.UserStatus;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserReadService {
+public class UserSeaerchService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserAuthSearchService userAuthSearchService;
