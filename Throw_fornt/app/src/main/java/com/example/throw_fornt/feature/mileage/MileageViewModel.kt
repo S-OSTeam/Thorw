@@ -1,6 +1,7 @@
 package com.example.throw_fornt.feature.mileage
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.throw_fornt.data.model.response.MileageResponse
 import com.example.throw_fornt.data.remote.retrofit.MileageRetrofit
@@ -15,11 +16,11 @@ class MileageViewModel: ViewModel() {
     val event: LiveData<Event>
         get() = _event
 
-    private val _mileageMy: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _mileageMy: MutableLiveData<String> = MutableLiveData()
     val mileageMy: LiveData<String>
         get() = _mileageMy
 
-    private val _rankMy: SingleLiveEvent<String> = SingleLiveEvent()
+    private val _rankMy: MutableLiveData<String> = MutableLiveData()
     val rankMy: LiveData<String>
         get() = _rankMy
     fun selectMileage(item: MileageResponse){

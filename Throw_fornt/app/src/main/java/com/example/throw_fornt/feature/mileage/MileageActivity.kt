@@ -12,36 +12,28 @@ import com.example.throw_fornt.util.common.BindingActivity
 import com.example.throw_fornt.util.common.Toaster
 
 class MileageActivity : BindingActivity<ActivityMileageBinding>(R.layout.activity_mileage) {
-    private val viewModel:MileageViewModel by viewModels()
+    private val viewModel: MileageViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        try {
-            viewModel.mileage()
-        }
-        catch (e:Exception){
-            true
-        }
-        viewModel.event.observe(this){handleEvent(it)}
+
+        viewModel.mileage()
+        viewModel.event.observe(this) { handleEvent(it) }
     }
 
-    fun handleEvent(event: MileageViewModel.Event){
-        when(event){
+    fun handleEvent(event: MileageViewModel.Event) {
+        when (event) {
             is MileageViewModel.Event.Ranking -> listMileage(event.items)
             is MileageViewModel.Event.Mileage -> mileageData()
         }
     }
 
-    fun mileageData(){
-        try {
-            viewModel.rank()
-        }catch (e:Exception){
-            true
-        }
+    fun mileageData() {
+        viewModel.rank()
     }
 
-    fun listMileage(items: List<MileageResponse>){
+    fun listMileage(items: List<MileageResponse>) {
         val list = binding.recyclerMileage
         val adapter = MileageAdapter(items, viewModel::selectMileage)
         adapter.notifyDataSetChanged()
