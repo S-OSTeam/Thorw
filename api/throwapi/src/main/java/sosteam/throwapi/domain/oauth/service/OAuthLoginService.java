@@ -10,7 +10,7 @@ import sosteam.throwapi.domain.oauth.exception.NotValidateTokenException;
 import sosteam.throwapi.domain.oauth.exception.NotSignUpUserException;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.repository.UserRepository;
-import sosteam.throwapi.domain.user.service.UserReadService;
+import sosteam.throwapi.domain.user.service.UserSeaerchService;
 import sosteam.throwapi.global.security.redis.repository.RefreshTokenRedisRepository;
 import sosteam.throwapi.global.security.redis.service.RedisUtilService;
 import sosteam.throwapi.global.service.TokensGenerateService;
@@ -26,7 +26,7 @@ public class OAuthLoginService {
     private final RedisUtilService redisUtilService;
     private final TokensGenerateService authTokensGenerateService;
     private final OAuthApiClientService oAuthApiClientService;
-    private final UserReadService userReadService;
+    private final UserSeaerchService userSearchService;
 
 
     public Tokens login(OAuthLoginDto oAuthLoginDto){
@@ -52,7 +52,7 @@ public class OAuthLoginService {
             User user = userRepository.searchBySNSId(snsId);
 
             //user 계정의 현재 상태를 확인
-            userReadService.isUserStatusNormal(user.getUserStatus());
+            userSearchService.isUserStatusNormal(user.getUserStatus());
 
             UUID memberId = user.getId();
             String inputId = user.getInputId();

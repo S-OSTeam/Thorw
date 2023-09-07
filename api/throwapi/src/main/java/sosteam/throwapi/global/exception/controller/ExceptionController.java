@@ -47,7 +47,7 @@ public class ExceptionController {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public CommonExceptionResponse httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
+    public CommonExceptionResponse httpMessageNotSearchableExceptionHandler(HttpMessageNotReadableException e) {
         return new CommonExceptionResponse(
                 "INVALID_JSON",
                 "JSON 형식이 잘못되었습니다."

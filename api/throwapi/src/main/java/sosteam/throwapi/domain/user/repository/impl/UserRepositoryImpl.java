@@ -56,7 +56,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     @Transactional
-    public Long updateByInputId(UserCngDto userCngDto) {
+    public Long modifyByInputId(UserCngDto userCngDto) {
         UUID userId = this.searchUUIDByInputId(userCngDto.getInputId());
         long result = queryFactory
                 .update(userInfo)
@@ -75,7 +75,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     @Transactional
-    public Long updateUserStatusByInputId(String inputId, UserStatus userStatus) {
+    public Long modifyUserStatusByInputId(String inputId, UserStatus userStatus) {
         UUID userId = this.searchUUIDByInputId(inputId);
         long result = queryFactory
                 .update(user)
@@ -124,7 +124,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     @Transactional
-    public Long updatePwdByUserId(UUID userId, String pwd) {
+    public Long modifyPwdByUserId(UUID userId, String pwd) {
         Long result = queryFactory.update(user)
                 .set(user.inputPassword, pwd)
                 .where(user.id.eq(userId))
@@ -139,7 +139,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public Long findRankByMileage(Long userMileage) {
+    public Long searchRankByMileage(Long userMileage) {
         // mileage보다 더 높은 mileage를 가진 사용자의 수를 조회
         long countHigherMileage = queryFactory
                 .selectFrom(mileage)

@@ -50,7 +50,7 @@ public class MileageSearchService {
         Long mileage = user.getMileage().getAmount();
 
         // 해당 사용자의 순위를 계산
-        Long userRank = userRepository.findRankByMileage(mileage);
+        Long userRank = userRepository.searchRankByMileage(mileage);
 
         return new RankingDto(user.getUserInfo().getUserName(), mileage,userRank);
     }

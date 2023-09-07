@@ -14,7 +14,7 @@ import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserReadService;
+import sosteam.throwapi.domain.user.service.UserSeaerchService;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.List;
@@ -26,16 +26,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreCreateService {
     private final StoreRepository storeRepository;
-    private final StoreGetService storeGetService;
+    private final StoreSearchService storeSearchService;
 
-    private final UserReadService userReadService;
+    private final UserSeaerchService userSearchService;
     private final JwtTokenService jwtTokenService;
     @Transactional
     public Store saveStore(StoreSaveDto storeDto) {
         log.debug("Start Creating Store = {}", storeDto);
         // if Store is already Exist
         // return 409 : Conflict http status
-        Optional<StoreDto> result = storeGetService.isExistByCRN(storeDto.getCrn());
+        Optional<StoreDto> result = storeSearchService.isExistByCRN(storeDto.getCrn());
         if (result.isPresent()) throw new StoreAlreadyExistException();
 
 
@@ -43,7 +43,7 @@ public class StoreCreateService {
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(storeDto.getAccessToken())
         );
-        User user = userReadService.searchByInputId(userInfoDto);
+        User user = userSearchService.searchByInputId(userInfoDto);
 
         // Make external Store id using UUID
         UUID extStoreId = UUID.randomUUID();

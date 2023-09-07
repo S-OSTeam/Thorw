@@ -20,7 +20,7 @@ import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
 import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
 import sosteam.throwapi.domain.store.service.StoreCreateService;
 import sosteam.throwapi.domain.store.service.StoreDeleteService;
-import sosteam.throwapi.domain.store.service.StoreGetService;
+import sosteam.throwapi.domain.store.service.StoreSearchService;
 import sosteam.throwapi.domain.store.service.StoreModifyService;
 
 import java.time.LocalDateTime;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/store")
 @RequiredArgsConstructor
 public class StoreController {
-    private final StoreGetService storeGetService;
+    private final StoreSearchService storeSearchService;
     private final StoreCreateService storeCreateService;
     private final StoreModifyService storeModifyService;
     private final StoreDeleteService storeDeleteService;
@@ -89,7 +89,7 @@ public class StoreController {
             String auth
     ) {
         String accessToken = auth.split(" ")[1];
-        Set<StoreDto> storeDtos = storeGetService.searchMyStores(accessToken);
+        Set<StoreDto> storeDtos = storeSearchService.searchMyStores(accessToken);
         Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }
@@ -113,7 +113,7 @@ public class StoreController {
                 request.getTrashType().replace("0","_")
         );
         // Convert Dto to Response
-        Set<StoreDto> storeDtos = storeGetService.searchStoreInRadius(dto);
+        Set<StoreDto> storeDtos = storeSearchService.searchStoreInRadius(dto);
         Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }
@@ -128,7 +128,7 @@ public class StoreController {
      */
     @PostMapping("/crn")
     public ResponseEntity<StoreResponse> searchByCompanyRegistrationNumber(@RequestBody @Valid StoreCrnRequest request) {
-        StoreDto dto =  storeGetService.searchByCRN(request.getCrn().replaceAll("-",""));
+        StoreDto dto =  storeSearchService.searchByCRN(request.getCrn().replaceAll("-",""));
         if(dto == null) throw new NoSuchStoreException();
         StoreResponse resp = dto.toResponse();
         return ResponseEntity.ok(resp);
@@ -142,7 +142,7 @@ public class StoreController {
      */
     @PostMapping("/name")
     public ResponseEntity<Set<StoreResponse>> searchByName(@RequestBody @Valid StoreNameRequest request) {
-        Set<StoreDto> dtos = storeGetService.searchStoreByName(request.getStoreName());
+        Set<StoreDto> dtos = storeSearchService.searchStoreByName(request.getStoreName());
         Set<StoreResponse> resp = dtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }

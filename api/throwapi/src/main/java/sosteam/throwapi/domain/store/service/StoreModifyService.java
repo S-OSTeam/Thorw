@@ -15,7 +15,7 @@ import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserReadService;
+import sosteam.throwapi.domain.user.service.UserSeaerchService;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Optional;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreModifyService {
     private final StoreRepository storeRepository;
-    private final UserReadService userReadService;
+    private final UserSeaerchService userSearchService;
     private final JwtTokenService jwtTokenService;
 
     /**
@@ -46,7 +46,7 @@ public class StoreModifyService {
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
         );
-        User user = userReadService.searchByInputId(userInfoDto);
+        User user = userSearchService.searchByInputId(userInfoDto);
 
         // Find Store By given storeId
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());

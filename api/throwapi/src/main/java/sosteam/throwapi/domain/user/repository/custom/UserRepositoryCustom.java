@@ -16,17 +16,17 @@ public interface UserRepositoryCustom {
 
     UUID searchUUIDByInputId(String inputId);
 
-    Long updateByInputId(UserCngDto userCngDto);
+    Long modifyByInputId(UserCngDto userCngDto);
 
-    Long updateUserStatusByInputId(String inputId, UserStatus userStatus);
+    Long modifyUserStatusByInputId(String inputId, UserStatus userStatus);
 
     boolean existBySNSId(String snsId);
 
     User searchByEmail(String email);
 
-    Long updatePwdByUserId(UUID userId, String pwd);
+    Long modifyPwdByUserId(UUID userId, String pwd);
 
-    Long findRankByMileage(Long mileage);
+    Long searchRankByMileage(Long mileage);
 
     Set<User> searchTop10UsersByMileage();
 

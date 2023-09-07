@@ -4,29 +4,22 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import sosteam.throwapi.domain.user.controller.request.RankingRequest;
 import sosteam.throwapi.domain.user.controller.request.login.ThrowLoginRequest;
 import sosteam.throwapi.domain.user.controller.request.user.*;
 import sosteam.throwapi.domain.user.controller.response.IdDuplicateResponse;
 import sosteam.throwapi.domain.user.controller.response.PWCheckResponse;
-import sosteam.throwapi.domain.user.controller.response.RankingResponse;
 import sosteam.throwapi.domain.user.controller.response.UserInfoResponse;
 import sosteam.throwapi.domain.user.entity.SNSCategory;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.login.ThrowLoginDto;
 import sosteam.throwapi.domain.user.entity.dto.user.*;
-import sosteam.throwapi.domain.user.exception.ModifyMileageException;
 import sosteam.throwapi.domain.user.service.*;
 import sosteam.throwapi.global.entity.Role;
 import sosteam.throwapi.global.entity.UserStatus;
 import sosteam.throwapi.global.service.JwtTokenService;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -34,8 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserController {
     private final UserCreateService userCreateService;
-    private final UserReadService userReadService;
-    private final UserUpdateService userUpdateService;
+    private final UserSeaerchService userSearchService;
+    private final UserModifyService userModifyService;
     private final UserDeleteService userDeleteService;
     private final JwtTokenService jwtTokenService;
     private final MileageModifyService mileageModifyService;
@@ -46,7 +39,7 @@ public class UserController {
                 params.getInputId()
         );
 
-        IdDuplicateResponse result = new IdDuplicateResponse(userReadService.checkIdDup(idDuplicationDto));
+        IdDuplicateResponse result = new IdDuplicateResponse(userSearchService.checkIdDup(idDuplicationDto));
         return ResponseEntity.ok(result);
     }
 
@@ -68,7 +61,7 @@ public class UserController {
         );
 
         //pw 가 일치 하는지 확인
-        PWCheckResponse result = new PWCheckResponse(userReadService.checkPWAgain(pwCheckDto));
+        PWCheckResponse result = new PWCheckResponse(userSearchService.checkPWAgain(pwCheckDto));
         return ResponseEntity.ok(result);
     }
 
@@ -114,7 +107,7 @@ public class UserController {
                 params.getInputPassword()
         );
 
-        userUpdateService.restoreUserStatus(throwLoginDto);
+        userModifyService.restoreUserStatus(throwLoginDto);
         return ResponseEntity.ok("계정이 활성화 되었습니다.");
     }
 
@@ -131,7 +124,7 @@ public class UserController {
                 jwtTokenService.extractSubject(accessToken)
         );
 
-        User result = userReadService.searchByInputId(userInfoDto);
+        User result = userSearchService.searchByInputId(userInfoDto);
 
         return ResponseEntity.ok(new UserInfoResponse(
                 result.getInputId(),
@@ -158,7 +151,7 @@ public class UserController {
                 inputId
         );
         // 존재 하는 회원인지 확인
-        userReadService.searchByInputId(userInfoDto);
+        userSearchService.searchByInputId(userInfoDto);
 
         UserCngDto userCngDto = new UserCngDto(
                 inputId,
@@ -167,7 +160,7 @@ public class UserController {
                 params.getEmail()
         );
         // 정보 변경
-        userUpdateService.cngUser(userCngDto);
+        userModifyService.cngUser(userCngDto);
 
         return ResponseEntity.ok("회원 정보 변경 완료");
     }

@@ -10,7 +10,7 @@ import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserReadService;
+import sosteam.throwapi.domain.user.service.UserSeaerchService;
 import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Optional;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreDeleteService {
     private final StoreRepository storeRepository;
-    private final UserReadService userReadService;
+    private final UserSeaerchService userSearchService;
     private final JwtTokenService jwtTokenService;
 
 
@@ -30,7 +30,7 @@ public class StoreDeleteService {
         UserInfoDto userInfoDto = new UserInfoDto(
                 jwtTokenService.extractSubject(accessToken)
         );
-        User user = userReadService.searchByInputId(userInfoDto);
+        User user = userSearchService.searchByInputId(userInfoDto);
 
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(extStoreId);
         if (optionalStore.isEmpty()) throw new NoSuchStoreException();

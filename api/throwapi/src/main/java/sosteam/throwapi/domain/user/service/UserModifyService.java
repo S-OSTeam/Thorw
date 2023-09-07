@@ -15,7 +15,7 @@ import sosteam.throwapi.global.entity.UserStatus;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserUpdateService {
+public class UserModifyService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserAuthSearchService userAuthSearchService;
@@ -29,11 +29,11 @@ public class UserUpdateService {
 
 
         //user 의 status 를 normal 로 변경
-        Long result = userRepository.updateUserStatusByInputId(throwLoginDto.getInputId(), UserStatus.NORMAL);
+        Long result = userRepository.modifyUserStatusByInputId(throwLoginDto.getInputId(), UserStatus.NORMAL);
     }
 
     public void cngUser(UserCngDto userCngDto) {
-        Long result = userRepository.updateByInputId(userCngDto);
+        Long result = userRepository.modifyByInputId(userCngDto);
         log.debug("result cng User Service = {}", result.toString());
     }
 
@@ -60,7 +60,7 @@ public class UserUpdateService {
         String encodedPwd = passwordEncoder.encode(pwd);
 
         //같다면 변경
-        Long result = userRepository.updatePwdByUserId(user.getId(), encodedPwd);
+        Long result = userRepository.modifyPwdByUserId(user.getId(), encodedPwd);
 
         return result;
     }
