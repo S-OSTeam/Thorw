@@ -16,6 +16,7 @@ class MyPageViewModel : ViewModel() {
     //MypageRetrofit 변수
     private val mypageHelper: MypageRetrofit = MypageRetrofit()
     private val _event: SingleLiveEvent<Event> = SingleLiveEvent()
+    lateinit var myProfile: MypageResponse
     val event: LiveData<Event>
         get() = _event
 
@@ -41,6 +42,11 @@ class MyPageViewModel : ViewModel() {
         _event.value = Event.Mileage
     }
 
+    fun profileModify(){
+
+        _event.value = Event.Profile(myProfile)
+    }
+
     //회원정보 조회
     fun inquiry(){
         mypageHelper.mypageService.memberRequest().enqueue(object: Callback<MypageResponse> {
@@ -49,6 +55,10 @@ class MyPageViewModel : ViewModel() {
                     _name.value = response.body()?.userName
                     _email.value = response.body()?.email
                     _mileage.value = response.body()?.mileage
+                    val profile = MypageResponse(response.body()?.inputId.toString(), response.body()?.role.toString(),
+                        response.body()?.userName.toString(),response.body()?.userPhoneNumber.toString(),
+                        response.body()?.email.toString(),response.body()?.mileage.toString())
+                    myProfile = profile
                 }
                 else{
 
@@ -64,5 +74,6 @@ class MyPageViewModel : ViewModel() {
     sealed class Event(){
         object Store: Event()
         object Mileage: Event()
+        data class Profile(val profile: MypageResponse): Event()
     }
 }

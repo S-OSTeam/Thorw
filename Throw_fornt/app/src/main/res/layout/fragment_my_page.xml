@@ -79,7 +79,8 @@
                     android:layout_gravity="bottom"
                     android:background="@drawable/edit_text_border"
                     android:text="프로필 수정"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:onClick="@{()->viewModel.profileModify()}"/>
             </FrameLayout>
 
             <FrameLayout

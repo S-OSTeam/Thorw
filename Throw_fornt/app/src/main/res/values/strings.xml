@@ -27,4 +27,10 @@
     <!--mypage-->
     <string name="mypage_store_text"><u>가게 관리</u></string>
     <string name="mypage_mileage_buy_text"><u>마일리지/상품 구매</u></string>
+
+    <!--profile-->
+    <string name="profile_yes_text">예</string>
+    <string name="profile_no_text">아니요</string>
+    <string name="profile_modify_text">프로필을 수정하시겠습니까?</string>
+    <string name="profile_tilte_text">프로필 수정</string>
 </resources>
