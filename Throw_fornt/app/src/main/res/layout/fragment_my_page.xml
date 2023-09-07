@@ -79,7 +79,8 @@
                     android:layout_gravity="bottom"
                     android:background="@drawable/edit_text_border"
                     android:text="프로필 수정"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:onClick="@{()->viewModel.profileModify()}"/>
             </FrameLayout>
 
             <FrameLayout
@@ -119,7 +120,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
-                                android:text="1,000 P"/>
+                                android:text="@{viewModel.mileage}"/>
                         </FrameLayout>
                         <FrameLayout
                             android:layout_width="match_parent"
@@ -134,7 +135,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
-                                android:text="1,000 P"/>
+                                android:text="@{viewModel.mileage}"/>
                         </FrameLayout>
                     </LinearLayout>
                 </FrameLayout>
@@ -198,7 +199,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            android:text="마일리지/상품 구매"
+                            android:text="마일리지/랭킹 조회"
                             android:textStyle="bold"
                             android:textSize="20dp"/>
                         <View

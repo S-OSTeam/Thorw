@@ -1,17 +1,23 @@
 package com.example.throw_fornt.feature.myPage
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.throw_fornt.R
+import com.example.throw_fornt.data.model.response.MypageResponse
 import com.example.throw_fornt.databinding.FragmentMyPageBinding
+import com.example.throw_fornt.feature.mileage.MileageActivity
+import com.example.throw_fornt.feature.myPage.profile.ProfileActivity
 import com.example.throw_fornt.feature.store.StoreActivity
 import com.example.throw_fornt.util.common.BindingFragment
+import com.example.throw_fornt.util.common.Toaster
 
 class MyPageFragment : BindingFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
 
     private val viewModel: MyPageViewModel by viewModels()
+    val REQUEST_CODE: Int = 1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,6 +32,7 @@ class MyPageFragment : BindingFragment<FragmentMyPageBinding>(R.layout.fragment_
         when(event){
             is MyPageViewModel.Event.Store -> storeActivity()
             is MyPageViewModel.Event.Mileage -> mileageActivity()
+            is MyPageViewModel.Event.Profile -> profileActivity(event.profile)
         }
     }
 
@@ -35,6 +42,24 @@ class MyPageFragment : BindingFragment<FragmentMyPageBinding>(R.layout.fragment_
     }
 
     fun mileageActivity(){
+        val intent: Intent = Intent(activity, MileageActivity::class.java)
+        startActivity(intent)
+    }
 
+    fun profileActivity(profile: MypageResponse){
+        val intent: Intent = Intent(activity, ProfileActivity::class.java)
+        intent.putExtra("data",profile)
+        startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val receiveData = data!!.getStringExtra("data")
+            if(receiveData!=null){
+                context?.let { Toaster.showLong(it, receiveData.toString()) }
+                viewModel.inquiry()
+            }
+        }
     }
 }
