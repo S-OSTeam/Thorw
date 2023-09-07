@@ -58,7 +58,7 @@ public class StoreController {
             @RequestBody @Valid StoreSaveRequest request
     ) {
         // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn());
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
         log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
         String accessToken = auth.split(" ")[1];
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
@@ -162,7 +162,7 @@ public class StoreController {
     ) {
         String accessToken = auth.split(" ")[1];
         // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn());
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
@@ -209,8 +209,8 @@ public class StoreController {
      *  9 : 기타 오류
      *  -10 : 해당 번호 존재 X
      */
-    public String confirmCompanyRegistrationNumber(String number){
-        BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number);
+    public String confirmCompanyRegistrationNumber(String number,String accessToken){
+        BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number,accessToken);
         if( response == null || response.getTotalCount() == 0) throw new NoSuchRegistrationNumberException();
         if(response.getResultCode() < 0) throw new BiznoAPIException(response.getResultCode());
         return response.getItems().get(0).getCompany();
