@@ -10,6 +10,8 @@ import com.example.throw_fornt.data.model.request.StoreRequest
 import com.example.throw_fornt.data.model.response.StoreModel
 import com.example.throw_fornt.data.model.response.testBody
 import com.example.throw_fornt.data.remote.retrofit.StoreRetrofit
+import com.example.throw_fornt.feature.myPage.MyPageViewModel
+import com.example.throw_fornt.feature.store.StoreViewModel
 import com.example.throw_fornt.feature.store.register.RegisterViewModel
 import com.example.throw_fornt.util.common.SingleLiveEvent
 import org.json.JSONObject
@@ -73,8 +75,6 @@ class ManagementViewModel(): ViewModel() {
     fun selectItem(item: StoreModel){
         checkCrn = item.bno.toString()
         crn.value = item.bno
-        //내 정보 조회가 안되서 테스트 데이터
-        ceoEdit.value = "김국밥"
         storePhone.value = item.storePhone
         fullAddress.value = item.fullAddress
         zoneNo.value = item.zipCode
@@ -82,6 +82,8 @@ class ManagementViewModel(): ViewModel() {
         lon = item.longitude
         uuid = item.uuid
         trashType(item.trashType)
+        //내 정보 조회가 안되서 테스트 데이터
+        ceoEdit.value = MyPageViewModel.myProfile.userName
     }
 
     //쓰레기 종류 Check Box 형태로 변경

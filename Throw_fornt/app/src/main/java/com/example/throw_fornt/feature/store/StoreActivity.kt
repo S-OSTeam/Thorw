@@ -20,7 +20,6 @@ import java.lang.Exception
 
 class StoreActivity : BindingActivity<ActivityStoreBinding>(R.layout.activity_store) {
     private val viewModel: StoreViewModel by viewModels()
-    private val managerViewModel: ManagementViewModel by viewModels()
     var items = ArrayList<StoreModel>()
     val REQUEST_CODE: Int = 1
 

@@ -13,10 +13,12 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MyPageViewModel : ViewModel() {
+    companion object{
+        lateinit var myProfile: MypageResponse
+    }
     //MypageRetrofit 변수
     private val mypageHelper: MypageRetrofit = MypageRetrofit()
     private val _event: SingleLiveEvent<Event> = SingleLiveEvent()
-    lateinit var myProfile: MypageResponse
     val event: LiveData<Event>
         get() = _event
 
