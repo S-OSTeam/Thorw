@@ -2,8 +2,8 @@ package sosteam.throwapi.domain.store.repository.repoCustom;
 
 import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.Store;
-import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 
 import java.util.Optional;
 import java.util.Set;

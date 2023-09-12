@@ -1,6 +1,5 @@
 package sosteam.throwapi.domain.store.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +12,10 @@ import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreSaveDto;
-import sosteam.throwapi.domain.store.exception.BiznoAPIException;
-import sosteam.throwapi.domain.store.exception.NoSuchRegistrationNumberException;
-import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
-import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoAPI;
-import sosteam.throwapi.domain.store.externalAPI.bizno.BiznoApiResponse;
-import sosteam.throwapi.domain.store.service.StoreCreateService;
-import sosteam.throwapi.domain.store.service.StoreDeleteService;
-import sosteam.throwapi.domain.store.service.StoreSearchService;
-import sosteam.throwapi.domain.store.service.StoreModifyService;
+import sosteam.throwapi.domain.store.service.*;
+import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
+import sosteam.throwapi.domain.user.service.UserSeaerchService;
+import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -46,50 +40,59 @@ public class StoreController {
     private final StoreCreateService storeCreateService;
     private final StoreModifyService storeModifyService;
     private final StoreDeleteService storeDeleteService;
+    private final BiznoService biznoService;
+    private final JwtTokenService jwtTokenService;
+    private final UserSeaerchService userSearchService;
 
-    private final BiznoAPI biznoAPI;
-    ObjectMapper mapper = new ObjectMapper();
-
+    /**
+     * 새로운 가게를 등록합니다.
+     * @param auth 사용자의 토큰
+     * @param request 생성할 가게 정보
+     * @return 가게의 외부 UUID
+     */
     @PostMapping
     public ResponseEntity<UUID> saveStore(
             @RequestHeader(name = "Authorization", required = true)
             String auth,
-
             @RequestBody @Valid StoreSaveRequest request
     ) {
-        // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
-        log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
+        // 비즈노 API 호출 성공 시, 해당 사업자 번호의 가게 이름을 가져옵니다.
         String accessToken = auth.split(" ")[1];
-        // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
-        // remove '-'
-        // Call save Service
+        String storeName = biznoService.confirmCompanyRegistrationNumber(request.getCrn(), accessToken);
+
+        // Bearer qwee..가 acdessToken이므로 실제 토큰인 뒷 부분을 가져옵니다.
+        UUID userId = getUserByToken(accessToken);
+
+        // 사업자 번호 입력 시 "-" 를 제거합니다
+        String crn = request.getCrn().replaceAll("-", "");
         StoreSaveDto dto = new StoreSaveDto(
-                accessToken,
                 null,
                 storeName,
                 request.getStorePhone(),
-                request.getCrn().replaceAll("-",""),
+                crn,
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
                 request.getFullAddress(),
                 request.getTrashType()
         );
-        log.debug("StoreSaveRequest = {}", dto);
-
-        Store store = storeCreateService.saveStore(dto);
-
+        Store store = storeCreateService.saveStore(userId,dto);
         return ResponseEntity.ok(store.getExtStoreId());
     }
 
+    /**
+     * 내 가게 불러오기
+     * @param auth 사용자 토큰
+     * @return 해당 사용자의 가게들을 반환
+     */
     @GetMapping("/user")
     public ResponseEntity<Set<StoreResponse>> searchMyStores(
             @RequestHeader(name = "Authorization", required = true)
             String auth
     ) {
         String accessToken = auth.split(" ")[1];
-        Set<StoreDto> storeDtos = storeSearchService.searchMyStores(accessToken);
+        UUID userId = getUserByToken(accessToken);
+        Set<StoreDto> storeDtos = storeSearchService.searchMyStores(userId);
         Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
         return ResponseEntity.ok(resp);
     }
@@ -112,6 +115,7 @@ public class StoreController {
                 request.getDistance(),
                 request.getTrashType().replace("0","_")
         );
+
         // Convert Dto to Response
         Set<StoreDto> storeDtos = storeSearchService.searchStoreInRadius(dto);
         Set<StoreResponse> resp = storeDtos.stream().map(StoreDto::toResponse).collect(Collectors.toSet());
@@ -129,7 +133,6 @@ public class StoreController {
     @PostMapping("/crn")
     public ResponseEntity<StoreResponse> searchByCompanyRegistrationNumber(@RequestBody @Valid StoreCrnRequest request) {
         StoreDto dto =  storeSearchService.searchByCRN(request.getCrn().replaceAll("-",""));
-        if(dto == null) throw new NoSuchStoreException();
         StoreResponse resp = dto.toResponse();
         return ResponseEntity.ok(resp);
     }
@@ -157,63 +160,69 @@ public class StoreController {
     public ResponseEntity<StoreResponse> modifyStore(
             @RequestHeader(name = "Authorization", required = true)
             String auth,
-
             @RequestBody @Valid StoreModifyRequest request
     ) {
+        // Bearer qwee..가 acdessToken이므로 실제 토큰인 뒷 부분을 가져옵니다.
         String accessToken = auth.split(" ")[1];
-        // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
-        log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
+        UUID userId = getUserByToken(accessToken);
 
-        // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
-        // remove '-'
+        // 비즈노 호출 성공 시 가게 이름을 받는다.
+        String storeName = biznoService.confirmCompanyRegistrationNumber(request.getCrn(), accessToken);
+
+        // 사업자 번호 입력 시 "-" 를 제거합니다
+        String crn = request.getCrn().replaceAll("-", "");
+
+        // 수정 데이터가 담긴 dto를 생성합니다.
         StoreDto dto = new StoreDto(
                 request.getExtStoreId(),
                 storeName,
                 request.getStorePhone(),
-                request.getCrn().replaceAll("-",""),
+                crn,
                 request.getLatitude(),
                 request.getLongitude(),
                 request.getZipCode(),
                 request.getFullAddress(),
                 request.getTrashType()
         );
-        // Call modify Method
-        log.debug("StoreModifyRequest = {}", dto);
-        StoreDto storeDto = storeModifyService.modify(accessToken,dto);
+
+        // 수정 서비스를 호출합니다.
+        StoreDto storeDto = storeModifyService.modify(userId,dto);
+
+        // 수정이 완료되었다면, 수정 된 가게 데이터를 반환합니다.
         return ResponseEntity.ok(storeDto.toResponse());
     }
 
+    /**
+     * 요청 가게를 삭제합니다.
+     * @param auth 요청한 사용자 토큰
+     * @param request 삭제를 원하는 가게의 외부 UUID
+     * @return 삭제 완료 문구
+     */
     @DeleteMapping
     public ResponseEntity<String> deleteStore(
             @RequestHeader(name = "Authorization", required = true)
             String auth,
-
             @RequestBody @Valid StoreDeleteRequest request
     ) {
+        // Bearer qwee..가 acdessToken이므로 실제 토큰인 뒷 부분을 가져옵니다.
         String accessToken = auth.split(" ")[1];
-        storeDeleteService.deleteStore(accessToken,request.getExtStoreId());
+        UUID userId = getUserByToken(accessToken);
+
+        // 가게 삭제 서비스 호출
+        storeDeleteService.deleteStore(userId,request.getExtStoreId());
+
+        // 삭제 서비스가 완료되면 삭제 된 가게의 외부 UUID와 삭제 된 시간을 문자열로 반환합니다.
         String resp = "Delete Store: " + request.getExtStoreId() +
                 "<" + String.valueOf(LocalDateTime.now()) + ">";
         return ResponseEntity.ok(resp);
     }
 
-    /**
-     * BIZNO API를 이용하여 해당 사업자 번호가 국세청에 등록된 번호인지 확인
-     * @param number 사업자 등록 번호
-     * @return result 사업자 등록 번호로 등록된 가게 이름 -> storeName
-     * response.getResultCode() :
-     *  -1 : 미등록 사용자 -> Wrong API-KEY
-     *  -2 : 파라메터 오류`
-     *  -3 : 1일 100건 조회수 초과
-     *  9 : 기타 오류
-     *  -10 : 해당 번호 존재 X
-     */
-    public String confirmCompanyRegistrationNumber(String number,String accessToken){
-        BiznoApiResponse response = biznoAPI.confirmCompanyRegistrationNumber(number,accessToken);
-        if( response == null || response.getTotalCount() == 0) throw new NoSuchRegistrationNumberException();
-        if(response.getResultCode() < 0) throw new BiznoAPIException(response.getResultCode());
-        return response.getItems().get(0).getCompany();
+    // 토큰을 통해 사용자를 가져 옵니다.
+    public UUID getUserByToken(String token) {
+        UserInfoDto userInfoDto = new UserInfoDto(
+                jwtTokenService.extractSubject(token)
+        );
+        return userSearchService.searchByInputId(userInfoDto).getId();
     }
 }
 

@@ -1,8 +1,6 @@
 package sosteam.throwapi.domain.store.repository.repoCustomImpl;
 
-import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,8 +11,8 @@ import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.QAddress;
 import sosteam.throwapi.domain.store.entity.QStore;
 import sosteam.throwapi.domain.store.entity.Store;
-import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 import sosteam.throwapi.domain.user.entity.QUser;
 
@@ -31,7 +29,6 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     private final QAddress qAddress;
     private final QUser qUser;
     @Autowired
-
     public StoreCustomRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
         this.qStore = QStore.store;
@@ -108,6 +105,7 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
         Address address = jpaQueryFactory
                 .selectFrom(qAddress)
                 .innerJoin(qAddress.store,qStore)
+                .fetchJoin()
                 .where(qStore.id.eq(uuid))
                 .fetchOne();
         return Optional.ofNullable(address);

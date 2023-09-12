@@ -66,7 +66,7 @@ public class User extends PrimaryKeyEntity implements UserDetails {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Mileage mileage;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Store> stores;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
