@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.global.entity.PrimaryKeyEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -34,19 +35,19 @@ public class Store extends PrimaryKeyEntity {
     // 일반쓰레기 | 병 | 플라스틱 | 종이 | 캔
     @NotNull
     private String trashType;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    @NotNull
-    @OneToOne(
+
+    @OneToMany(
             mappedBy = "store",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(name = "address_id")
-    private Address address;
+    private List<Address> address;
 
     public Store(UUID extStoreId, String storeName, String storePhone, String companyRegistrationNumber, String trashType) {
         this.extStoreId = extStoreId;
@@ -68,7 +69,7 @@ public class Store extends PrimaryKeyEntity {
         return this.user;
     }
 
-    public Address modifyAddress(Address address) {
+    public List<Address> modifyAddress(List<Address> address) {
         this.address = address;
         return this.address;
     }

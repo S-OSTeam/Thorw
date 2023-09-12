@@ -7,31 +7,25 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.entity.dto.StoreDto;
+import sosteam.throwapi.domain.store.entity.dto.StoreInRadiusDto;
 import sosteam.throwapi.domain.store.exception.NoStoreOfUserException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.Direction;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
-import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserSeaerchService;
 import sosteam.throwapi.global.exception.exception.NoContentException;
 import sosteam.throwapi.global.exception.exception.NotFoundException;
-import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreSearchService {
     private final StoreRepository storeRepository;
-    private final UserSeaerchService userSearchService;
-
-    private final JwtTokenService jwtTokenService;
 
     /**
      * 1: Make two points that are (distance) km apart from the current location
@@ -111,13 +105,9 @@ public class StoreSearchService {
         return storeRepository.searchByCRN(crn);
     }
 
-    public Set<StoreDto> searchMyStores(String accessToken) {
+    public Set<StoreDto> searchMyStores(UUID uuid) {
         // 요청 사용자 정보 가져오기
-        UserInfoDto userInfoDto = new UserInfoDto(
-                jwtTokenService.extractSubject(accessToken)
-        );
-        User user = userSearchService.searchByInputId(userInfoDto);
-        Optional<Set<StoreDto>> storeDtos = storeRepository.searchMyStores(user.getId());
+        Optional<Set<StoreDto>> storeDtos = storeRepository.searchMyStores(uuid);
         if(storeDtos.isEmpty()) throw new NoStoreOfUserException();
         if(storeDtos.get().isEmpty()) throw new NoContentException();
         return storeDtos.get();

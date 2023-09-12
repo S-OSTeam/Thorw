@@ -3,15 +3,12 @@ package sosteam.throwapi.domain.store.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import sosteam.throwapi.domain.store.entity.Address;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.exception.InvalidRequestException;
 import sosteam.throwapi.domain.store.exception.NoSuchStoreException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserSeaerchService;
-import sosteam.throwapi.global.service.JwtTokenService;
+import sosteam.throwapi.domain.user.repository.UserRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,37 +18,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreDeleteService {
     private final StoreRepository storeRepository;
-    private final UserSeaerchService userSearchService;
-    private final JwtTokenService jwtTokenService;
-
-
-    public void deleteStore(String accessToken, UUID extStoreId) {
-        // 요청 사용자 정보 가져오기
-        UserInfoDto userInfoDto = new UserInfoDto(
-                jwtTokenService.extractSubject(accessToken)
-        );
-        User user = userSearchService.searchByInputId(userInfoDto);
-
+    private final UserRepository userRepository;
+    public UUID deleteStore(UUID userId, UUID extStoreId) {
+        // 가게 외부 UUID로 해당 가게를 불러옵니다.
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(extStoreId);
         if (optionalStore.isEmpty()) throw new NoSuchStoreException();
         Store store = optionalStore.get();
 
-        // check if the store's owner is same with request-user
-        UUID userId = storeRepository.searchUserByStore(store).orElseThrow(NoSuchStoreException::new);
-        //log.debug("userId1:{}, userId2:{}", user.getId(), userId);
-        if (userId.compareTo(user.getId()) != 0) throw new InvalidRequestException("DELETE");
-
-
-        Optional<Address> optionalAddress = storeRepository.searchAddressByStore(store.getId());
-        if (optionalAddress.isEmpty()) throw new NoSuchStoreException();
-        Address address = optionalAddress.get();
+        // 삭제를 요청한 사용자와 해당 가게의 주인이 동일 인물인지 확인합니다.
+        User user = userRepository.findById(userId).orElseThrow(NoSuchStoreException::new);
+        UUID findUserId = storeRepository.searchUserByStore(store).orElseThrow(()-> new InvalidRequestException("DELETE"));
+        if (findUserId.compareTo(user.getId()) != 0) throw new InvalidRequestException("DELETE");
 
         if (
                 store.getExtStoreId().equals(extStoreId)
         ) {
-            store.modifyAddress(null);
-            address.modifyStore(null);
+            // 가게와 주소의 연관관계를 끊어줍니다.
             storeRepository.delete(store);
         } else throw new InvalidRequestException("DELETE");
+
+        return extStoreId;
     }
 }

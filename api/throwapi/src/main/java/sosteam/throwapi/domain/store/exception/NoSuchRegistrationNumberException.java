@@ -5,6 +5,6 @@ import sosteam.throwapi.global.exception.exception.CommonException;
 
 public class NoSuchRegistrationNumberException extends CommonException {
     public NoSuchRegistrationNumberException() {
-            super("NO_SUCH_REGISTRATION_NUMBER", "국세청에 등록되지 않은 사업자등록번호입니다.", HttpStatus.BAD_REQUEST);
+            super("NO_SUCH_REGISTRATION_NUMBER", "국세청에 등록되지 않은 사업자등록번호입니다.", HttpStatus.UNAUTHORIZED);
     }
 }
