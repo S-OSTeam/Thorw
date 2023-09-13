@@ -14,9 +14,8 @@ import sosteam.throwapi.domain.store.exception.WrongStoreIdException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserSeaerchService;
-import sosteam.throwapi.global.service.JwtTokenService;
+import sosteam.throwapi.domain.user.exception.NoSuchUserException;
+import sosteam.throwapi.domain.user.repository.UserRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,9 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreModifyService {
     private final StoreRepository storeRepository;
-    private final UserSeaerchService userSearchService;
-    private final JwtTokenService jwtTokenService;
-
+    private final UserRepository userRepository;
     /**
      * 가게 정보를 수정하는 메소드
      *
@@ -41,31 +38,31 @@ public class StoreModifyService {
      * 만약 가게 코드가 올바르지 않으면 데이터의 무결성이 안지켜진것이므로 수정 시도를 막는다.
      */
     @Transactional
-    public StoreDto modify(String accessToken, StoreDto dto) {
-        // 요청 사용자 정보 가져오기
-        UserInfoDto userInfoDto = new UserInfoDto(
-                jwtTokenService.extractSubject(accessToken)
-        );
-        User user = userSearchService.searchByInputId(userInfoDto);
-
-        // Find Store By given storeId
+    public StoreDto modify(UUID userId, StoreDto dto) {
+        // 가게 외부 UUID를 통해 해당 가게를 가져옵니다.
         Optional<Store> optionalStore = storeRepository.searchByExtStoreId(dto.getExtStoreId());
         if (optionalStore.isEmpty()) throw new WrongStoreIdException();
         Store store = optionalStore.get();
 
-        // check if the store's owner is same with request-user
-        UUID userId = storeRepository.searchUserByStore(store).orElseThrow(NoSuchStoreException::new);
-        if (userId.compareTo(user.getId()) != 0) throw new InvalidRequestException("MODIFY");
+        // 불러온 가게의 주인이 수정 요청을 한 사용자와 동일 인물인지 확인합니다.
+        User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+        UUID findUserId = storeRepository.searchUserByStore(store).orElseThrow(()-> new InvalidRequestException("MODIFY"));
+        if (findUserId.compareTo(user.getId()) != 0) throw new InvalidRequestException("MODIFY");
 
+        // 가게 정보를 수정합니다.
         store.modify(
                 dto.getStoreName(),
                 dto.getStorePhone(),
                 dto.getCrn(),
                 dto.getTrashType()
         );
+
+        // 가게의 주소 정보를 가져옵니다.
         Optional<Address> optionalAddress = storeRepository.searchAddressByStore(store.getId());
         if (optionalAddress.isEmpty()) throw new NoSuchStoreException();
         Address address = optionalAddress.get();
+
+        // 주소 정보를 수정합니다.
         Point location = GeometryUtil.parseLocation(
                 dto.getLatitude(),
                 dto.getLongitude()
@@ -77,6 +74,7 @@ public class StoreModifyService {
                 dto.getFullAddress(),
                 dto.getZipCode()
         );
+        storeRepository.save(store);
         return new StoreDto(
                 dto.getExtStoreId(),
                 dto.getStoreName(),

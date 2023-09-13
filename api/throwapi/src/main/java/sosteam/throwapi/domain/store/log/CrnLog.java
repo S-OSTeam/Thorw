@@ -3,6 +3,8 @@ package sosteam.throwapi.domain.store.log;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import sosteam.throwapi.global.service.TimeStamped;
 
 import java.util.UUID;
@@ -17,7 +19,8 @@ public class CrnLog extends TimeStamped {
     @Column
     private String ip;
 
-    @Column
+    @Column(name = "user_id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID userId;
 
 public CrnLog(String ip, UUID userId) {

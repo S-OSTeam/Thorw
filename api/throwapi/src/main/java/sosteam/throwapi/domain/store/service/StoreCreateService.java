@@ -13,10 +13,10 @@ import sosteam.throwapi.domain.store.exception.StoreAlreadyExistException;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.util.GeometryUtil;
 import sosteam.throwapi.domain.user.entity.User;
-import sosteam.throwapi.domain.user.entity.dto.user.UserInfoDto;
-import sosteam.throwapi.domain.user.service.UserSeaerchService;
-import sosteam.throwapi.global.service.JwtTokenService;
+import sosteam.throwapi.domain.user.exception.NoSuchUserException;
+import sosteam.throwapi.domain.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,28 +26,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreCreateService {
     private final StoreRepository storeRepository;
-    private final StoreSearchService storeSearchService;
+    private final UserRepository userRepository;
 
-    private final UserSeaerchService userSearchService;
-    private final JwtTokenService jwtTokenService;
     @Transactional
-    public Store saveStore(StoreSaveDto storeDto) {
-        log.debug("Start Creating Store = {}", storeDto);
-        // if Store is already Exist
-        // return 409 : Conflict http status
-        Optional<StoreDto> result = storeSearchService.isExistByCRN(storeDto.getCrn());
+    public Store saveStore(UUID userId,StoreSaveDto storeDto) {
+        log.debug("가게 저장 서비스 시작 = {}", storeDto);
+        // 만약에 해당 사업자 번호로 등록된 가게가 존재할 경우,
+        Optional<StoreDto> result = storeRepository.searchByCRN(storeDto.getCrn());
+        // 409 충돌 에러를 반환 합니다.
         if (result.isPresent()) throw new StoreAlreadyExistException();
-
-
-        // 요청 사용자 정보 가져오기
-        UserInfoDto userInfoDto = new UserInfoDto(
-                jwtTokenService.extractSubject(storeDto.getAccessToken())
-        );
-        User user = userSearchService.searchByInputId(userInfoDto);
-
-        // Make external Store id using UUID
+        // 가게 외부 노출용 UUID를 생성합니다.
         UUID extStoreId = UUID.randomUUID();
-        // 1: Create Store Entity
+        // 1. 가게 객체 생성
         Store store = new Store(
                 extStoreId,
                 storeDto.getStoreName(),
@@ -56,13 +46,12 @@ public class StoreCreateService {
                 storeDto.getTrashType()
         );
 
-        // 2: Create Address Entity
-        // 2-1 : Create Point based on Lat,Lon
+        // 2: 주소 객체 생성
+        // 2-1 : 위도 경도를 통해 POINT 타입 멤버를 만듭니다.
         Point location = GeometryUtil.parseLocation(
                 storeDto.getLatitude(),
                 storeDto.getLongitude()
         );
-        log.debug("location={}", location);
         Address address = new Address(
                 location,
                 storeDto.getLatitude(),
@@ -71,17 +60,25 @@ public class StoreCreateService {
                 storeDto.getZipCode()
         );
 
-        // 4: Mapping Store and Address
-        store.modifyAddress(address);
+        // 4: 가게와 주소 객체를 연결 합니다.
         address.modifyStore(store);
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(address);
+        store.modifyAddress(addresses);
 
-        // 5: Mapping Store and User
+        // 사용자 불러오기
+        User user = userRepository.findById(userId).orElseThrow(NoSuchUserException::new);
+
+        // 5: 가게와 사용자 객체를 연결 합니다.
         store.modifyUser(user);
         List<Store> stores = user.getStores();
+        if(stores == null) {
+            stores = new ArrayList<>();
+            user.modifyStore(stores);
+        }
         stores.add(store);
-        user.modifyStore(stores);
 
-        // 6: save Store Entity
+        // 6: 가게 객체를 저장 합니다.
         return storeRepository.save(store);
     }
 }
