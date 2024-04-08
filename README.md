@@ -1,2 +1,2 @@
-# Thorws
+# Thorw
 Throw Application
