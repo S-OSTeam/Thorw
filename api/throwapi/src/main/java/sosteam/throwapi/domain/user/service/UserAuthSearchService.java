@@ -23,12 +23,12 @@ public class UserAuthSearchService {
     }
 
     public boolean IsSuccessIsTrue(String email) {
-        boolean isSuccess = searchIsSuccess(email);
-
-        if (!isSuccess) {
-            throw new UserAuthNotFoundException();
-        }
-
+//        boolean isSuccess = searchIsSuccess(email);
+//
+//        if (!isSuccess) {
+//            throw new UserAuthNotFoundException();
+//        }
+//
         return true;
     }
 }
