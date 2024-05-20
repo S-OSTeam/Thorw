@@ -2,6 +2,7 @@ package sosteam.throwapi.domain.store.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -53,14 +54,17 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<UUID> saveStore(
             @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String auth,
 
             @RequestBody @Valid StoreSaveRequest request
     ) {
+        log.debug("controller start");
+
         // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
-        log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
         String accessToken = auth.split(" ")[1];
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),accessToken);
+        log.debug("POST : BIZNO API RESULT : StoreName ={}",storeName);
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
         // remove '-'
         // Call save Service
