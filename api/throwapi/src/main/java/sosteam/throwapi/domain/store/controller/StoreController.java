@@ -160,6 +160,7 @@ public class StoreController {
     @PutMapping
     public ResponseEntity<StoreResponse> modifyStore(
             @RequestHeader(name = "Authorization", required = true)
+            @Pattern(regexp = "^(Bearer)\s.+$", message = "Bearer [accessToken]")
             String auth,
 
             @RequestBody @Valid StoreModifyRequest request
