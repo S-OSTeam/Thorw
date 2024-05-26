@@ -167,7 +167,7 @@ public class StoreController {
     ) {
         String accessToken = auth.split(" ")[1];
         // Bizno RegistrationNumber Confirm API Error checking
-        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),auth);
+        String storeName = confirmCompanyRegistrationNumber(request.getCrn(),accessToken);
         log.debug("PUT: BIZNO API RESULT : StoreName ={}",storeName);
 
         // if CompanyRegistrationNumber Form is XXX-XX-XXXXX,
