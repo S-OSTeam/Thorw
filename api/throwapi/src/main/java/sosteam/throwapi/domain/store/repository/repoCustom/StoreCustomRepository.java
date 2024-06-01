@@ -23,4 +23,6 @@ public interface StoreCustomRepository {
     Optional<Set<StoreDto>> searchMyStores(UUID uuid);
 
     Optional<UUID> searchUserByStore(Store store);
+
+    Optional<Store> searchByInputId(String inputId);
 }

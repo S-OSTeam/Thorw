@@ -104,6 +104,17 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
+    public Optional<Store> searchByInputId(String inputId) {
+        Store store = jpaQueryFactory
+                .selectFrom(qStore)
+                .innerJoin(qStore.user,qUser)
+                .where(qUser.inputId.eq(inputId))
+                .fetchOne();
+        return Optional.ofNullable(store);
+    }
+
+
+    @Override
     public Optional<Address> searchAddressByStore(UUID uuid) {
         Address address = jpaQueryFactory
                 .selectFrom(qAddress)
@@ -119,17 +130,17 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 jpaQueryFactory
                         .select(
                                 Projections.constructor(
-                                StoreDto.class,
-                                qStore.extStoreId,
-                                qStore.storeName,
-                                qStore.storePhone,
-                                qStore.companyRegistrationNumber,
-                                qAddress.latitude,
-                                qAddress.longitude,
-                                qAddress.zipCode,
-                                qAddress.fullAddress,
-                                qStore.trashType
-                            )
+                                        StoreDto.class,
+                                        qStore.extStoreId,
+                                        qStore.storeName,
+                                        qStore.storePhone,
+                                        qStore.companyRegistrationNumber,
+                                        qAddress.latitude,
+                                        qAddress.longitude,
+                                        qAddress.zipCode,
+                                        qAddress.fullAddress,
+                                        qStore.trashType
+                                )
                         ).from(qStore)
                         .innerJoin(qStore.address,qAddress)
                         .innerJoin(qStore.user,qUser)
