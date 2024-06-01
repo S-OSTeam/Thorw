@@ -104,17 +104,6 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
-    public Optional<Store> searchByInputId(String inputId) {
-        Store store = jpaQueryFactory
-                .selectFrom(qStore)
-                .innerJoin(qStore.user,qUser)
-                .where(qUser.inputId.eq(inputId))
-                .fetchOne();
-        return Optional.ofNullable(store);
-    }
-
-
-    @Override
     public Optional<Address> searchAddressByStore(UUID uuid) {
         Address address = jpaQueryFactory
                 .selectFrom(qAddress)

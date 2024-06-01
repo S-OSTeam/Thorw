@@ -27,13 +27,6 @@ public class RankingController {
     private final MileageSearchService mileageSearchService;
     private final JwtTokenService jwtTokenService;
 
-    @PostMapping("/getStoreList")
-    public ResponseEntity<Optional<Store>> getStoreListByInputId(@RequestBody @Valid String inputId){
-        log.debug("getStoreListByInputId()");
-        Optional<Store> storeList = mileageSearchService.getStoreListByInputId(inputId);
-        return ResponseEntity.ok(storeList);
-    }
-
     @GetMapping("/leaderboard")
     public ResponseEntity<List<RankingResponse>> createLeaderBoard() {
         log.debug("CREATELEADERBOARDCONTROLLER");
@@ -41,7 +34,6 @@ public class RankingController {
 
         List<RankingResponse> rankingResponses = leaderBoard.stream()
                 .map(rankingDto -> new RankingResponse(
-                        rankingDto.getInputId(),
                         rankingDto.getUserName(),
                         rankingDto.getMileage(),
                         rankingDto.getRanking()))
@@ -61,7 +53,6 @@ public class RankingController {
 
 
         RankingResponse rankingResponse = new RankingResponse(
-                rankingDto.getInputId(),
                 rankingDto.getUserName(),
                 rankingDto.getMileage(),
                 rankingDto.getRanking());

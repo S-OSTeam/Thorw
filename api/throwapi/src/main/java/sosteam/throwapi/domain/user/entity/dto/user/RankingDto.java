@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RankingDto {
-    private String inputId;
     private String userName;
     private Long mileage;
     private Long ranking;

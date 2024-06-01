@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class RankingResponse {
-    private String inputId;
     private String userName;
     private Long mileage;
     private Long ranking;
