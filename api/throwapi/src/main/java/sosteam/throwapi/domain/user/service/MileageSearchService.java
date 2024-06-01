@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.entity.Store;
+import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.RankingDto;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MileageSearchService {
     private final UserRepository userRepository;
-    private final StoreCustomRepository storeCustomRepository;
+    private final StoreRepository storeRepository;
 
     /**
      * 10위까지 리더보드 정보 넣기. {userName,mileage,ranking}로 리턴
@@ -61,7 +62,7 @@ public class MileageSearchService {
     }
 
     public Optional<Store> getStoreListByInputId(String inputId){
-        Optional<Store> storeList = storeCustomRepository.searchByInputId(inputId);
+        Optional<Store> storeList = storeRepository.searchByInputId(inputId);
         return storeList;
     }
 }
