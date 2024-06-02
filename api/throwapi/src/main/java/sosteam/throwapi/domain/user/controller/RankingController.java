@@ -17,6 +17,7 @@ import sosteam.throwapi.global.service.JwtTokenService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -27,6 +28,13 @@ public class RankingController {
     private final MileageSearchService mileageSearchService;
     private final JwtTokenService jwtTokenService;
 
+    @PostMapping("/getStoreList")
+    public ResponseEntity<Optional<Set<Store>>> getStoreListByInputId(@RequestBody @Valid String inputId){
+        log.debug("getStoreListByInputId()");
+        Optional<Set<Store>> storeList = mileageSearchService.getStoreListByInputId(inputId);
+        return ResponseEntity.ok(storeList);
+    }
+
     @GetMapping("/leaderboard")
     public ResponseEntity<List<RankingResponse>> createLeaderBoard() {
         log.debug("CREATELEADERBOARDCONTROLLER");
@@ -34,6 +42,7 @@ public class RankingController {
 
         List<RankingResponse> rankingResponses = leaderBoard.stream()
                 .map(rankingDto -> new RankingResponse(
+                        rankingDto.getInputId(),
                         rankingDto.getUserName(),
                         rankingDto.getMileage(),
                         rankingDto.getRanking()))
@@ -53,6 +62,7 @@ public class RankingController {
 
 
         RankingResponse rankingResponse = new RankingResponse(
+                rankingDto.getInputId(),
                 rankingDto.getUserName(),
                 rankingDto.getMileage(),
                 rankingDto.getRanking());

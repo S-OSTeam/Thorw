@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.store.repository.repo.StoreRepository;
-import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.RankingDto;
 import sosteam.throwapi.domain.user.repository.UserRepository;
@@ -22,6 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MileageSearchService {
     private final UserRepository userRepository;
+    private final StoreRepository storeRepository;
+
     /**
      * 10위까지 리더보드 정보 넣기. {userName,mileage,ranking}로 리턴
      */
@@ -36,6 +37,7 @@ public class MileageSearchService {
                 .filter(user -> user.getUserInfo() != null && user.getMileage() != null)
                 .sorted(Comparator.comparing(user -> -user.getMileage().getAmount()))  // 마일리지에 따라 내림차순 정렬
                 .map(user -> new RankingDto(
+                        user.getInputId(),
                         user.getUserInfo().getUserName(),
                         user.getMileage().getAmount(),
                         rank.getAndIncrement()))
@@ -55,6 +57,11 @@ public class MileageSearchService {
         // 해당 사용자의 순위를 계산
         Long userRank = userRepository.searchRankByMileage(mileage);
 
-        return new RankingDto(user.getUserInfo().getUserName(), mileage,userRank);
+        return new RankingDto(user.getInputId(), user.getUserInfo().getUserName(), mileage,userRank);
+    }
+
+    public Optional<Set<Store>> getStoreListByInputId(String inputId){
+        Optional<Set<Store>> storeList = storeRepository.searchByInputId(inputId);
+        return storeList;
     }
 }
