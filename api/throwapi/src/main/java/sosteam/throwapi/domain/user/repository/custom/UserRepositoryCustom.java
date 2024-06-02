@@ -1,5 +1,6 @@
 package sosteam.throwapi.domain.user.repository.custom;
 
+import sosteam.throwapi.domain.store.entity.Store;
 import sosteam.throwapi.domain.user.entity.User;
 import sosteam.throwapi.domain.user.entity.dto.user.UserCngDto;
 import sosteam.throwapi.global.entity.UserStatus;
@@ -31,4 +32,5 @@ public interface UserRepositoryCustom {
     Set<User> searchTop10UsersByMileage();
 
     Long modifyMileageByInputId(String inputId, Long acMileage);
+
 }

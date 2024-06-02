@@ -10,8 +10,8 @@ import sosteam.throwapi.domain.user.entity.dto.user.RankingDto;
 import sosteam.throwapi.domain.user.repository.UserRepository;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -60,8 +60,8 @@ public class MileageSearchService {
         return new RankingDto(user.getInputId(), user.getUserInfo().getUserName(), mileage,userRank);
     }
 
-    public Optional<Set<Store>> getStoreListByInputId(String inputId){
-        Optional<Set<Store>> storeList = storeRepository.searchByInputId(inputId);
-        return storeList;
+    public Set<Store> searchStoreByInputId(String inputId){
+        Set<Store> result = storeRepository.searchStoreByInputId(inputId);
+        return result;
     }
 }

@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public interface StoreCustomRepository {
     Optional<Set<StoreDto>> searchStoreInRadius(StoreInRadiusDto storeInRadiusDto);
-    Optional<Set<Store>> searchByInputId(String inputId);
 
     Optional<Set<StoreDto>> searchByName(String name);
 
@@ -24,4 +23,6 @@ public interface StoreCustomRepository {
     Optional<Set<StoreDto>> searchMyStores(UUID uuid);
 
     Optional<UUID> searchUserByStore(Store store);
+
+    Set<Store> searchStoreByInputId(String inputId);
 }

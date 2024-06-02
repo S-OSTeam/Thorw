@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,10 +19,10 @@ import sosteam.throwapi.domain.store.entity.dto.StoreDto;
 import sosteam.throwapi.domain.store.repository.repoCustom.StoreCustomRepository;
 import sosteam.throwapi.domain.user.entity.QUser;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+import static sosteam.throwapi.domain.user.entity.QMileage.mileage;
+import static sosteam.throwapi.domain.user.entity.QUser.user;
 
 @Slf4j
 @Repository
@@ -95,6 +96,16 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     }
 
     @Override
+    public Set<Store> searchStoreByInputId(String inputId){
+        Set<Store> result = new HashSet<>(jpaQueryFactory
+                .selectFrom(qStore)
+                .innerJoin(qStore.user, qUser)
+                .where(qUser.inputId.eq(inputId))
+                .fetch());
+        return result;
+    }
+
+    @Override
     public Optional<Store> searchByExtStoreId(UUID uuid) {
         Store store = jpaQueryFactory
                 .selectFrom(qStore)
@@ -102,19 +113,6 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
                 .fetchOne();
         return Optional.ofNullable(store);
     }
-
-    @Override
-    public Optional<Set<Store>> searchByInputId(String inputId) {
-        Set<Store> result = new HashSet<>(
-                jpaQueryFactory
-                        .selectFrom(qStore)
-                        .innerJoin(qStore.user,qUser)
-                        .where(qUser.inputId.eq(inputId))
-                        .fetchOne()
-        );
-        return Optional.of(result);
-    }
-
 
     @Override
     public Optional<Address> searchAddressByStore(UUID uuid) {
