@@ -167,7 +167,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         UUID userId = this.searchUUIDByInputId(inputId);
         long result = queryFactory
                 .update(mileage)
-                .set(mileage.amount, mileage.amount.)
+                .set(mileage.amount, mileage.amount.add(10))
                 .where(mileage.user.id.eq(userId))
                 .execute();
 
